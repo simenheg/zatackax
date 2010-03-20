@@ -57,9 +57,10 @@ SDL_Rect arrowClip[32];
 
 SDL_Surface *screen = NULL;
 SDL_Surface *msg = NULL;
+SDL_Surface *image = NULL;
+SDL_Surface *arrows = NULL;
+SDL_Surface *broadcast[BROADC_LIMIT];
 SDL_Event event;
-SDL_Surface *image;
-SDL_Surface *arrows;
 
 void (*logicFunc)(void);
 void (*displayFunc)(void);
@@ -124,6 +125,14 @@ void drawScores()
         SDL_BlitSurface(scoreText, NULL, screen, &offset);
         SDL_FreeSurface(scoreText);
     }
+
+    for (i = 0; i < BROADC_LIMIT; i++) {
+        if (broadcast[i] != NULL) {
+            SDL_Rect offset = {WINDOW_W - broadcast[i]->w - 4,
+                WINDOW_H - (broadcast[i]->h * (i + 1))};
+            SDL_BlitSurface(broadcast[i], NULL, screen, &offset);
+        }
+    }
 }
 
 SDL_Surface *loadImage(const char filename[])
@@ -150,14 +159,12 @@ int loadFiles(void)
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
     }
-    /*
-    if ((font_score = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-r.ttf",
+    if ((font_score = TTF_OpenFont("data/fonts/OCR-A/tarzeau-OCR-A.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
     }
-    */
-    if ((font_score = TTF_OpenFont("data/fonts/OCR-A/tarzeau-OCR-A.ttf",
-                    MENU_FONT_SIZE)) == NULL) {
+    if ((font_broadc = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-r.ttf",
+                    BROADC_FONT_SIZE)) == NULL) {
         return 0;
     }
 
@@ -310,6 +317,19 @@ void killPlayer(struct player *p)
             break;
         }
     }
+
+    SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
+    for (i = BROADC_LIMIT - 1; i > 0; i--) {
+        broadcast[i] = broadcast[i - 1];
+        if (broadcast[i] != NULL) {
+            int alpha = 255 - i * (255.0 / BROADC_LIMIT);
+            SDL_SetAlpha(broadcast[i], SDL_SRCALPHA, alpha);
+        }
+    }
+
+    char anomsg[BROADC_BUF];
+    broadcast[0] = TTF_RenderUTF8_Shaded(font_broadc, "Player died", p->c,
+            cMenuBG);
 
     refreshGameScreen(); /* Update scores */
 }
@@ -488,6 +508,8 @@ int init(void)
     if (TTF_Init() == -1) {
         return 0;
     }
+    
+    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface));
 
     SDL_WM_SetCaption("Zatacka X", NULL);
 

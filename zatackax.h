@@ -13,6 +13,10 @@
 
 /* #define DEBUG */
 
+#define BROADC_LIMIT        6   /* Maximum number of broadcast messages */
+#define BROADC_BUF          128 /* Maximum broadcast length */
+#define BROADC_FONT_SIZE    13
+
 #define SCREEN_BPP          32
 
 #define N_DIMENSION         3
@@ -104,6 +108,7 @@ static char menuchoice_s = 0;
 static unsigned char fullscreen = 0;
 static TTF_Font *font_menu = NULL;
 static TTF_Font *font_score = NULL;
+static TTF_Font *font_broadc = NULL;
 SDL_Color cMenuText = {0x80, 0x80, 0x80};
 SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00};
