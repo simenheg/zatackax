@@ -238,8 +238,17 @@ struct vel spawn()
     return initPos;
 }
 
+void cleanBroadcast(void)
+{
+    int i;
+    for (i = 0; i < BROADC_LIMIT; i++) {
+        SDL_FreeSurface(broadcast[i]);
+    }
+    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
+}
+
 /* This needs some fixing... !!! */
-void cleanHitMap()
+void cleanHitMap(void)
 {
 #ifdef DEBUG
     fprintf(stderr, "Cleaning hitmap...\n");
@@ -509,7 +518,7 @@ int init(void)
         return 0;
     }
     
-    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface));
+    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
 
     SDL_WM_SetCaption("Zatacka X", NULL);
 
@@ -1124,6 +1133,7 @@ int main(int argc, char **argv)
                     if (logicFunc == logicGame
                             || logicFunc == logicGameStart) {
                         cleanHitMap();
+                        cleanBroadcast();
                         initPlayers1();
                         logicFunc = logicMainMenu;
                         displayFunc = displayMainMenu;
