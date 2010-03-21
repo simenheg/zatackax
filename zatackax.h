@@ -30,7 +30,7 @@
 
 #define SPAWN_SPACE_MIN     100
 #define SCORE_SPACING       25
-#define COUNTDOWN_TOLERANCE 400
+#define COUNTDOWN_TOLERANCE 60
 #define MAX_PLAYERS         8
 #define DEFAULT_N_PLAYERS   2
 #define START_ROUND_WAIT    1500
@@ -109,6 +109,7 @@ static unsigned char fullscreen = 0;
 static TTF_Font *font_menu = NULL;
 static TTF_Font *font_score = NULL;
 static TTF_Font *font_broadc = NULL;
+static TTF_Font *font_broadcb = NULL;
 SDL_Color cMenuText = {0x80, 0x80, 0x80};
 SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00};

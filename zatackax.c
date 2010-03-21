@@ -167,6 +167,10 @@ int loadFiles(void)
                     BROADC_FONT_SIZE)) == NULL) {
         return 0;
     }
+    if ((font_broadcb = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-b.ttf"
+                    , BROADC_FONT_SIZE)) == NULL) {
+        return 0;
+    }
 
     SDL_SurfaceInfo("arrowsheet.png", arrows);
 
@@ -185,17 +189,16 @@ int loadFiles(void)
     p = parrows;
     for (i = 0; i < MAX_PLAYERS; i++, p++) {
         *p = SDL_CreateRGBSurface(arrows->flags, arrows->w,
-            arrows->h, arrows->format->BitsPerPixel, 
-            arrows->format->Rmask, arrows->format->Gmask,
-            arrows->format->Bmask, 0);
+                arrows->h, arrows->format->BitsPerPixel, 
+                arrows->format->Rmask, arrows->format->Gmask,
+                arrows->format->Bmask, 0);
     }
 
     return 1;
 }
 
 struct recentMapPiece {
-    Uint32 count;
-    int x, y;
+    int x, y, count;
     struct recentMapPiece *next;
 };
 
@@ -337,55 +340,58 @@ void killPlayer(char killed, char killer)
         }
     }
 
+    /* Make broadcast message */
     char anomsg1[BROADC_BUF];
     char anomsg2[BROADC_BUF];
+    SDL_Surface *tmp[3];
+    int broadw = 0;
+    int nbroad = 0;
 
-    /* Maybe make this nicer/more expandable, ie. suicide */
+    snprintf(anomsg1, BROADC_BUF, "Player%d", killed);
+
     if (killer == 0) { /* Walled */
 
-        snprintf(anomsg1, BROADC_BUF, "Player%d", killed);
-
-        SDL_Surface *tmp1 = TTF_RenderUTF8_Shaded(font_broadc, anomsg1,
+        nbroad = 2;
+        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg1,
                 p->c, cMenuBG);
-        SDL_Surface *tmp2 = TTF_RenderUTF8_Shaded(font_broadc,
+        tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " hit the wall", cBroadcast, cMenuBG);
 
-        broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE,
-                tmp1->w + tmp2->w, tmp1->h, SCREEN_BPP, 0, 0, 0, 0);
+    } else if (killer == killed) { /* Suicide */
 
-        SDL_Rect offset = {tmp1->w, 0};
-        SDL_BlitSurface(tmp1, NULL, broadcast[0], NULL);
-        SDL_BlitSurface(tmp2, NULL, broadcast[0], &offset);
-        SDL_FreeSurface(tmp1);
-        SDL_FreeSurface(tmp2);
+        nbroad = 2;
+        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg1,
+                p->c, cMenuBG);
+        tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
+                " committed suicide", cBroadcast, cMenuBG);
 
     } else { /* Killed */
 
-        struct player *pk = &players[killer - 1];
+        nbroad = 3;
 
-        snprintf(anomsg1, BROADC_BUF, "Player%d", killed);
+        struct player *pk = &players[killer - 1];
         snprintf(anomsg2, BROADC_BUF, "Player%d", killer);
 
-        SDL_Surface *tmp1 = TTF_RenderUTF8_Shaded(font_broadc, anomsg1,
+        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg1,
                 p->c, cMenuBG);
-        SDL_Surface *tmp2 = TTF_RenderUTF8_Shaded(font_broadc,
+        tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " crashed into ", cBroadcast, cMenuBG);
-        SDL_Surface *tmp3 = TTF_RenderUTF8_Shaded(font_broadc, anomsg2,
+        tmp[2] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg2,
                 pk->c, cMenuBG);
-
-        broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE,
-                tmp1->w + tmp2->w + tmp3->w, tmp1->h, SCREEN_BPP,
-                0, 0, 0, 0);
-
-        SDL_Rect offset1 = {tmp1->w, 0};
-        SDL_Rect offset2 = {tmp1->w + tmp2->w, 0};
-        SDL_BlitSurface(tmp1, NULL, broadcast[0], NULL);
-        SDL_BlitSurface(tmp2, NULL, broadcast[0], &offset1);
-        SDL_BlitSurface(tmp3, NULL, broadcast[0], &offset2);
-        SDL_FreeSurface(tmp1);
-        SDL_FreeSurface(tmp2);
-        SDL_FreeSurface(tmp3);
     }
+
+    for (i = 0; i < nbroad; i++) broadw += tmp[i]->w;
+    broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE,
+            broadw, tmp[0]->h, SCREEN_BPP, 0, 0, 0, 0);
+
+    for (i = 0; i < nbroad; i++) {
+        int j;
+        SDL_Rect offset = {0, 0};
+        for (j = i; j > 0; j--) offset.x += tmp[j-1]->w;
+        SDL_BlitSurface(tmp[i], NULL, broadcast[0], &offset);
+    }
+
+    for (i = 0; i < nbroad; i++) SDL_FreeSurface(tmp[i]);
 
     refreshGameScreen(); /* Update scores */
 }
@@ -456,7 +462,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
                 putPixel(xpx, ypx, (&players[player-1])->c,
                         screen->pixels);
 
-                if (*hit == 0 || *hit == player + MAX_PLAYERS) {
+                if (*hit == 0) {
                     struct recentMapPiece *new
                         = malloc(sizeof(struct recentMapPiece));
                     *hit = player + MAX_PLAYERS;
@@ -465,9 +471,11 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
                     new->y = ypx;
                     new->next = recents;
                     recents = new;
-                } else {
+                } else if (*hit != player + MAX_PLAYERS) {
+                    printf("%d\n", *hit);
                     if (player == *hit) {
                         printf("Player %d committed suicide!\n", player);
+                        killPlayer(player, *hit);
                     } else {
                         if (*hit > MAX_PLAYERS) {
                             printf("Player %d crashed into Player %d!\n",
@@ -525,8 +533,8 @@ void updateHitMap()
         if (cur->count <= 0) {
             unsigned char *at =
                 &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
+            *at -= MAX_PLAYERS;
             prev->next = cur->next;
-            if (*at > MAX_PLAYERS) (*at) -= MAX_PLAYERS;
             free(cur);
             cur = prev->next;
         } else {
@@ -565,7 +573,7 @@ int init(void)
     if (TTF_Init() == -1) {
         return 0;
     }
-    
+
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
 
     SDL_WM_SetCaption("Zatacka X", NULL);
@@ -959,38 +967,38 @@ void displaySettingsMenu(void)
                 0x00, 0x00, 0x00));
 
     /*
-    if (menuchoice_s == 0) {
-        glColor3f(0.5, 0.5, 0.5);
-        glBegin(GL_TRIANGLES);
+       if (menuchoice_s == 0) {
+       glColor3f(0.5, 0.5, 0.5);
+       glBegin(GL_TRIANGLES);
 
-        // Theese are nasty. Should come up with something cleaner.
-        if (dim < maxdim) {
-            glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0]))
-                    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
-                    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y + 0.5); 
-            glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0]))
-                    / TRIANGLE_PANNING_X + 5.5, WINDOW_H / 2
-                    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
-                    + (FONT_CHAR_HEIGHT / 2) * 1.2 + 0.5);
-            glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0]))
-                    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
-                    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
-                    + FONT_CHAR_HEIGHT * 1.2 + 0.5);
-        }
-        if (dim > 0) {
-            glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0]))
-                    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
-                    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y + 0.5);
-            glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0]))
-                    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
-                    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
-                    + FONT_CHAR_HEIGHT * 1.2 + 0.5);
-            glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0]))
-                    / TRIANGLE_PANNING_X - 4.5, WINDOW_H / 2
-                    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
-                    + (FONT_CHAR_HEIGHT / 2) * 1.2 + 0.5);
-        }
-        glEnd();
+    // Theese are nasty. Should come up with something cleaner.
+    if (dim < maxdim) {
+    glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0]))
+    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
+    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y + 0.5); 
+    glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0]))
+    / TRIANGLE_PANNING_X + 5.5, WINDOW_H / 2
+    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
+    + (FONT_CHAR_HEIGHT / 2) * 1.2 + 0.5);
+    glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0]))
+    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
+    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
+    + FONT_CHAR_HEIGHT * 1.2 + 0.5);
+    }
+    if (dim > 0) {
+    glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0]))
+    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
+    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y + 0.5);
+    glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0]))
+    / TRIANGLE_PANNING_X + 0.5, WINDOW_H / 2
+    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
+    + FONT_CHAR_HEIGHT * 1.2 + 0.5);
+    glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0]))
+    / TRIANGLE_PANNING_X - 4.5, WINDOW_H / 2
+    + (MENU_SETTINGS_CHOICES) * TRIANGLE_PANNING_Y
+    + (FONT_CHAR_HEIGHT / 2) * 1.2 + 0.5);
+    }
+    glEnd();
     }
     */
 
@@ -1019,23 +1027,23 @@ void displaySettingsMenu(void)
     }
 
     /*
-    for (i = 0; i < MENU_SETTINGS_CHOICES; i++) {
+       for (i = 0; i < MENU_SETTINGS_CHOICES; i++) {
 
-        if (i == menuchoice_s) {
-            glColor3f(1.0, 1.0, 1.0);
-        } else {
-            glColor3f(0.5, 0.5, 0.5);
-        }
+       if (i == menuchoice_s) {
+       glColor3f(1.0, 1.0, 1.0);
+       } else {
+       glColor3f(0.5, 0.5, 0.5);
+       }
 
-        glRasterPos2f((WINDOW_W / 2) - (strlen(c[i]) * FONT_CHAR_WIDTH
-                    / 2.0) + 0.5, (WINDOW_H / 2)
-                + (MENU_SETTINGS_CHOICES * 7) - (i * MENU_SPACING) + 0.5);
+       glRasterPos2f((WINDOW_W / 2) - (strlen(c[i]) * FONT_CHAR_WIDTH
+       / 2.0) + 0.5, (WINDOW_H / 2)
+       + (MENU_SETTINGS_CHOICES * 7) - (i * MENU_SPACING) + 0.5);
 
-        for (j = 0; j < strlen(c[i]); j++) {
-            glutBitmapCharacter(font_menu, c[i][j]);
-        }
-    }
-    */
+       for (j = 0; j < strlen(c[i]); j++) {
+       glutBitmapCharacter(font_menu, c[i][j]);
+       }
+       }
+       */
 
     if (SDL_Flip(screen) == -1) {
         exit(1);
@@ -1102,13 +1110,13 @@ void logicMainMenu(void)
 void logicSettingsMenu(void)
 {
     /*
-    if (glutGet(GLUT_WINDOW_HEIGHT) != dimensions[dim][1]
-            || glutGet(GLUT_WINDOW_WIDTH) != dimensions[dim][0]) {
-        printf("Could not fit window!\n");
-        maxdim--;
-        reshapeWindow(0);
-        }
-        */
+       if (glutGet(GLUT_WINDOW_HEIGHT) != dimensions[dim][1]
+       || glutGet(GLUT_WINDOW_WIDTH) != dimensions[dim][0]) {
+       printf("Could not fit window!\n");
+       maxdim--;
+       reshapeWindow(0);
+       }
+       */
     if (keyDown[32] || keyDown[13]) {
         switch (menuchoice_s) {
             case MENU_SETTINGS_CHOICES - 1: /* Back */
