@@ -92,6 +92,7 @@ static unsigned int keyDown[322];       /* 322 is the number of
                                            (see SDL_keysym.h) */
 static struct player players[MAX_PLAYERS];
 static struct SDL_Surface **parrows;
+static struct SDL_Surface **pballs;
 
 static Uint32 prevtime = 0;
 static Uint32 delta = 1;

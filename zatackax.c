@@ -1,64 +1,11 @@
 #include "zatackax.h"
 
-/* GIMP RGB C-Source image dump (ball.c) */
-static const struct {
-    int width;
-    int height;
-    int bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-    char pixel_data[20 * 20 * 3 + 1];
-} ball = {
-    20, 20, 3,
-    "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-        "\0\0\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-        "\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0"
-        "\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\0\0\0\0\0"
-        "\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0"
-        "\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\0"
-        "\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377"
-        "\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377"
-        "\0\0\377\0\0\377\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\377\0\0\377\0\0"
-        "\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0"
-        "\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\0\0\0\377"
-        "\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377"
-        "\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0"
-        "\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377"
-        "\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0"
-        "\0\0\0\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377"
-        "\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377"
-        "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0"
-        "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\0\0\0\0"
-        "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\377\0"
-        "\0\377\0\0\377\0\0\377\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
-        "\0\0",
-};
-
 SDL_Rect arrowClip[32];
-
 SDL_Surface *screen = NULL;
 SDL_Surface *msg = NULL;
 SDL_Surface *image = NULL;
 SDL_Surface *arrows = NULL;
+SDL_Surface *ball = NULL;
 SDL_Surface *broadcast[BROADC_LIMIT];
 SDL_Event event;
 
@@ -84,8 +31,8 @@ void colorFill(SDL_Color c, SDL_Surface *sprite)
     int xx, yy;
     unsigned char *target = sprite->pixels;
 
-    for (yy = 0; yy < 128; yy++) {
-        for (xx = 0; xx < 64; xx++, target += 4) {
+    for (yy = 0; yy < sprite->h; yy++) {
+        for (xx = 0; xx < sprite->w; xx++, target += 4) {
             target[0] *= c.b / 255.0;
             target[1] *= c.g / 255.0;
             target[2] *= c.r / 255.0;
@@ -95,18 +42,20 @@ void colorFill(SDL_Color c, SDL_Surface *sprite)
 
 void drawCircle(int x, int y, SDL_Color c)
 {
-    int xx, yy;
-    unsigned char *target = screen->pixels;
-    target += 4 * ((WINDOW_W * y) + x);
+    /*
+       int xx, yy;
+       unsigned char *target = screen->pixels;
+       target += 4 * ((WINDOW_W * y) + x);
 
-    for (yy = 0; yy < ball.height; yy++, target += WINDOW_W*4) {
-        target -= ball.width * 4;
-        for (xx = 0; xx < ball.width; xx++, target += 4) {
-            target[0] = c.b;
-            target[1] = c.g;
-            target[2] = c.r;
-        }
-    }
+       for (yy = 0; yy < ball.height; yy++, target += WINDOW_W*4) {
+       target -= ball.width * 4;
+       for (xx = 0; xx < ball.width; xx++, target += 4) {
+       target[0] = c.b;
+       target[1] = c.g;
+       target[2] = c.r;
+       }
+       }
+       */
 }
 
 void drawScores()
@@ -155,6 +104,7 @@ int loadFiles(void)
     SDL_Surface **p;
 
     if ((arrows = loadImage("data/gfx/arrowsheet.png")) == NULL) return 0;
+    if ((ball = loadImage("data/gfx/ball.png")) == NULL) return 0;
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
@@ -192,6 +142,16 @@ int loadFiles(void)
                 arrows->h, arrows->format->BitsPerPixel, 
                 arrows->format->Rmask, arrows->format->Gmask,
                 arrows->format->Bmask, 0);
+    }
+
+    /* Make ball copies */
+    pballs = malloc((MAX_PLAYERS + 1) * sizeof(SDL_Surface));
+    p = pballs;
+    for (i = 0; i < MAX_PLAYERS + 1; i++, p++) {
+        *p = SDL_CreateRGBSurface(ball->flags, ball->w,
+                ball->h, ball->format->BitsPerPixel, 
+                ball->format->Rmask, ball->format->Gmask,
+                ball->format->Bmask, 0);
     }
 
     return 1;
@@ -341,18 +301,17 @@ void killPlayer(char killed, char killer)
     }
 
     /* Make broadcast message */
-    char anomsg1[BROADC_BUF];
-    char anomsg2[BROADC_BUF];
+    char anomsg[2][BROADC_BUF];
     SDL_Surface *tmp[3];
     int broadw = 0;
     int nbroad = 0;
 
-    snprintf(anomsg1, BROADC_BUF, "Player%d", killed);
+    snprintf(anomsg[0], BROADC_BUF, "Player%d", killed);
 
     if (killer == 0) { /* Walled */
 
         nbroad = 2;
-        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg1,
+        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
                 p->c, cMenuBG);
         tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " hit the wall", cBroadcast, cMenuBG);
@@ -360,7 +319,7 @@ void killPlayer(char killed, char killer)
     } else if (killer == killed) { /* Suicide */
 
         nbroad = 2;
-        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg1,
+        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
                 p->c, cMenuBG);
         tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " committed suicide", cBroadcast, cMenuBG);
@@ -370,13 +329,13 @@ void killPlayer(char killed, char killer)
         nbroad = 3;
 
         struct player *pk = &players[killer - 1];
-        snprintf(anomsg2, BROADC_BUF, "Player%d", killer);
+        snprintf(anomsg[1], BROADC_BUF, "Player%d", killer);
 
-        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg1,
+        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
                 p->c, cMenuBG);
         tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " crashed into ", cBroadcast, cMenuBG);
-        tmp[2] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg2,
+        tmp[2] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[1],
                 pk->c, cMenuBG);
     }
 
@@ -472,7 +431,6 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
                     new->next = recents;
                     recents = new;
                 } else if (*hit != player + MAX_PLAYERS) {
-                    printf("%d\n", *hit);
                     if (player == *hit) {
                         printf("Player %d committed suicide!\n", player);
                         killPlayer(player, *hit);
@@ -556,6 +514,7 @@ void exitGame(int status)
 {
     free(hitmap);
     free(parrows);
+    free(pballs);
 
     screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
             SDL_SWSURFACE);
@@ -597,6 +556,30 @@ int initScreen(void)
     initHitMap(WINDOW_W, WINDOW_H);
 
     return 1;
+}
+
+void colorBalls(void)
+{
+    int i;
+    SDL_Color inactive = {127, 127, 127};
+    SDL_Surface **s = pballs;
+    struct player *p = &players[0];
+    for (i = 0; i < MAX_PLAYERS; i++, p++, s++) {
+        SDL_BlitSurface(ball, NULL, *s, NULL);
+        SDL_LockSurface(*s);
+        colorFill(p->c, *s);
+        SDL_UnlockSurface(*s);
+    }
+
+    SDL_BlitSurface(ball, NULL, *s, NULL);
+    SDL_LockSurface(*s);
+    colorFill(inactive, *s);
+    SDL_UnlockSurface(*s);
+}
+
+void initMainMenu(void)
+{
+    colorBalls();
 }
 
 void initPlayers1(void)
@@ -869,8 +852,6 @@ void displayGameStart(void)
 
 void displayMainMenu(void)
 {
-    SDL_Color col = {0x00, 0x00, 0xFF};
-
     char *c[MENU_MAIN_CHOICES];
     c[0] = "START GAME";
     c[1] = "SETTINGS";
@@ -878,31 +859,6 @@ void displayMainMenu(void)
 
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                 0x00, 0x00, 0x00));
-
-    SDL_LockSurface(screen);
-    drawCircle(50, 80, col);
-    SDL_UnlockSurface(screen);
-
-    /*
-       for (i = 0; i < nPlayers; i++) {
-       struct player *p = &players[i];
-       glBegin(GL_POINTS);
-       glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0])
-       / 2.4) + ((i - nPlayers) * 30) + 0.5,
-       (WINDOW_H / 2) + (MENU_MAIN_CHOICES * 7)
-       + (FONT_CHAR_HEIGHT / 2.0) + 0.5);
-       glEnd();
-       }
-
-       glColor3f(0.5, 0.5, 0.5);
-       glBegin(GL_POINTS);
-       for (i = nPlayers; i < MAX_PLAYERS; i++) {
-       glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0])
-       / 1.35) + ((i - nPlayers) * 30) + 0.5,
-       (WINDOW_H / 2) + (MENU_MAIN_CHOICES * 7)
-       + (FONT_CHAR_HEIGHT / 2.0) + 0.5);
-       }
-       */
 
     unsigned int i;
     signed int mid = -(MENU_MAIN_CHOICES / 2);
@@ -928,33 +884,34 @@ void displayMainMenu(void)
         SDL_FreeSurface(msg);
     }
 
+    /* This could/should be made smoother... */
+    for (i = 0; i < nPlayers; i++) {
+        SDL_Rect offset = {
+            (WINDOW_W / 2)              /* window offset */
+                - 55                    /* temp. offset */            
+                + (i - nPlayers) * 30   /* player modifier */
+                ,
+            (WINDOW_H / 2)              /* window offset */
+                - 37                    /* temp. offset */
+        };
+        SDL_BlitSurface(pballs[i], NULL, screen, &offset);
+    }
+
+    for (i = nPlayers; i < MAX_PLAYERS; i++) {
+        SDL_Rect offset = {
+            (WINDOW_W / 2)              /* window offset */
+                + 64                    /* temp. offset */            
+                + (i - nPlayers) * 30   /* player modifier */
+                ,
+            (WINDOW_H / 2)              /* window offset */
+                - 37                    /* temp. offset */
+        };
+        SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset);
+    }
+
     if (SDL_Flip(screen) == -1) {
         exit(1);
     }
-
-    /*
-       unsigned int j;
-       for (i = 0; i < nPlayers; i++) {
-       struct player *p = &players[i];
-       glColor3f(p->c.r, p->c.g, p->c.b);
-       glBegin(GL_POINTS);
-       glVertex2i((WINDOW_W / 2) - (FONT_CHAR_WIDTH * strlen(c[0])
-       / 2.4) + ((i - nPlayers) * 30) + 0.5,
-       (WINDOW_H / 2) + (MENU_MAIN_CHOICES * 7)
-       + (FONT_CHAR_HEIGHT / 2.0) + 0.5);
-       glEnd();
-       }
-
-       glColor3f(0.5, 0.5, 0.5);
-       glBegin(GL_POINTS);
-       for (i = nPlayers; i < MAX_PLAYERS; i++) {
-       glVertex2i((WINDOW_W / 2) + (FONT_CHAR_WIDTH * strlen(c[0])
-       / 1.35) + ((i - nPlayers) * 30) + 0.5,
-       (WINDOW_H / 2) + (MENU_MAIN_CHOICES * 7)
-       + (FONT_CHAR_HEIGHT / 2.0) + 0.5);
-       }
-       glEnd();
-       */
 }
 
 void displaySettingsMenu(void)
@@ -1080,10 +1037,10 @@ void logicMainMenu(void)
         menuchoice--;
     } else if (keyDown[SPEC_LEFT]) {
         keyDown[SPEC_LEFT] = 0;
-        if (menuchoice == 0 && nPlayers < MAX_PLAYERS) nPlayers++;
+        if (menuchoice == 0 && nPlayers > 1) nPlayers--;
     } else if (keyDown[SPEC_RIGHT]) {
         keyDown[SPEC_RIGHT] = 0;
-        if (menuchoice == 0 && nPlayers > 1) nPlayers--;
+        if (menuchoice == 0 && nPlayers < MAX_PLAYERS) nPlayers++;
     }
     if (menuchoice >= MENU_MAIN_CHOICES) {
         menuchoice = 0;
@@ -1121,6 +1078,7 @@ void logicSettingsMenu(void)
         switch (menuchoice_s) {
             case MENU_SETTINGS_CHOICES - 1: /* Back */
                 keyDown[32] = keyDown[13] = 0;
+                initMainMenu();
                 displayFunc = displayMainMenu;
                 logicFunc = logicMainMenu;
                 menuchoice_s = 0;
@@ -1178,6 +1136,8 @@ int main(int argc, char **argv)
     initPlayers1();
     initPlayers2();
 
+    initMainMenu();
+
     logicFunc = logicMainMenu;
     displayFunc = displayMainMenu;
 
@@ -1194,6 +1154,7 @@ int main(int argc, char **argv)
                         logicFunc = logicMainMenu;
                         displayFunc = displayMainMenu;
                     } else if (logicFunc == logicSettingsMenu) {
+                        initMainMenu();
                         logicFunc = logicMainMenu;
                         displayFunc = displayMainMenu;
                     } else {
