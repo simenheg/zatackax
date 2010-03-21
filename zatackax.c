@@ -309,18 +309,19 @@ void refreshGameScreen()
     }
 }
 
-void killPlayer(struct player *p)
+void killPlayer(char killed, char killer)
 {
     int i;
 
+    struct player *p = &players[killed - 1];
     alivecount--;
     p->alive = 0;
 
     for (i = 0; i < MAX_PLAYERS; i++) {
-        struct player *p = &players[i];
-        if (p->active) {
-            if (p->alive) {
-                p->score++;
+        struct player *pt = &players[i];
+        if (pt->active) {
+            if (pt->alive) {
+                pt->score++;
             }
         } else {
             break;
@@ -336,9 +337,55 @@ void killPlayer(struct player *p)
         }
     }
 
-    char anomsg[BROADC_BUF];
-    broadcast[0] = TTF_RenderUTF8_Shaded(font_broadc, "Player died", p->c,
-            cMenuBG);
+    char anomsg1[BROADC_BUF];
+    char anomsg2[BROADC_BUF];
+
+    /* Maybe make this nicer/more expandable, ie. suicide */
+    if (killer == 0) { /* Walled */
+
+        snprintf(anomsg1, BROADC_BUF, "Player%d", killed);
+
+        SDL_Surface *tmp1 = TTF_RenderUTF8_Shaded(font_broadc, anomsg1,
+                p->c, cMenuBG);
+        SDL_Surface *tmp2 = TTF_RenderUTF8_Shaded(font_broadc,
+                " hit the wall", cBroadcast, cMenuBG);
+
+        broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE,
+                tmp1->w + tmp2->w, tmp1->h, SCREEN_BPP, 0, 0, 0, 0);
+
+        SDL_Rect offset = {tmp1->w, 0};
+        SDL_BlitSurface(tmp1, NULL, broadcast[0], NULL);
+        SDL_BlitSurface(tmp2, NULL, broadcast[0], &offset);
+        SDL_FreeSurface(tmp1);
+        SDL_FreeSurface(tmp2);
+
+    } else { /* Killed */
+
+        struct player *pk = &players[killer - 1];
+
+        snprintf(anomsg1, BROADC_BUF, "Player%d", killed);
+        snprintf(anomsg2, BROADC_BUF, "Player%d", killer);
+
+        SDL_Surface *tmp1 = TTF_RenderUTF8_Shaded(font_broadc, anomsg1,
+                p->c, cMenuBG);
+        SDL_Surface *tmp2 = TTF_RenderUTF8_Shaded(font_broadc,
+                " crashed into ", cBroadcast, cMenuBG);
+        SDL_Surface *tmp3 = TTF_RenderUTF8_Shaded(font_broadc, anomsg2,
+                pk->c, cMenuBG);
+
+        broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE,
+                tmp1->w + tmp2->w + tmp3->w, tmp1->h, SCREEN_BPP,
+                0, 0, 0, 0);
+
+        SDL_Rect offset1 = {tmp1->w, 0};
+        SDL_Rect offset2 = {tmp1->w + tmp2->w, 0};
+        SDL_BlitSurface(tmp1, NULL, broadcast[0], NULL);
+        SDL_BlitSurface(tmp2, NULL, broadcast[0], &offset1);
+        SDL_BlitSurface(tmp3, NULL, broadcast[0], &offset2);
+        SDL_FreeSurface(tmp1);
+        SDL_FreeSurface(tmp2);
+        SDL_FreeSurface(tmp3);
+    }
 
     refreshGameScreen(); /* Update scores */
 }
@@ -425,16 +472,17 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
                         if (*hit > MAX_PLAYERS) {
                             printf("Player %d crashed into Player %d!\n",
                                     player, *hit - MAX_PLAYERS);
+                            killPlayer(player, *hit - MAX_PLAYERS);
                         } else {
                             printf("Player %d crashed into Player %d!\n",
                                     player, *hit);
+                            killPlayer(player, *hit);
                         }
                     }
 #ifdef DEBUG
                     fprintf(stderr, "Player %d crashed at: (%d, %d)\n",
                             player, xpx, ypx);
 #endif
-                    killPlayer(&players[player - 1]);
                     return;
                 }
             } else {
@@ -443,7 +491,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
                 fprintf(stderr, "Player %d walled at: (%d, %d)\n",
                         player, xpx, ypx);
 #endif
-                killPlayer(&players[player - 1]);
+                killPlayer(player, 0);
                 return;
             }
         }

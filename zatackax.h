@@ -14,7 +14,7 @@
 /* #define DEBUG */
 
 #define BROADC_LIMIT        6   /* Maximum number of broadcast messages */
-#define BROADC_BUF          128 /* Maximum broadcast length */
+#define BROADC_BUF          32  /* Maximum broadcast name length */
 #define BROADC_FONT_SIZE    13
 
 #define SCREEN_BPP          32
@@ -112,6 +112,7 @@ static TTF_Font *font_broadc = NULL;
 SDL_Color cMenuText = {0x80, 0x80, 0x80};
 SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00};
+SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF};
 
 void logicMainMenu(void);
 void logicSettingsMenu(void);
