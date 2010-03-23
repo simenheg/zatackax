@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g3 -Wall -lGLU -lglut -lSDL -lSDL_image -lSDL_ttf
+CFLAGS = -g3 -std=c99 -pedantic -Wall -Wextra -lGLU -lglut -lSDL -lSDL_image -lSDL_ttf
 
 objects = zatackax.o
 

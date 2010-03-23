@@ -1,7 +1,6 @@
 #ifndef IFISMS_H
 #define IFISMS_H
 
-#include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
 #include <malloc.h>
@@ -62,11 +61,11 @@ struct player {
     bool alive;
     SDL_Color c;
     SDL_Surface *arrow;
-    GLdouble posx;
-    GLdouble posy;
-    GLuint prevx;
-    GLuint prevy;
-    GLdouble dir;
+    double posx;
+    double posy;
+    double dir;
+    unsigned int prevx;
+    unsigned int prevy;
     unsigned int score;
     unsigned int lkey;
     unsigned int rkey;
@@ -76,7 +75,7 @@ struct player {
 static unsigned int randomizer = 1;  /* Help distribute better random
                                         values */
 
-static const GLint dimensions[N_DIMENSION][2] = {
+static const int dimensions[N_DIMENSION][2] = {
     {640, 480},
     {800, 600},
     {1024, 768}
@@ -84,8 +83,8 @@ static const GLint dimensions[N_DIMENSION][2] = {
 
 static int dim = 1;                     /* Chosen field dimensions */
 static int maxdim = N_DIMENSION - 1;    /* Maximal dimension fit */
-static GLuint WINDOW_W;                 /* Window width */
-static GLuint WINDOW_H;                 /* Window height */
+static unsigned int WINDOW_W;                 /* Window width */
+static unsigned int WINDOW_H;                 /* Window height */
 
 static unsigned int keyDown[322];       /* 322 is the number of
                                            possible SDL keys
@@ -111,10 +110,10 @@ static TTF_Font *font_menu = NULL;
 static TTF_Font *font_score = NULL;
 static TTF_Font *font_broadc = NULL;
 static TTF_Font *font_broadcb = NULL;
-SDL_Color cMenuText = {0x80, 0x80, 0x80};
-SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF};
-SDL_Color cMenuBG = {0x00, 0x00, 0x00};
-SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF};
+SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
+SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
+SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
+SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
 
 void logicMainMenu(void);
 void logicSettingsMenu(void);
