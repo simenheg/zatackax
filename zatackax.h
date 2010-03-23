@@ -1,5 +1,5 @@
-#ifndef IFISMS_H
-#define IFISMS_H
+#ifndef ZATACKAX_H
+#define ZATACKAX_H
 
 #include <math.h>
 #include <stdio.h>
@@ -10,37 +10,46 @@
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_ttf.h"
 
-/* #define DEBUG */
+#define PI                  3.14159265358
 
-#define BROADC_LIMIT        6   /* Maximum number of broadcast messages */
-#define BROADC_BUF          32  /* Maximum broadcast name length */
-#define BROADC_FONT_SIZE    13
-
+/* DEFAULT WINDOW DIMENSIONS */
+#define DEFAULT_WINDOW_W    800
+#define DEFAULT_WINDOW_H    600
 #define SCREEN_BPP          32
 
-#define N_DIMENSION         3
+/* BROADCAST MESSAGES */
+#define BROADC_BUF          32  /* Maximum broadcast name length */
+#define BROADC_FONT_SIZE    13
+#define BROADC_LIMIT        6   /* Maximum number of broadcast messages */
 
-#define SCORE_BUF           8 
+/* SCORES */
+#define SCORE_BUF           8
+#define SCORE_SPACING       25
 
+/* SPECIAL KEYS */
 #define SPEC_UP             273
 #define SPEC_DOWN           274
 #define SPEC_RIGHT          275
 #define SPEC_LEFT           276 
 
-#define SPAWN_SPACE_MIN     100
-#define SCORE_SPACING       25
-#define COUNTDOWN_TOLERANCE 60
-#define MAX_PLAYERS         8
-#define DEFAULT_N_PLAYERS   2
-#define START_ROUND_WAIT    1500
+/* PLAYERS */
+#define MAX_PLAYERS         8   /* Maximal number of players */
+#define DEFAULT_N_PLAYERS   2   /* Default number of players */
 
-#define HOLE_FREQ           3000
+/* SPAWNING */
+#define START_ROUND_WAIT    1500    /* Miliseconds until the game starts */
+#define SPAWN_SPACE_MIN     100     /* Minimal spawning distance from
+                                       screen edges */
+
+/* HOLES */
 #define HOLE_FIRST_DELAY    300
+#define HOLE_FREQ           3000
 #define HOLE_SIZE           1875
 
-#define ZATA_SIZE           4
-#define TOLERANCE           ZATA_SIZE / 2
-#define PI                  3.14159265358
+/* ZATAS */
+#define ZATA_SIZE           4                   /* Thickness of the zata */
+#define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
+#define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
 
 /* MENUS */
 #define MENU_FONT_SIZE          20
@@ -72,23 +81,26 @@ struct player {
     unsigned int holecount;
 };
 
-static unsigned int randomizer = 1;  /* Help distribute better random
-                                        values */
-
-static const int dimensions[N_DIMENSION][2] = {
-    {640, 480},
-    {800, 600},
-    {1024, 768}
+struct recentMapPiece {
+    int x, y, count;
+    struct recentMapPiece *next;
 };
 
-static int dim = 1;                     /* Chosen field dimensions */
-static int maxdim = N_DIMENSION - 1;    /* Maximal dimension fit */
-static unsigned int WINDOW_W;                 /* Window width */
-static unsigned int WINDOW_H;                 /* Window height */
+struct vel {
+    double x, y, dir;
+    unsigned int holecount;
+};
 
-static unsigned int keyDown[322];       /* 322 is the number of
-                                           possible SDL keys
-                                           (see SDL_keysym.h) */
+static unsigned int randomizer = 1; /* Help distribute better random
+                                       values */
+
+static unsigned int WINDOW_W;       /* Window width */
+static unsigned int WINDOW_H;       /* Window height */
+
+static unsigned int keyDown[322];   /* 322 is the number of
+                                       possible SDL keys
+                                       (see SDL_keysym.h) */
+
 static struct player players[MAX_PLAYERS];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
