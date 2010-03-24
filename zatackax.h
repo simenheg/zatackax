@@ -42,14 +42,15 @@
                                        screen edges */
 
 /* HOLES */
-#define HOLE_FIRST_DELAY    300
-#define HOLE_FREQ           3000
-#define HOLE_SIZE           1875
+#define HOLE_FIRST_DELAY    300     /* Minimum delay of first hole */
+#define HOLE_FREQ           3000    /* How often holes appears */
+#define HOLE_SIZE           2800    /* Higher number -> smaller hole */
+#define HOLE_DELAY          385     /* Time before hole is created */
 
 /* ZATAS */
 #define ZATA_SIZE           4                   /* Thickness of the zata */
 #define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
-#define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
+#define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)   /* Suicide detection */
 
 /* MENUS */
 #define MENU_FONT_SIZE          20
@@ -78,7 +79,7 @@ struct player {
     unsigned int score;
     unsigned int lkey;
     unsigned int rkey;
-    unsigned int holecount;
+    int holecount;
 };
 
 struct recentMapPiece {
@@ -111,7 +112,16 @@ static Uint32 delta = 1;
 static unsigned int alivecount = 0;
 static int countdown;
 
+/* The hitmap contains one character for each pixel on the screen. Each
+ * pixel is represented with a number, according to the following code:
+ *
+ * 0                            - empty pixel
+ * 1-MAX_PLAYERS                - player x resides here
+ * MAX_PLAYERS-MAX_PLAYERS*2    - player x resides here, but cannot
+ *                                commit suicide here
+ */
 static unsigned char *hitmap;
+
 static struct recentMapPiece *recents;
 
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;

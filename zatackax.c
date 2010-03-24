@@ -363,7 +363,8 @@ void newRound(void)
     printf(")\n");
 }
 
-void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
+void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
+        unsigned char modifier)
 {
     int i, j;
 
@@ -391,13 +392,14 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player)
                 if (*hit == 0) {
                     struct recentMapPiece *new
                         = malloc(sizeof(struct recentMapPiece));
-                    *hit = player + MAX_PLAYERS;
+                    *hit = player + MAX_PLAYERS + modifier;
                     new->count = COUNTDOWN_TOLERANCE;
                     new->x = xpx;
                     new->y = ypx;
                     new->next = recents;
                     recents = new;
-                } else if (*hit != player + MAX_PLAYERS) {
+                } else if (*hit != player + MAX_PLAYERS &&
+                        *hit != player + MAX_PLAYERS * 2) {
                     if (player == *hit) {
                         printf("Player %d committed suicide!\n", player);
                         killPlayer(player, *hit);
@@ -455,9 +457,17 @@ void updateHitMap()
 
     while (cur != NULL) {
         cur->count -= delta;
-        if (cur->count <= 0) {
-            unsigned char *at =
-                &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
+        unsigned char *at =
+            &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
+        if (cur->count <= HOLE_DELAY && *at > MAX_PLAYERS * 2) {
+            *at = 0;
+            SDL_LockSurface(screen);
+            putPixel(cur->x, cur->y, cMenuBG, screen->pixels);
+            SDL_UnlockSurface(screen);
+            prev->next = cur->next;
+            free(cur);
+            cur = prev->next;
+        } else if (cur->count <= 0) {
             *at -= MAX_PLAYERS;
             prev->next = cur->next;
             free(cur);
@@ -707,13 +717,17 @@ void logicGame(void)
                     p->holecount = 0;
                 }
 
-                if (/*p->holecount < HOLE_SIZE && */(p->prevx != curx
-                            || p->prevy != cury)) {
+                if (p->prevx != curx || p->prevy != cury) {
 #ifdef DEBUG
                     fprintf(stderr, "Adding to hitmap: %d, %d...\n",
                             p->prevx, p->prevy);
 #endif
-                    addToHitMap(p->prevx, p->prevy, p->active);
+                    if (p->holecount > HOLE_SIZE) {
+                        addToHitMap(p->prevx, p->prevy, p->active,
+                                MAX_PLAYERS);
+                    } else {
+                        addToHitMap(p->prevx, p->prevy, p->active, 0);
+                    }
                     p->prevx = curx;
                     p->prevy = cury;
                 }
