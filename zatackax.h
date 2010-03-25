@@ -50,7 +50,7 @@
 /* ZATAS */
 #define ZATA_SIZE           4                   /* Thickness of the zata */
 #define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
-#define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)   /* Suicide detection */
+#define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
 
 /* MENUS */
 #define MENU_FONT_SIZE          20
@@ -115,10 +115,11 @@ static int countdown;
 /* The hitmap contains one character for each pixel on the screen. Each
  * pixel is represented with a number, according to the following code:
  *
- * 0                            - empty pixel
- * 1-MAX_PLAYERS                - player x resides here
- * MAX_PLAYERS-MAX_PLAYERS*2    - player x resides here, but cannot
- *                                commit suicide here
+ * 0                                - empty pixel
+ * 1-MAX_PLAYERS                    - player x resides here
+ * (MAX_PLAYERS+1)-MAX_PLAYERS*2    - player x resides here, but cannot
+ *                                    commit suicide here
+ * (MAX_PLAYERS*2+1)-MAX_PLAYERS*3  - later to become a hole
  */
 static unsigned char *hitmap;
 
@@ -144,6 +145,5 @@ void logicGame(void);
 void displayMainMenu(void);
 void displaySettingsMenu(void);
 void displayGameStart(void);
-void displayGame(void);
 
 #endif

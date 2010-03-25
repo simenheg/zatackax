@@ -9,8 +9,39 @@ SDL_Surface *ball = NULL;
 SDL_Surface *broadcast[BROADC_LIMIT];
 SDL_Event event;
 
-void (*logicFunc)(void);
-void (*displayFunc)(void);
+void displayVoid(void) {}
+
+struct scene {
+    void (*logicFunc)(void);
+    void (*displayFunc)(void);
+    struct scene *parentScene;
+};
+
+static struct scene mainMenu = {
+    logicMainMenu,
+    displayMainMenu,
+    NULL
+};
+
+static struct scene gameStart = {
+    logicGameStart,
+    displayGameStart,
+    &mainMenu
+};
+
+static struct scene game = {
+    logicGame,
+    displayVoid,
+    &mainMenu
+};
+
+static struct scene settingsMenu = {
+    logicSettingsMenu,
+    displaySettingsMenu,
+    &mainMenu
+};
+
+struct scene *curScene = NULL;
 
 void SDL_SurfaceInfo(char *name, SDL_Surface *sprite)
 {
@@ -344,8 +375,7 @@ void newRound(void)
     countdown = START_ROUND_WAIT;
     memset(hitmap, '\0', sizeof(bool) * WINDOW_W * WINDOW_H);
 
-    logicFunc = logicGameStart;
-    displayFunc = displayGameStart;
+    curScene = &gameStart;
 
     printf(" -- New round! --  ( Score: ");
     for (i = 0; i < MAX_PLAYERS; i++) {
@@ -626,46 +656,6 @@ void initPlayers2(void)
     }
 }
 
-void displayGame(void) {
-
-    /*
-       unsigned char *target;
-
-       SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
-       0x00, 0x00, 0x00));
-
-       SDL_LockSurface(screen);
-
-       target = screen->pixels;
-
-       unsigned int xx;
-       unsigned int yy;
-       for (yy = 0; yy < WINDOW_H; yy++) {
-       for (xx = 0; xx < WINDOW_W; xx++, target += 4) {
-       char charat = hitmap[sizeof(bool)
-     * ((WINDOW_W * yy) + xx)]; 
-     if (charat != 0) {
-     struct player *p;
-     if (charat > MAX_PLAYERS) {
-     p = &players[charat - MAX_PLAYERS - 1];
-     } else {
-     p = &players[charat - 1];
-     }
-     target[0] = 0xFF * p->c.b;
-     target[1] = 0xFF * p->c.g;
-     target[2] = 0xFF * p->c.r;
-     }
-     }
-     }
-
-     SDL_UnlockSurface(screen);
-
-     if (SDL_Flip(screen) == -1) {
-     exit(1);
-     }
-     */
-}
-
 void keyPress(unsigned char key) {
     keyDown[key] = 1;
 }
@@ -760,8 +750,7 @@ void logicGameStart(void)
     if (countdown > 0) {
         countdown -= delta;
     } else {
-        logicFunc = logicGame;
-        displayFunc = displayGame;
+        curScene = &game;
     }
 }
 
@@ -901,13 +890,11 @@ void logicMainMenu(void)
             case 0:
                 initPlayers2();
                 newRound();
-                logicFunc = logicGameStart;
-                displayFunc = displayGameStart;
+                curScene = &gameStart;
                 break;
             case 1:
                 keyDown[32] = keyDown[13] = 0;
-                displayFunc = displaySettingsMenu;
-                logicFunc = logicSettingsMenu;
+                curScene = &settingsMenu;
                 break;
             case 2:
                 exitGame(0);
@@ -943,9 +930,8 @@ void logicSettingsMenu(void)
             case MENU_SETTINGS_CHOICES - 1: /* Back */
                 keyDown[32] = keyDown[13] = 0;
                 initMainMenu();
-                displayFunc = displayMainMenu;
-                logicFunc = logicMainMenu;
                 menuchoice_s = 0;
+                curScene = curScene->parentScene;
                 break;
             default:
                 break;
@@ -996,28 +982,23 @@ int main(void)
 
     initMainMenu();
 
-    logicFunc = logicMainMenu;
-    displayFunc = displayMainMenu;
+    curScene = &mainMenu;
 
     for (;;) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
                 int k = event.key.keysym.sym;
                 if (k == SDLK_ESCAPE) {
-                    if (logicFunc == logicGame
-                            || logicFunc == logicGameStart) {
+                    if (curScene == &game || curScene == &gameStart) {
                         cleanHitMap();
                         cleanBroadcast();
                         initPlayers1();
-                        logicFunc = logicMainMenu;
-                        displayFunc = displayMainMenu;
-                    } else if (logicFunc == logicSettingsMenu) {
+                    } else if (curScene == &settingsMenu) {
                         initMainMenu();
-                        logicFunc = logicMainMenu;
-                        displayFunc = displayMainMenu;
-                    } else {
+                    } else if (curScene->parentScene == NULL) {
                         exitGame(0);
                     }
+                    curScene = curScene->parentScene;
                 } else {
 #ifdef DEBUG
                     printf("Pressed: %c (%d)\n", k, k);
@@ -1038,8 +1019,8 @@ int main(void)
                 }
             }
         }
-        logicFunc();
-        displayFunc();
+        curScene->logicFunc();
+        curScene->displayFunc();
     }
 
     return 0;
