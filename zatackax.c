@@ -45,7 +45,7 @@ struct scene *curScene = NULL;
 
 void SDL_SurfaceInfo(char *name, SDL_Surface *sprite)
 {
-    printf("Loaded: %s (w:%d h:%d bpp:%d)\n", name, sprite->w, sprite->h,
+    printf("Loaded: %s\t(w:%d h:%d bpp:%d)\n", name, sprite->w, sprite->h,
             sprite->format->BitsPerPixel);
 }
 
@@ -136,6 +136,7 @@ int loadFiles(void)
     }
 
     SDL_SurfaceInfo("arrowsheet.png", arrows);
+    SDL_SurfaceInfo("ball.png", ball);
 
     /* Clip arrow sprite sheet */
     for (y = i = 0; y < 128; y += 16) {
@@ -489,7 +490,7 @@ void updateHitMap()
         cur->count -= delta;
         unsigned char *at =
             &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
-        if (cur->count <= HOLE_DELAY && *at > MAX_PLAYERS * 2) {
+        if (holes && cur->count <= HOLE_DELAY && *at > MAX_PLAYERS * 2) {
             *at = 0;
             SDL_LockSurface(screen);
             putPixel(cur->x, cur->y, cMenuBG, screen->pixels);
@@ -586,6 +587,7 @@ void colorBalls(void)
 
 void initMainMenu(void)
 {
+    menuchoice = 0;
     colorBalls();
 }
 
@@ -702,9 +704,11 @@ void logicGame(void)
                 curx = (unsigned int)p->posx;
                 cury = (unsigned int)p->posy;
 
-                p->holecount += delta;
-                if (p->holecount > HOLE_FREQ) {
-                    p->holecount = 0;
+                if (holes) {
+                    p->holecount += delta;
+                    if (p->holecount > HOLE_FREQ) {
+                        p->holecount = 0;
+                    }
                 }
 
                 if (p->prevx != curx || p->prevy != cury) {
@@ -712,7 +716,7 @@ void logicGame(void)
                     fprintf(stderr, "Adding to hitmap: %d, %d...\n",
                             p->prevx, p->prevy);
 #endif
-                    if (p->holecount > HOLE_SIZE) {
+                    if (holes && p->holecount > HOLE_SIZE) {
                         addToHitMap(p->prevx, p->prevy, p->active,
                                 MAX_PLAYERS);
                     } else {
@@ -851,8 +855,13 @@ void displaySettingsMenu(void)
     char *c[MENU_SETTINGS_CHOICES];
     int mid = -(MENU_MAIN_CHOICES / 2);
 
-    c[0] = "FULLSCREEN";
-    c[1] = "BACK";
+    char s1[MENU_BUF] = "FULLSCREEN ";
+    char s2[MENU_BUF] = "HOLES ";
+    strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
+    strncat(s2, holes ON_OFF, MENU_BUF - strlen(s2));
+    c[0] = s1;
+    c[1] = s2;
+    c[2] = "BACK";
 
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                 0x00, 0x00, 0x00));
@@ -893,7 +902,6 @@ void logicMainMenu(void)
                 curScene = &gameStart;
                 break;
             case 1:
-                keyDown[32] = keyDown[13] = 0;
                 curScene = &settingsMenu;
                 break;
             case 2:
@@ -902,6 +910,7 @@ void logicMainMenu(void)
             default:
                 break;
         }
+        keyDown[32] = keyDown[13] = 0;
     }
     if (keyDown[SPEC_DOWN]) {
         keyDown[SPEC_DOWN] = 0;
@@ -927,6 +936,13 @@ void logicSettingsMenu(void)
 {
     if (keyDown[32] || keyDown[13]) {
         switch (menuchoice_s) {
+            case 0: /* Toggle fullscreen */
+                fullscreen ^= 1;
+                initScreen();
+                break;
+            case 1: /* Toggle holes */
+                holes ^= 1;
+                break;
             case MENU_SETTINGS_CHOICES - 1: /* Back */
                 keyDown[32] = keyDown[13] = 0;
                 initMainMenu();
@@ -936,20 +952,17 @@ void logicSettingsMenu(void)
             default:
                 break;
         }
+        keyDown[32] = keyDown[13] = 0;
     }
     if (keyDown[SPEC_DOWN]) {
         keyDown[SPEC_DOWN] = 0;
-        menuchoice_s--;
+        menuchoice_s++;
     } else if (keyDown[SPEC_UP]) {
         keyDown[SPEC_UP] = 0;
-        menuchoice_s++;
+        menuchoice_s--;
     } else if (keyDown[SPEC_LEFT]) {
-        fullscreen = 0;
-        initScreen();
         keyDown[SPEC_LEFT] = 0;
     } else if (keyDown[SPEC_RIGHT]) {
-        fullscreen = 1;
-        initScreen();
         keyDown[SPEC_RIGHT] = 0;
     }
     if (menuchoice_s >= MENU_SETTINGS_CHOICES) {

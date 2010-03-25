@@ -53,6 +53,7 @@
 #define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
 
 /* MENUS */
+#define MENU_BUF                32  /* Maxiumum menu string length */
 #define MENU_FONT_SIZE          20
 #define SPACEMOD                15
 
@@ -60,14 +61,14 @@
 #define MENU_MAIN_CHOICES       3
 
 /* SETTINGS MENU */
-#define MENU_SETTINGS_CHOICES   2
+#define MENU_SETTINGS_CHOICES   3
 #define TRIANGLE_PANNING_X      1.8
 #define TRIANGLE_PANNING_Y      6.5
+#define ON_OFF                  ? "[on]" : "[off]"
 
 typedef unsigned char bool;
 
-struct player {
-    unsigned char active;   /* 0 if activated, ID else */
+struct player { unsigned char active;   /* 0 if activated, ID else */
     bool alive;
     SDL_Color c;
     SDL_Surface *arrow;
@@ -125,10 +126,12 @@ static unsigned char *hitmap;
 
 static struct recentMapPiece *recents;
 
+static bool fullscreen = 0;
+static bool holes = 1;
+
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
 static char menuchoice = 0;
 static char menuchoice_s = 0;
-static unsigned char fullscreen = 0;
 static TTF_Font *font_menu = NULL;
 static TTF_Font *font_score = NULL;
 static TTF_Font *font_broadc = NULL;
