@@ -553,6 +553,7 @@ int init(void)
 
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
 
+    SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_SetCaption("Zatacka X", NULL);
 
     return 1;
