@@ -295,7 +295,11 @@ void refreshGameScreen()
             if (charat != 0) {
                 struct player *p;
                 if (charat > MAX_PLAYERS) {
-                    p = &players[charat - MAX_PLAYERS - 1];
+                    if (charat > MAX_PLAYERS * 2) {
+                        p = &players[charat - (MAX_PLAYERS * 2) - 1];
+                    } else {
+                        p = &players[charat - MAX_PLAYERS - 1];
+                    }
                 } else {
                     p = &players[charat - 1];
                 }
