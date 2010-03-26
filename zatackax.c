@@ -88,11 +88,13 @@ void drawScores()
         SDL_FreeSurface(scoreText);
     }
 
-    for (i = 0; i < BROADC_LIMIT; i++) {
-        if (broadcast[i] != NULL) {
-            SDL_Rect offset = {WINDOW_W - broadcast[i]->w - 4,
-                WINDOW_H - (broadcast[i]->h * (i + 1)), 0, 0};
-            SDL_BlitSurface(broadcast[i], NULL, screen, &offset);
+    if (broadcasts) {
+        for (i = 0; i < BROADC_LIMIT; i++) {
+            if (broadcast[i] != NULL) {
+                SDL_Rect offset = {WINDOW_W - broadcast[i]->w - 4,
+                    WINDOW_H - (broadcast[i]->h * (i + 1)), 0, 0};
+                SDL_BlitSurface(broadcast[i], NULL, screen, &offset);
+            }
         }
     }
 }
@@ -272,28 +274,14 @@ void refreshGameScreen()
     }
 }
 
-void killPlayer(char killed, char killer)
+void makeBroadcast(struct player *p, unsigned char killer)
 {
     int i;
     char anomsg[2][BROADC_BUF];
     SDL_Surface *tmp[3];
     int broadw = 0;
     int nbroad = 0;
-
-    struct player *p = &players[killed - 1];
-    alivecount--;
-    p->alive = 0;
-
-    for (i = 0; i < MAX_PLAYERS; i++) {
-        struct player *pt = &players[i];
-        if (pt->active) {
-            if (pt->alive) {
-                pt->score++;
-            }
-        } else {
-            break;
-        }
-    }
+    int killed = p->active;
 
     SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
     for (i = BROADC_LIMIT - 1; i > 0; i--) {
@@ -350,6 +338,28 @@ void killPlayer(char killed, char killer)
     }
 
     for (i = 0; i < nbroad; i++) SDL_FreeSurface(tmp[i]);
+}
+
+void killPlayer(unsigned char killed, unsigned char killer)
+{
+    int i;
+
+    struct player *p = &players[killed - 1];
+    alivecount--;
+    p->alive = 0;
+
+    for (i = 0; i < MAX_PLAYERS; i++) {
+        struct player *pt = &players[i];
+        if (pt->active) {
+            if (pt->alive) {
+                pt->score++;
+            }
+        } else {
+            break;
+        }
+    }
+
+    if (broadcasts) makeBroadcast(p, killer);
 
     refreshGameScreen(); /* Update scores */
 }
@@ -857,11 +867,14 @@ void displaySettingsMenu(void)
 
     char s1[MENU_BUF] = "FULLSCREEN ";
     char s2[MENU_BUF] = "HOLES ";
+    char s3[MENU_BUF] = "BROADCASTS ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, holes ON_OFF, MENU_BUF - strlen(s2));
+    strncat(s3, broadcasts ON_OFF, MENU_BUF - strlen(s3));
     c[0] = s1;
     c[1] = s2;
-    c[2] = "BACK";
+    c[2] = s3;
+    c[3] = "BACK";
 
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                 0x00, 0x00, 0x00));
@@ -943,6 +956,9 @@ void logicSettingsMenu(void)
             case 1: /* Toggle holes */
                 holes ^= 1;
                 break;
+            case 2: /* Toggle broadcasts */
+                broadcasts ^= 1;
+                break;
             case MENU_SETTINGS_CHOICES - 1: /* Back */
                 keyDown[32] = keyDown[13] = 0;
                 initMainMenu();
@@ -1004,7 +1020,7 @@ int main(void)
                 if (k == SDLK_ESCAPE) {
                     if (curScene == &game || curScene == &gameStart) {
                         cleanHitMap();
-                        cleanBroadcast();
+                        if (broadcasts) cleanBroadcast();
                         initPlayers1();
                     } else if (curScene == &settingsMenu) {
                         initMainMenu();

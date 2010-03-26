@@ -61,14 +61,15 @@
 #define MENU_MAIN_CHOICES       3
 
 /* SETTINGS MENU */
-#define MENU_SETTINGS_CHOICES   3
+#define MENU_SETTINGS_CHOICES   4
 #define TRIANGLE_PANNING_X      1.8
 #define TRIANGLE_PANNING_Y      6.5
 #define ON_OFF                  ? "[on]" : "[off]"
 
 typedef unsigned char bool;
 
-struct player { unsigned char active;   /* 0 if activated, ID else */
+struct player {
+    unsigned char active;   /* 0 if activated, ID else */
     bool alive;
     SDL_Color c;
     SDL_Surface *arrow;
@@ -128,6 +129,7 @@ static struct recentMapPiece *recents;
 
 static bool fullscreen = 0;
 static bool holes = 1;
+static bool broadcasts = 1;
 
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
 static char menuchoice = 0;
