@@ -32,6 +32,16 @@ struct menu menuSettings = {
     0,
 };
 
+struct menu menuPlayer = {
+    9,
+    0,
+};
+
+struct menu menuPConf = {
+    4,
+    0,
+};
+
 static struct scene mainMenu = {
     logicMainMenu,
     displayMainMenu,
@@ -60,6 +70,12 @@ static struct scene playerMenu = {
     logicPlayerMenu,
     displayPlayerMenu,
     &settingsMenu
+};
+
+static struct scene pConfMenu = {
+    logicPConfMenu,
+    displayPConfMenu,
+    &playerMenu
 };
 
 struct scene *curScene = NULL;
@@ -103,8 +119,8 @@ void drawScores()
         SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
         p = &players[i];
         snprintf(score_str, SCORE_BUF, "%d", p->score);
-        scoreText = TTF_RenderUTF8_Shaded(font_score, score_str, p->c,
-                cMenuBG);
+        scoreText = TTF_RenderUTF8_Shaded(font_score, score_str,
+                colors[p->color], cMenuBG);
         SDL_BlitSurface(scoreText, NULL, screen, &offset);
         SDL_FreeSurface(scoreText);
     }
@@ -283,9 +299,9 @@ void refreshGameScreen()
                 } else {
                     p = &players[charat - 1];
                 }
-                target[0] = p->c.b;
-                target[1] = p->c.g;
-                target[2] = p->c.r;
+                target[0] = (&colors[p->color])->b;
+                target[1] = (&colors[p->color])->g;
+                target[2] = (&colors[p->color])->r;
             }
         }
     }
@@ -322,7 +338,7 @@ void makeBroadcast(struct player *p, unsigned char killer)
 
         nbroad = 2;
         tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
-                p->c, cMenuBG);
+                colors[p->color], cMenuBG);
         tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " hit the wall", cBroadcast, cMenuBG);
 
@@ -330,7 +346,7 @@ void makeBroadcast(struct player *p, unsigned char killer)
 
         nbroad = 2;
         tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
-                p->c, cMenuBG);
+                colors[p->color], cMenuBG);
         tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " committed suicide", cBroadcast, cMenuBG);
 
@@ -342,11 +358,11 @@ void makeBroadcast(struct player *p, unsigned char killer)
         snprintf(anomsg[1], BROADC_BUF, "Player%d", killer);
 
         tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
-                p->c, cMenuBG);
+                colors[p->color], cMenuBG);
         tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
                 " crashed into ", cBroadcast, cMenuBG);
         tmp[2] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[1],
-                pk->c, cMenuBG);
+                colors[pk->color], cMenuBG);
     }
 
     for (i = 0; i < nbroad; i++) broadw += tmp[i]->w;
@@ -416,7 +432,6 @@ void newRound(void)
         struct player *p = &players[i];
         if (p->active) {
             printf("%d ", p->score);
-            if (nPlayers == 1) players[0].score = 0;
             respawn(p);
         } else {
             printf(")\n");
@@ -450,7 +465,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                 unsigned char *hit =
                     &hitmap[sizeof(bool) * ((WINDOW_W * ypx) + xpx)];
 
-                putPixel(xpx, ypx, (&players[player-1])->c,
+                putPixel(xpx, ypx, colors[(&players[player-1])->color],
                         screen->pixels);
 
                 if (*hit == 0) {
@@ -609,7 +624,7 @@ void colorBalls(void)
     for (i = 0; i < MAX_PLAYERS; i++, p++, s++) {
         SDL_BlitSurface(ball, NULL, *s, NULL);
         SDL_LockSurface(*s);
-        colorFill(p->c, *s);
+        colorFill(colors[p->color], *s);
         SDL_UnlockSurface(*s);
     }
 
@@ -621,7 +636,6 @@ void colorBalls(void)
 
 void initMainMenu(void)
 {
-    menuMain.choice = 0;
     colorBalls();
 }
 
@@ -629,53 +643,38 @@ void initPlayers1(void)
 {
     int i;
     struct player *p = &players[0];
-    SDL_Surface **s = parrows;
 
-    for (i = 0; i < MAX_PLAYERS; i++, p++, s++) {
+    for (i = 0; i < MAX_PLAYERS; i++, p++) {
         p->score = 0;
+        p->color = i;
         switch (i) {
             case 0:
                 p->lkey = SPEC_LEFT; p->rkey = SPEC_RIGHT;
-                p->c.r = 0xFF; p->c.g = 0x00; p->c.b = 0x00;
                 break;
             case 1:
                 p->lkey = 'a'; p->rkey = 's';
-                p->c.r = 0x00; p->c.g = 0x00; p->c.b = 0xFF;
                 break;
             case 2:
                 p->lkey = 'z'; p->rkey = 'x';
-                p->c.r = 0x00; p->c.g = 0xFF; p->c.b = 0x00;
                 break;
             case 3:
                 p->lkey = 'q'; p->rkey = 'w';
-                p->c.r = 0xFF; p->c.g = 0xFF; p->c.b = 0x00;
                 break;
             case 4:
                 p->lkey = 'e'; p->rkey = 'r';
-                p->c.r = 0xFF; p->c.g = 0x00; p->c.b = 0xFF;
                 break;
             case 5:
                 p->lkey = 'd'; p->rkey = 'f';
-                p->c.r = 0x00; p->c.g = 0xFF; p->c.b = 0xFF;
                 break;
             case 6:
                 p->lkey = 'c'; p->rkey = 'v';
-                p->c.r = 0xFF; p->c.g = 0xFF; p->c.b = 0xFF;
                 break;
             case 7:
                 p->lkey = 't'; p->rkey = 'y';
-                p->c.r = 0x60; p->c.g = 0x60; p->c.b = 0x60;
                 break;
             default:
                 break;
         }
-
-        /* Assign arrows */
-        SDL_BlitSurface(arrows, NULL, *s, NULL);
-        SDL_LockSurface(*s);
-        colorFill(p->c, *s);
-        SDL_UnlockSurface(*s);
-        p->arrow = *s;
     }
 }
 
@@ -683,10 +682,20 @@ void initPlayers2(void)
 {
     int i;
     struct player *p = &players[0];
+    SDL_Surface **s = parrows;
 
-    for (i = 0; i < nPlayers; i++, p++) {
+    for (i = 0; i < nPlayers; i++, p++, s++) {
+
         p->active = i + 1;
+
+        /* Assign arrows */
+        SDL_BlitSurface(arrows, NULL, *s, NULL);
+        SDL_LockSurface(*s);
+        colorFill(colors[p->color], *s);
+        SDL_UnlockSurface(*s);
+        p->arrow = *s;
     }
+
     for (; i < MAX_PLAYERS; i++, p++) {
         p->active = 0;
     }
@@ -733,7 +742,6 @@ void logicGame(void)
 
                 p->posx += 0.1 * cos(p->dir) * delta;
                 p->posy += 0.1 * sin(p->dir) * delta;
-                if (nPlayers == 1) players[0].score += delta;
 
                 curx = (unsigned int)p->posx;
                 cury = (unsigned int)p->posy;
@@ -820,6 +828,22 @@ void displayGameStart(void)
     }
 }
 
+void handleMenu(struct menu *m)
+{
+    if (keyDown[SPEC_DOWN]) {
+        keyDown[SPEC_DOWN] = 0;
+        m->choice++;
+    } else if (keyDown[SPEC_UP]) {
+        keyDown[SPEC_UP] = 0;
+        m->choice--;
+    }
+    if (m->choice >= m->choices) {
+        m->choice = 0;
+    } else if (m->choice < 0) {
+        m->choice = m->choices - 1;
+    }
+}
+
 void displayMenu(char *c[], struct menu *m)
 {
     int i;
@@ -845,7 +869,8 @@ void displayMenu(char *c[], struct menu *m)
                 - ((m->choices % 2) - 1)             /* halfspace */
                 * (SPACEMOD / 2)
                 - (msg->h / 2)                      /* centralize */
-                , 0, 0};
+                , 0, 0
+        };
 
         SDL_BlitSurface(msg, NULL, screen, &offset);
         SDL_FreeSurface(msg);
@@ -871,7 +896,8 @@ void displayMainMenu(void)
                 ,
             (WINDOW_H / 2)              /* window offset */
                 - 37                    /* temp. offset */
-                , 0, 0};
+                , 0, 0
+        };
         SDL_BlitSurface(pballs[i], NULL, screen, &offset);
     }
 
@@ -883,7 +909,8 @@ void displayMainMenu(void)
                 ,
             (WINDOW_H / 2)              /* window offset */
                 - 37                    /* temp. offset */
-                , 0, 0};
+                , 0, 0
+        };
         SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset);
     }
 
@@ -892,8 +919,111 @@ void displayMainMenu(void)
     }
 }
 
-void logicPlayerMenu(void) {}
-void displayPlayerMenu(void) {}
+void logicPConfMenu(void)
+{
+    if (keyDown[32] || keyDown[13]) {
+        switch (menuPConf.choice) {
+            case 3:
+                curScene = curScene->parentScene;
+                break;
+            default:
+                break;
+        }
+        keyDown[32] = keyDown[13] = 0;
+    } else if (keyDown[SPEC_LEFT]) {
+        keyDown[SPEC_LEFT] = 0;
+        if (menuPConf.choice == 0) {
+            if ((&players[editPlayer])->color == 0) {
+                (&players[editPlayer])->color =
+                    (sizeof(colors) / sizeof(SDL_Color)) - 1;
+            } else {
+                (&players[editPlayer])->color--;
+            }
+        }
+    } else if (keyDown[SPEC_RIGHT]) {
+        if (menuPConf.choice == 0) {
+            if ((&players[editPlayer])->color ==
+                    (sizeof(colors) / sizeof(SDL_Color)) - 1) {
+                (&players[editPlayer])->color = 0;
+            } else {
+                (&players[editPlayer])->color++;
+            }
+        }
+        keyDown[SPEC_RIGHT] = 0;
+    }
+    handleMenu(&menuPConf);
+}
+
+void displayPConfMenu(void)
+{
+    char *c[menuPConf.choices];
+    c[0] = "COLOR";
+    c[1] = "LEFT BUTTON";
+    c[2] = "RIGHT BUTTON";
+    c[3] = "BACK";
+
+    displayMenu(c, &menuPConf);
+
+    /* !!! This is only temporarily */
+    SDL_Rect offset1 = {
+        (WINDOW_W / 2)              /* window offset */
+            + 40                    /* temp. offset */            
+            ,
+        (WINDOW_H / 2)              /* window offset */
+            - 55                    /* temp. offset */
+            , 0, 0
+    };
+    SDL_Rect offset2 = {
+        (WINDOW_W / 2)              /* window offset */
+            - 40 - ball->w          /* temp. offset */            
+            ,
+        (WINDOW_H / 2)              /* window offset */
+            - 55                    /* temp. offset */
+            , 0, 0
+    };
+    colorBalls();
+    SDL_BlitSurface(pballs[editPlayer], NULL, screen, &offset1);
+    SDL_BlitSurface(pballs[editPlayer], NULL, screen, &offset2);
+
+    if (SDL_Flip(screen) == -1) {
+        exit(1);
+    }
+}
+
+void logicPlayerMenu(void)
+{
+    if (keyDown[32] || keyDown[13]) {
+        if (menuPlayer.choice == 8) {
+            curScene = curScene->parentScene;
+        } else {
+            editPlayer = menuPlayer.choice;
+            menuPConf.choice = 0;
+            curScene = &pConfMenu;
+        }
+        keyDown[32] = keyDown[13] = 0;
+    }
+    handleMenu(&menuPlayer);
+}
+
+void displayPlayerMenu(void)
+{
+    char *c[menuPlayer.choices];
+    c[0] = "PLAYER 1 CONFIG";
+    c[1] = "PLAYER 2 CONFIG";
+    c[2] = "PLAYER 3 CONFIG";
+    c[3] = "PLAYER 4 CONFIG";
+    c[4] = "PLAYER 5 CONFIG";
+    c[5] = "PLAYER 6 CONFIG";
+    c[6] = "PLAYER 7 CONFIG";
+    c[7] = "PLAYER 8 CONFIG";
+    c[8] = "BACK";
+
+    displayMenu(c, &menuPlayer);
+
+    if (SDL_Flip(screen) == -1) {
+        exit(1);
+    }
+}
 
 void displaySettingsMenu(void)
 {
@@ -918,24 +1048,24 @@ void displaySettingsMenu(void)
     }
 }
 
-void handleMenu(struct menu *m)
+void initColors(void)
 {
-    if (keyDown[SPEC_DOWN]) {
-        keyDown[SPEC_DOWN] = 0;
-        m->choice++;
-    } else if (keyDown[SPEC_UP]) {
-        keyDown[SPEC_UP] = 0;
-        m->choice--;
-    } else if (keyDown[SPEC_LEFT]) {
-        keyDown[SPEC_LEFT] = 0;
-    } else if (keyDown[SPEC_RIGHT]) {
-        keyDown[SPEC_RIGHT] = 0;
-    }
-    if (m->choice >= m->choices) {
-        m->choice = 0;
-    } else if (m->choice < 0) {
-        m->choice = m->choices - 1;
-    }
+    SDL_Color *c = &colors[0];
+    c->r = 0xFF; c->g = 0x00; c->b = 0x00;
+    c++;
+    c->r = 0x00; c->g = 0x00; c->b = 0xFF;
+    c++;
+    c->r = 0x00; c->g = 0xFF; c->b = 0x00;
+    c++;
+    c->r = 0xFF; c->g = 0xFF; c->b = 0x00;
+    c++;
+    c->r = 0xFF; c->g = 0x00; c->b = 0xFF;
+    c++;
+    c->r = 0x00; c->g = 0xFF; c->b = 0xFF;
+    c++;
+    c->r = 0xFF; c->g = 0xFF; c->b = 0xFF;
+    c++;
+    c->r = 0x60; c->g = 0x60; c->b = 0x60;
 }
 
 void logicMainMenu(void)
@@ -958,6 +1088,12 @@ void logicMainMenu(void)
                 break;
         }
         keyDown[32] = keyDown[13] = 0;
+    } else if (keyDown[SPEC_LEFT]) {
+        keyDown[SPEC_LEFT] = 0;
+        if (menuMain.choice == 0 && nPlayers > 1) nPlayers--;
+    } else if (keyDown[SPEC_RIGHT]) {
+        keyDown[SPEC_RIGHT] = 0;
+        if (menuMain.choice == 0 && nPlayers < MAX_PLAYERS) nPlayers++;
     }
     handleMenu(&menuMain);
 }
@@ -976,10 +1112,13 @@ void logicSettingsMenu(void)
             case 2: /* Toggle broadcasts */
                 broadcasts ^= 1;
                 break;
+            case 3:
+                menuPlayer.choice = 0;
+                curScene = &playerMenu;
+                break;
             case 4: /* Back */
                 keyDown[32] = keyDown[13] = 0;
                 initMainMenu();
-                menuSettings.choice = 0;
                 curScene = curScene->parentScene;
                 break;
             default:
@@ -1008,6 +1147,7 @@ int main(void)
         return 1;
     }
 
+    initColors();
     initPlayers1();
     initPlayers2();
 
@@ -1023,7 +1163,6 @@ int main(void)
                     if (curScene == &game || curScene == &gameStart) {
                         cleanHitMap();
                         if (broadcasts) cleanBroadcast();
-                        initPlayers1();
                     } else if (curScene == &settingsMenu) {
                         initMainMenu();
                     } else if (curScene->parentScene == NULL) {

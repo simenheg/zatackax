@@ -74,11 +74,11 @@ static bool broadcasts = DEFAULT_BROADCASTS;
 struct player {
     unsigned char active;   /* 0 if activated, ID else */
     bool alive;
-    SDL_Color c;
     SDL_Surface *arrow;
     double posx;
     double posy;
     double dir;
+    unsigned int color;
     unsigned int prevx;
     unsigned int prevy;
     unsigned int score;
@@ -107,6 +107,7 @@ static unsigned int keyDown[322];   /* 322 is the number of
                                        possible SDL keys
                                        (see SDL_keysym.h) */
 
+static SDL_Color colors[8];
 static struct player players[MAX_PLAYERS];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
@@ -140,14 +141,18 @@ SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
 SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
 
+static unsigned char editPlayer = 0;
+
 void logicMainMenu(void);
 void logicSettingsMenu(void);
 void logicPlayerMenu(void);
+void logicPConfMenu(void);
 void logicGameStart(void);
 void logicGame(void);
 void displayMainMenu(void);
 void displaySettingsMenu(void);
 void displayPlayerMenu(void);
+void displayPConfMenu(void);
 void displayGameStart(void);
 
 #endif
