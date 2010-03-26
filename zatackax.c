@@ -17,6 +17,21 @@ struct scene {
     struct scene *parentScene;
 };
 
+struct menu {
+    char choices;
+    char choice;
+};
+
+struct menu menuMain = {
+    3,
+    0,
+};
+
+struct menu menuSettings = {
+    5,
+    0,
+};
+
 static struct scene mainMenu = {
     logicMainMenu,
     displayMainMenu,
@@ -41,9 +56,15 @@ static struct scene settingsMenu = {
     &mainMenu
 };
 
+static struct scene playerMenu = {
+    logicPlayerMenu,
+    displayPlayerMenu,
+    &settingsMenu
+};
+
 struct scene *curScene = NULL;
 
-void SDL_SurfaceInfo(char *name, SDL_Surface *sprite)
+void confirmLoading(char *name, SDL_Surface *sprite)
 {
     printf("Loaded: %s\t(w:%d h:%d bpp:%d)\n", name, sprite->w, sprite->h,
             sprite->format->BitsPerPixel);
@@ -137,8 +158,10 @@ int loadFiles(void)
         return 0;
     }
 
-    SDL_SurfaceInfo("arrowsheet.png", arrows);
-    SDL_SurfaceInfo("ball.png", ball);
+#ifdef DEBUG
+    confirmLoading("arrowsheet.png", arrows);
+    confirmLoading("ball.png", ball);
+#endif
 
     /* Clip arrow sprite sheet */
     for (y = i = 0; y < 128; y += 16) {
@@ -598,7 +621,7 @@ void colorBalls(void)
 
 void initMainMenu(void)
 {
-    menuchoice = 0;
+    menuMain.choice = 0;
     colorBalls();
 }
 
@@ -797,21 +820,17 @@ void displayGameStart(void)
     }
 }
 
-void displayMainMenu(void)
+void displayMenu(char *c[], struct menu *m)
 {
     int i;
-    char *c[MENU_MAIN_CHOICES];
-    int mid = -(MENU_MAIN_CHOICES / 2);
-    c[0] = "START GAME";
-    c[1] = "SETTINGS";
-    c[2] = "EXIT";
+    int mid = -(m->choices / 2);
 
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                 0x00, 0x00, 0x00));
 
-    for (i = 0; i < MENU_MAIN_CHOICES; i++, mid++) {
+    for (i = 0; i < m->choices; i++, mid++) {
 
-        if (i == menuchoice) {
+        if (i == m->choice) {
             msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuTextH);
         } else {
             msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuText);
@@ -823,12 +842,25 @@ void displayMainMenu(void)
                 ,
             (WINDOW_H / 2)                          /* offset */
                 + (mid * ((msg->h / 2) + SPACEMOD)) /* spacing */
+                - ((m->choices % 2) - 1)             /* halfspace */
+                * (SPACEMOD / 2)
                 - (msg->h / 2)                      /* centralize */
                 , 0, 0};
 
         SDL_BlitSurface(msg, NULL, screen, &offset);
         SDL_FreeSurface(msg);
     }
+}
+
+void displayMainMenu(void)
+{
+    int i;
+    char *c[menuMain.choices];
+    c[0] = "START GAME";
+    c[1] = "SETTINGS";
+    c[2] = "EXIT";
+
+    displayMenu(c, &menuMain);
 
     /* This could/should be made smoother... */
     for (i = 0; i < nPlayers; i++) {
@@ -860,11 +892,12 @@ void displayMainMenu(void)
     }
 }
 
+void logicPlayerMenu(void) {}
+void displayPlayerMenu(void) {}
+
 void displaySettingsMenu(void)
 {
-    int i;
-    char *c[MENU_SETTINGS_CHOICES];
-    int mid = -(MENU_MAIN_CHOICES / 2);
+    char *c[menuSettings.choices];
 
     char s1[MENU_BUF] = "FULLSCREEN ";
     char s2[MENU_BUF] = "HOLES ";
@@ -875,47 +908,47 @@ void displaySettingsMenu(void)
     c[0] = s1;
     c[1] = s2;
     c[2] = s3;
-    c[3] = "BACK";
+    c[3] = "PLAYER CONFIG";
+    c[4] = "BACK";
 
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
-                0x00, 0x00, 0x00));
-
-    for (i = 0; i < MENU_SETTINGS_CHOICES; i++, mid++) {
-
-        if (i == menuchoice_s) {
-            msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuTextH);
-        } else {
-            msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuText);
-        }
-
-        SDL_Rect offset = {
-            (WINDOW_W / 2)                          /* offset */
-                - (msg->w / 2)                      /* centralize */
-                ,
-            (WINDOW_H / 2)                          /* offset */
-                + (mid * ((msg->h / 2) + SPACEMOD)) /* spacing */
-                - (msg->h / 2)                      /* centralize */
-                , 0, 0};
-
-        SDL_BlitSurface(msg, NULL, screen, &offset);
-        SDL_FreeSurface(msg);
-    }
+    displayMenu(c, &menuSettings);
 
     if (SDL_Flip(screen) == -1) {
         exit(1);
     }
 }
 
+void handleMenu(struct menu *m)
+{
+    if (keyDown[SPEC_DOWN]) {
+        keyDown[SPEC_DOWN] = 0;
+        m->choice++;
+    } else if (keyDown[SPEC_UP]) {
+        keyDown[SPEC_UP] = 0;
+        m->choice--;
+    } else if (keyDown[SPEC_LEFT]) {
+        keyDown[SPEC_LEFT] = 0;
+    } else if (keyDown[SPEC_RIGHT]) {
+        keyDown[SPEC_RIGHT] = 0;
+    }
+    if (m->choice >= m->choices) {
+        m->choice = 0;
+    } else if (m->choice < 0) {
+        m->choice = m->choices - 1;
+    }
+}
+
 void logicMainMenu(void)
 {
     if (keyDown[32] || keyDown[13]) {
-        switch (menuchoice) {
+        switch (menuMain.choice) {
             case 0:
                 initPlayers2();
                 newRound();
                 curScene = &gameStart;
                 break;
             case 1:
+                menuSettings.choice = 0;
                 curScene = &settingsMenu;
                 break;
             case 2:
@@ -926,30 +959,13 @@ void logicMainMenu(void)
         }
         keyDown[32] = keyDown[13] = 0;
     }
-    if (keyDown[SPEC_DOWN]) {
-        keyDown[SPEC_DOWN] = 0;
-        menuchoice++;
-    } else if (keyDown[SPEC_UP]) {
-        keyDown[SPEC_UP] = 0;
-        menuchoice--;
-    } else if (keyDown[SPEC_LEFT]) {
-        keyDown[SPEC_LEFT] = 0;
-        if (menuchoice == 0 && nPlayers > 1) nPlayers--;
-    } else if (keyDown[SPEC_RIGHT]) {
-        keyDown[SPEC_RIGHT] = 0;
-        if (menuchoice == 0 && nPlayers < MAX_PLAYERS) nPlayers++;
-    }
-    if (menuchoice >= MENU_MAIN_CHOICES) {
-        menuchoice = 0;
-    } else if (menuchoice < 0) {
-        menuchoice = MENU_MAIN_CHOICES - 1;
-    }
+    handleMenu(&menuMain);
 }
 
 void logicSettingsMenu(void)
 {
     if (keyDown[32] || keyDown[13]) {
-        switch (menuchoice_s) {
+        switch (menuSettings.choice) {
             case 0: /* Toggle fullscreen */
                 fullscreen ^= 1;
                 initScreen();
@@ -960,10 +976,10 @@ void logicSettingsMenu(void)
             case 2: /* Toggle broadcasts */
                 broadcasts ^= 1;
                 break;
-            case MENU_SETTINGS_CHOICES - 1: /* Back */
+            case 4: /* Back */
                 keyDown[32] = keyDown[13] = 0;
                 initMainMenu();
-                menuchoice_s = 0;
+                menuSettings.choice = 0;
                 curScene = curScene->parentScene;
                 break;
             default:
@@ -971,22 +987,7 @@ void logicSettingsMenu(void)
         }
         keyDown[32] = keyDown[13] = 0;
     }
-    if (keyDown[SPEC_DOWN]) {
-        keyDown[SPEC_DOWN] = 0;
-        menuchoice_s++;
-    } else if (keyDown[SPEC_UP]) {
-        keyDown[SPEC_UP] = 0;
-        menuchoice_s--;
-    } else if (keyDown[SPEC_LEFT]) {
-        keyDown[SPEC_LEFT] = 0;
-    } else if (keyDown[SPEC_RIGHT]) {
-        keyDown[SPEC_RIGHT] = 0;
-    }
-    if (menuchoice_s >= MENU_SETTINGS_CHOICES) {
-        menuchoice_s = 0;
-    } else if (menuchoice_s < 0) {
-        menuchoice_s = MENU_SETTINGS_CHOICES - 1;
-    }
+    handleMenu(&menuSettings);
 }
 
 int main(void)

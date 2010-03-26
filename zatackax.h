@@ -44,8 +44,8 @@
 /* HOLES */
 #define HOLE_FIRST_DELAY    300     /* Minimum delay of first hole */
 #define HOLE_FREQ           3000    /* How often holes appears */
-#define HOLE_SIZE           2800    /* Higher number -> smaller hole */
-#define HOLE_DELAY          385     /* Time before hole is created */
+#define HOLE_SIZE           2850    /* Higher number -> smaller hole */
+#define HOLE_DELAY          76      /* Time before hole is created */
 
 /* ZATAS */
 #define ZATA_SIZE           4                   /* Thickness of the zata */
@@ -57,16 +57,19 @@
 #define MENU_FONT_SIZE          20
 #define SPACEMOD                15
 
-/* MAIN MENU */
-#define MENU_MAIN_CHOICES       3
-
 /* SETTINGS MENU */
-#define MENU_SETTINGS_CHOICES   4
 #define TRIANGLE_PANNING_X      1.8
 #define TRIANGLE_PANNING_Y      6.5
 #define ON_OFF                  ? "[on]" : "[off]"
+#define DEFAULT_FULLSCREEN      0
+#define DEFAULT_HOLES           1
+#define DEFAULT_BROADCASTS      1
 
 typedef unsigned char bool;
+
+static bool fullscreen = DEFAULT_FULLSCREEN;
+static bool holes = DEFAULT_HOLES;
+static bool broadcasts = DEFAULT_BROADCASTS;
 
 struct player {
     unsigned char active;   /* 0 if activated, ID else */
@@ -127,13 +130,7 @@ static unsigned char *hitmap;
 
 static struct recentMapPiece *recents;
 
-static bool fullscreen = 0;
-static bool holes = 1;
-static bool broadcasts = 1;
-
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
-static char menuchoice = 0;
-static char menuchoice_s = 0;
 static TTF_Font *font_menu = NULL;
 static TTF_Font *font_score = NULL;
 static TTF_Font *font_broadc = NULL;
@@ -145,10 +142,12 @@ SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
 
 void logicMainMenu(void);
 void logicSettingsMenu(void);
+void logicPlayerMenu(void);
 void logicGameStart(void);
 void logicGame(void);
 void displayMainMenu(void);
 void displaySettingsMenu(void);
+void displayPlayerMenu(void);
 void displayGameStart(void);
 
 #endif
