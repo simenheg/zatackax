@@ -645,7 +645,6 @@ void initPlayers1(void)
     struct player *p = &players[0];
 
     for (i = 0; i < MAX_PLAYERS; i++, p++) {
-        p->score = 0;
         p->color = i;
         switch (i) {
             case 0:
@@ -687,6 +686,7 @@ void initPlayers2(void)
     for (i = 0; i < nPlayers; i++, p++, s++) {
 
         p->active = i + 1;
+        p->score = 0;
 
         /* Assign arrows */
         SDL_BlitSurface(arrows, NULL, *s, NULL);
