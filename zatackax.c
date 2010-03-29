@@ -18,7 +18,7 @@ struct scene {
 };
 
 struct menu {
-    char choices;
+    const char choices;
     char choice;
 };
 
@@ -487,15 +487,13 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                         printf("Player %d committed suicide!\n", player);
                         killPlayer(player, *hit);
                     } else {
-                        if (*hit > MAX_PLAYERS) {
-                            printf("Player %d crashed into Player %d!\n",
-                                    player, *hit - MAX_PLAYERS);
-                            killPlayer(player, *hit - MAX_PLAYERS);
-                        } else {
-                            printf("Player %d crashed into Player %d!\n",
-                                    player, *hit);
-                            killPlayer(player, *hit);
+                        int killer = *hit;
+                        while (killer > MAX_PLAYERS) {
+                            killer -= MAX_PLAYERS;
                         }
+                        printf("Player %d crashed into Player %d!\n",
+                                player, killer);
+                        killPlayer(player, killer);
                     }
 #ifdef DEBUG
                     fprintf(stderr, "Player %d crashed at: (%d, %d)\n",
