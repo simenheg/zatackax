@@ -99,8 +99,8 @@ void colorFill(SDL_Color c, SDL_Surface *sprite)
     int xx, yy;
     unsigned char *target = sprite->pixels;
 
-    for (yy = 0; yy < sprite->h; yy++) {
-        for (xx = 0; xx < sprite->w; xx++, target += 4) {
+    for (yy = 0; yy < sprite->h; ++yy) {
+        for (xx = 0; xx < sprite->w; ++xx, target += 4) {
             target[0] *= c.b / 255.0;
             target[1] *= c.g / 255.0;
             target[2] *= c.r / 255.0;
@@ -115,7 +115,7 @@ void drawScores()
     char score_str[SCORE_BUF];
     SDL_Surface *scoreText;
 
-    for (i = 0; i < nPlayers; i++) {
+    for (i = 0; i < nPlayers; ++i) {
         SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
         p = &players[i];
         snprintf(score_str, SCORE_BUF, "%d", p->score);
@@ -126,7 +126,7 @@ void drawScores()
     }
 
     if (broadcasts) {
-        for (i = 0; i < BROADC_LIMIT; i++) {
+        for (i = 0; i < BROADC_LIMIT; ++i) {
             if (broadcast[i] != NULL) {
                 SDL_Rect offset = {WINDOW_W - broadcast[i]->w - 4,
                     WINDOW_H - (broadcast[i]->h * (i + 1)), 0, 0};
@@ -180,8 +180,8 @@ int loadFiles(void)
 #endif
 
     /* Clip arrow sprite sheet */
-    for (y = i = 0; y < 128; y += 16) {
-        for (x = 0; x < 64; x += 16, i++) {
+    for (y = i = 0; y < arrows->h; y += 16) {
+        for (x = 0; x < arrows->w; x += 16, ++i) {
             arrowClip[i].x = x;
             arrowClip[i].y = y;
             arrowClip[i].w = 16;
@@ -192,7 +192,7 @@ int loadFiles(void)
     /* Make arrow copies */
     parrows = malloc(MAX_PLAYERS * sizeof(SDL_Surface));
     p = parrows;
-    for (i = 0; i < MAX_PLAYERS; i++, p++) {
+    for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
         *p = SDL_CreateRGBSurface(arrows->flags, arrows->w,
                 arrows->h, arrows->format->BitsPerPixel, 
                 arrows->format->Rmask, arrows->format->Gmask,
@@ -202,7 +202,7 @@ int loadFiles(void)
     /* Make ball copies */
     pballs = malloc((MAX_PLAYERS + 1) * sizeof(SDL_Surface));
     p = pballs;
-    for (i = 0; i < MAX_PLAYERS + 1; i++, p++) {
+    for (i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
         *p = SDL_CreateRGBSurface(ball->flags, ball->w,
                 ball->h, ball->format->BitsPerPixel, 
                 ball->format->Rmask, ball->format->Gmask,
@@ -223,14 +223,11 @@ struct vel spawn()
     }
 
     srand(timeseed);
-    rnd1 = rand() * randomizer;
-    randomizer++;
+    rnd1 = rand() * randomizer++;
     rnd2 = rand() * randomizer;
     randomizer += randomizer;
-    rnd3 = rand() * randomizer;
-    randomizer++;
-    rnd4 = rand() * randomizer;
-    randomizer++;
+    rnd3 = rand() * randomizer++;
+    rnd4 = rand() * randomizer++;
     initPos.x = SPAWN_SPACE_MIN
         + (rnd1 % (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
     initPos.y = SPAWN_SPACE_MIN
@@ -245,7 +242,7 @@ struct vel spawn()
 void cleanBroadcast(void)
 {
     int i;
-    for (i = 0; i < BROADC_LIMIT; i++) {
+    for (i = 0; i < BROADC_LIMIT; ++i) {
         SDL_FreeSurface(broadcast[i]);
     }
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
@@ -288,8 +285,8 @@ void refreshGameScreen()
 
     target = screen->pixels;
 
-    for (yy = 0; yy < WINDOW_H; yy++) {
-        for (xx = 0; xx < WINDOW_W; xx++, target += 4) {
+    for (yy = 0; yy < WINDOW_H; ++yy) {
+        for (xx = 0; xx < WINDOW_W; ++xx, target += 4) {
             char charat = hitmap[sizeof(bool)
                 * ((WINDOW_W * yy) + xx)]; 
             if (charat != 0) {
@@ -327,7 +324,7 @@ void makeBroadcast(struct player *p, unsigned char killer)
     int killed = p->active;
 
     SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
-    for (i = BROADC_LIMIT - 1; i > 0; i--) {
+    for (i = BROADC_LIMIT - 1; i > 0; --i) {
         broadcast[i] = broadcast[i - 1];
         if (broadcast[i] != NULL) {
             int alpha = 255 - i * (255.0 / BROADC_LIMIT);
@@ -369,18 +366,18 @@ void makeBroadcast(struct player *p, unsigned char killer)
                 colors[pk->color], cMenuBG);
     }
 
-    for (i = 0; i < nbroad; i++) broadw += tmp[i]->w;
+    for (i = 0; i < nbroad; ++i) broadw += tmp[i]->w;
     broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE,
             broadw, tmp[0]->h, SCREEN_BPP, 0, 0, 0, 0);
 
-    for (i = 0; i < nbroad; i++) {
+    for (i = 0; i < nbroad; ++i) {
         int j;
         SDL_Rect offset = {0, 0, 0, 0};
-        for (j = i; j > 0; j--) offset.x += tmp[j-1]->w;
+        for (j = i; j > 0; --j) offset.x += tmp[j-1]->w;
         SDL_BlitSurface(tmp[i], NULL, broadcast[0], &offset);
     }
 
-    for (i = 0; i < nbroad; i++) SDL_FreeSurface(tmp[i]);
+    for (i = 0; i < nbroad; ++i) SDL_FreeSurface(tmp[i]);
 }
 
 void killPlayer(unsigned char killed, unsigned char killer)
@@ -388,10 +385,10 @@ void killPlayer(unsigned char killed, unsigned char killer)
     int i;
 
     struct player *p = &players[killed - 1];
-    alivecount--;
+    --alivecount;
     p->alive = 0;
 
-    for (i = 0; i < MAX_PLAYERS; i++) {
+    for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *pt = &players[i];
         if (pt->active) {
             if (pt->alive) {
@@ -432,7 +429,7 @@ void newRound(void)
     curScene = &gameStart;
 
     printf(" -- New round! --  ( Score: ");
-    for (i = 0; i < MAX_PLAYERS; i++) {
+    for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
             printf("%d ", p->score);
@@ -457,8 +454,8 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
 
     SDL_LockSurface(screen);
 
-    for (i = -TOLERANCE; i < TOLERANCE; i++) {
-        for (j = -TOLERANCE; j < TOLERANCE; j++) {
+    for (i = -TOLERANCE; i < TOLERANCE; ++i) {
+        for (j = -TOLERANCE; j < TOLERANCE; ++j) {
 
             int xpx = x + i;
             int ypx = y + j;
@@ -623,7 +620,7 @@ void colorBalls(void)
     SDL_Color inactive = {127, 127, 127, 0};
     SDL_Surface **s = pballs;
     struct player *p = &players[0];
-    for (i = 0; i < MAX_PLAYERS; i++, p++, s++) {
+    for (i = 0; i < MAX_PLAYERS; ++i, ++p, ++s) {
         SDL_BlitSurface(ball, NULL, *s, NULL);
         SDL_LockSurface(*s);
         colorFill(colors[p->color], *s);
@@ -646,7 +643,7 @@ void initPlayers1(void)
     int i;
     struct player *p = &players[0];
 
-    for (i = 0; i < MAX_PLAYERS; i++, p++) {
+    for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
         p->color = i;
         switch (i) {
             case 0:
@@ -685,7 +682,7 @@ void initPlayers2(void)
     struct player *p = &players[0];
     SDL_Surface **s = parrows;
 
-    for (i = 0; i < nPlayers; i++, p++, s++) {
+    for (i = 0; i < nPlayers; ++i, ++p, ++s) {
 
         p->active = i + 1;
         p->score = 0;
@@ -698,7 +695,7 @@ void initPlayers2(void)
         p->arrow = *s;
     }
 
-    for (; i < MAX_PLAYERS; i++, p++) {
+    for (; i < MAX_PLAYERS; ++i, ++p) {
         p->active = 0;
     }
 }
@@ -727,7 +724,7 @@ void logicGame(void)
         delta = 35;
     }
 
-    for (i = 0; i < MAX_PLAYERS; i++) {
+    for (i = 0; i < MAX_PLAYERS; ++i) {
         if (players[i].active) {
 
             struct player *p = &players[i];
@@ -742,8 +739,8 @@ void logicGame(void)
                     p->dir += 0.0022 * delta;
                 }
 
-                p->posx += 0.1 * cos(p->dir) * delta;
-                p->posy += 0.1 * sin(p->dir) * delta;
+                p->posx += ZATA_SPEED * cos(p->dir) * delta;
+                p->posy += ZATA_SPEED * sin(p->dir) * delta;
 
                 curx = (unsigned int)p->posx;
                 cury = (unsigned int)p->posy;
@@ -811,7 +808,7 @@ void displayGameStart(void)
 
     if ((countdown % (START_ROUND_WAIT / 4)) > (START_ROUND_WAIT / 8)) {
         int i;
-        for (i = 0; i < MAX_PLAYERS; i++) {
+        for (i = 0; i < MAX_PLAYERS; ++i) {
             if (players[i].active) {
                 struct player *p = &players[i];
                 SDL_Rect offset = {(int)p->posx - 8, (int)p->posy - 8,
@@ -834,10 +831,10 @@ void handleMenu(struct menu *m)
 {
     if (keyDown[SPEC_DOWN]) {
         keyDown[SPEC_DOWN] = 0;
-        m->choice++;
+        ++(m->choice);
     } else if (keyDown[SPEC_UP]) {
         keyDown[SPEC_UP] = 0;
-        m->choice--;
+        --(m->choice);
     }
     if (m->choice >= m->choices) {
         m->choice = 0;
@@ -854,7 +851,7 @@ void displayMenu(char *c[], struct menu *m)
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                 0x00, 0x00, 0x00));
 
-    for (i = 0; i < m->choices; i++, mid++) {
+    for (i = 0; i < m->choices; ++i, ++mid) {
 
         if (i == m->choice) {
             msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuTextH);
@@ -890,7 +887,7 @@ void displayMainMenu(void)
     displayMenu(c, &menuMain);
 
     /* This could/should be made smoother... */
-    for (i = 0; i < nPlayers; i++) {
+    for (i = 0; i < nPlayers; ++i) {
         SDL_Rect offset = {
             (WINDOW_W / 2)              /* window offset */
                 - 55                    /* temp. offset */            
@@ -903,7 +900,7 @@ void displayMainMenu(void)
         SDL_BlitSurface(pballs[i], NULL, screen, &offset);
     }
 
-    for (i = nPlayers; i < MAX_PLAYERS; i++) {
+    for (i = nPlayers; i < MAX_PLAYERS; ++i) {
         SDL_Rect offset = {
             (WINDOW_W / 2)              /* window offset */
                 + 64                    /* temp. offset */            
@@ -923,7 +920,7 @@ void displayMainMenu(void)
 
 void logicPConfMenu(void)
 {
-    if (keyDown[32] || keyDown[13]) {
+    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuPConf.choice) {
             case 3:
                 curScene = curScene->parentScene;
@@ -931,7 +928,7 @@ void logicPConfMenu(void)
             default:
                 break;
         }
-        keyDown[32] = keyDown[13] = 0;
+        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
     } else if (keyDown[SPEC_LEFT]) {
         keyDown[SPEC_LEFT] = 0;
         if (menuPConf.choice == 0) {
@@ -939,7 +936,7 @@ void logicPConfMenu(void)
                 (&players[editPlayer])->color =
                     (sizeof(colors) / sizeof(SDL_Color)) - 1;
             } else {
-                (&players[editPlayer])->color--;
+                --((&players[editPlayer])->color);
             }
         }
     } else if (keyDown[SPEC_RIGHT]) {
@@ -948,7 +945,7 @@ void logicPConfMenu(void)
                     (sizeof(colors) / sizeof(SDL_Color)) - 1) {
                 (&players[editPlayer])->color = 0;
             } else {
-                (&players[editPlayer])->color++;
+                ++((&players[editPlayer])->color);
             }
         }
         keyDown[SPEC_RIGHT] = 0;
@@ -994,7 +991,7 @@ void displayPConfMenu(void)
 
 void logicPlayerMenu(void)
 {
-    if (keyDown[32] || keyDown[13]) {
+    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         if (menuPlayer.choice == 8) {
             curScene = curScene->parentScene;
         } else {
@@ -1002,7 +999,7 @@ void logicPlayerMenu(void)
             menuPConf.choice = 0;
             curScene = &pConfMenu;
         }
-        keyDown[32] = keyDown[13] = 0;
+        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
     }
     handleMenu(&menuPlayer);
 }
@@ -1054,25 +1051,25 @@ void initColors(void)
 {
     SDL_Color *c = &colors[0];
     c->r = 0xFF; c->g = 0x00; c->b = 0x00;
-    c++;
+    ++c;
     c->r = 0x00; c->g = 0x00; c->b = 0xFF;
-    c++;
+    ++c;
     c->r = 0x00; c->g = 0xFF; c->b = 0x00;
-    c++;
+    ++c;
     c->r = 0xFF; c->g = 0xFF; c->b = 0x00;
-    c++;
+    ++c;
     c->r = 0xFF; c->g = 0x00; c->b = 0xFF;
-    c++;
+    ++c;
     c->r = 0x00; c->g = 0xFF; c->b = 0xFF;
-    c++;
+    ++c;
     c->r = 0xFF; c->g = 0xFF; c->b = 0xFF;
-    c++;
+    ++c;
     c->r = 0x60; c->g = 0x60; c->b = 0x60;
 }
 
 void logicMainMenu(void)
 {
-    if (keyDown[32] || keyDown[13]) {
+    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuMain.choice) {
             case 0:
                 initPlayers2();
@@ -1089,20 +1086,20 @@ void logicMainMenu(void)
             default:
                 break;
         }
-        keyDown[32] = keyDown[13] = 0;
+        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
     } else if (keyDown[SPEC_LEFT]) {
         keyDown[SPEC_LEFT] = 0;
-        if (menuMain.choice == 0 && nPlayers > 1) nPlayers--;
+        if (menuMain.choice == 0 && nPlayers > 1) --nPlayers;
     } else if (keyDown[SPEC_RIGHT]) {
         keyDown[SPEC_RIGHT] = 0;
-        if (menuMain.choice == 0 && nPlayers < MAX_PLAYERS) nPlayers++;
+        if (menuMain.choice == 0 && nPlayers < MAX_PLAYERS) ++nPlayers;
     }
     handleMenu(&menuMain);
 }
 
 void logicSettingsMenu(void)
 {
-    if (keyDown[32] || keyDown[13]) {
+    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuSettings.choice) {
             case 0: /* Toggle fullscreen */
                 fullscreen ^= 1;
@@ -1119,14 +1116,14 @@ void logicSettingsMenu(void)
                 curScene = &playerMenu;
                 break;
             case 4: /* Back */
-                keyDown[32] = keyDown[13] = 0;
+                keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
                 curScene = curScene->parentScene;
                 break;
             default:
                 break;
         }
-        keyDown[32] = keyDown[13] = 0;
+        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
     }
     handleMenu(&menuSettings);
 }

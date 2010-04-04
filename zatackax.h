@@ -42,13 +42,16 @@
                                        screen edges */
 
 /* HOLES */
+/* Hole size.
+ * Higher number -> smaller hole */
+#define HOLE_SIZE           2830 * (0.9 + ZATA_SPEED)
 #define HOLE_FIRST_DELAY    300     /* Minimum delay of first hole */
 #define HOLE_FREQ           3000    /* How often holes appears */
-#define HOLE_SIZE           2850    /* Higher number -> smaller hole */
 #define HOLE_DELAY          76      /* Time before hole is created */
 
 /* ZATAS */
 #define ZATA_SIZE           4                   /* Thickness of the zata */
+#define ZATA_SPEED          0.09                /* Speed of the zata */
 #define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
 #define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
 
