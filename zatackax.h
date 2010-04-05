@@ -70,10 +70,6 @@
 
 typedef unsigned char bool;
 
-static bool fullscreen = DEFAULT_FULLSCREEN;
-static bool holes = DEFAULT_HOLES;
-static bool broadcasts = DEFAULT_BROADCASTS;
-
 struct player {
     unsigned char active;   /* 0 if activated, ID else */
     bool alive;
@@ -100,26 +96,16 @@ struct vel {
     unsigned int holecount;
 };
 
-static unsigned int randomizer = 1; /* Help distribute better random
-                                       values */
+struct scene {
+    void (*logicFunc)(void);
+    void (*displayFunc)(void);
+    struct scene *parentScene;
+};
 
-static unsigned int WINDOW_W;       /* Window width */
-static unsigned int WINDOW_H;       /* Window height */
-
-static unsigned int keyDown[322];   /* 322 is the number of
-                                       possible SDL keys
-                                       (see SDL_keysym.h) */
-
-static SDL_Color colors[8];
-static struct player players[MAX_PLAYERS];
-static struct SDL_Surface **parrows;
-static struct SDL_Surface **pballs;
-
-static Uint32 prevtime = 0;
-static Uint32 delta = 1;
-
-static unsigned int alivecount = 0;
-static int countdown;
+struct menu {
+    const char choices;
+    char choice;
+};
 
 /* The hitmap contains one character for each pixel on the screen. Each
  * pixel is represented with a number, according to the following code:
@@ -131,9 +117,8 @@ static int countdown;
  * (MAX_PLAYERS*2+1)-MAX_PLAYERS*3  - later to become a hole
  */
 static unsigned char *hitmap;
-
 static struct recentMapPiece *recents;
-
+static unsigned char editPlayer = 0;
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
 static TTF_Font *font_menu = NULL;
 static TTF_Font *font_score = NULL;
@@ -143,19 +128,78 @@ SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
 SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
+static SDL_Color colors[8];
+static struct player players[MAX_PLAYERS];
+static struct SDL_Surface **parrows;
+static struct SDL_Surface **pballs;
+static Uint32 prevtime = 0;
+static Uint32 delta = 1;
+static unsigned int alivecount = 0;
+static int countdown;
+static bool fullscreen = DEFAULT_FULLSCREEN;
+static bool holes = DEFAULT_HOLES;
+static bool broadcasts = DEFAULT_BROADCASTS;
+static unsigned int randomizer = 1; /* Help distribute better random
+                                       values */
 
-static unsigned char editPlayer = 0;
+static unsigned int WINDOW_W;       /* Window width */
+static unsigned int WINDOW_H;       /* Window height */
+static unsigned int keyDown[322];   /* 322 is the number of
+                                       possible SDL keys
+                                       (see SDL_keysym.h) */
 
-void logicMainMenu(void);
-void logicSettingsMenu(void);
-void logicPlayerMenu(void);
-void logicPConfMenu(void);
-void logicGameStart(void);
+/* PLAYER */
+void initPlayers1(void);
+void initPlayers2(void);
+void killPlayer(unsigned char killed, unsigned char killer);
+struct vel spawn(void);
+void respawn(struct player *p);
+
+/* HITMAP */
+void initHitMap(unsigned int w, unsigned int h);
+void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
+        unsigned char modifier);
+void updateHitMap(void);
+void cleanHitMap(void);
+
+/* GAME */
 void logicGame(void);
-void displayMainMenu(void);
-void displaySettingsMenu(void);
-void displayPlayerMenu(void);
-void displayPConfMenu(void);
+void logicGameStart(void);
 void displayGameStart(void);
+void refreshGameScreen(void);
+void makeBroadcast(struct player *p, unsigned char killer);
+void cleanBroadcast(void);
+void drawScores(void);
+void newRound(void);
+
+/* MENUS */
+void initMainMenu(void);
+void logicMainMenu(void);
+void displayMainMenu(void);
+void logicSettingsMenu(void);
+void displaySettingsMenu(void);
+void logicPlayerMenu(void);
+void displayPlayerMenu(void);
+void logicPConfMenu(void);
+void displayPConfMenu(void);
+void handleMenu(struct menu *m);
+void displayMenu(char *c[], struct menu *m);
+
+/* GRAPHICS */
+int initScreen(void);
+void putPixel(int x, int y, SDL_Color c, unsigned char *target);
+void colorFill(SDL_Color c, SDL_Surface *sprite);
+SDL_Surface *loadImage(const char filename[]);
+void initColors(void);
+void colorBalls(void);
+
+/* SYSTEM */
+int init(void);
+int loadFiles(void);
+void confirmLoading(char *name, SDL_Surface *sprite);
+void keyPress(unsigned char key);
+void keyRelease(unsigned char key);
+void displayVoid(void);
+void exitGame(int status);
 
 #endif
