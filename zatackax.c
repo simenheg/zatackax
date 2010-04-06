@@ -67,6 +67,10 @@ static struct scene pConfMenu = {
 
 struct scene *curScene = NULL;
 
+/**
+ * Stage 1 of player initialization.
+ * Assigns keys and colors.
+ */
 void initPlayers1(void)
 {
     int i;
@@ -105,6 +109,10 @@ void initPlayers1(void)
     }
 }
 
+/**
+ * Stage 2 of player initialization.
+ * Assigns arrow sprites and resets score.
+ */
 void initPlayers2(void)
 {
     int i;
@@ -129,6 +137,12 @@ void initPlayers2(void)
     }
 }
 
+/**
+ * Kills target player.
+ *
+ * @param killed ID of the player that was killed.
+ * @param killer ID of the player that was crashed into.
+ */
 void killPlayer(unsigned char killed, unsigned char killer)
 {
     int i;
@@ -153,6 +167,11 @@ void killPlayer(unsigned char killed, unsigned char killer)
     refreshGameScreen(); /* Update scores */
 }
 
+/**
+ * Provides a random position/direction vector.
+ * 
+ * @return The velocity vector of the newly spawned player.
+ */
 struct vel spawn(void)
 {
     long rnd1, rnd2, rnd3, rnd4;
@@ -180,6 +199,11 @@ struct vel spawn(void)
     return initPos;
 }
 
+/**
+ * Spawns a player randomly on the map.
+ *
+ * @param p The player which is to be spawned.
+ */
 void respawn(struct player *p)
 {
     struct vel initPos = spawn();
@@ -192,6 +216,12 @@ void respawn(struct player *p)
     p->holecount = initPos.holecount;
 }
 
+/**
+ * Initializes the hitmap.
+ *
+ * @param w Width of the map.
+ * @param h Height of the map.
+ */
 void initHitMap(unsigned int w, unsigned int h)
 {
     size_t len = sizeof(bool) * w * h;
@@ -200,6 +230,20 @@ void initHitMap(unsigned int w, unsigned int h)
     recents = NULL;
 }
 
+/**
+ * Adds a new piece to a queue, later to be added to the hitmap.
+ *
+ * Also draws the corresponding pixel onto the screen, and detects when
+ * players collide. (This function should be considered split up.)
+ * updateHitMap() actually puts the pieces into the map. 
+ *
+ * @param x x coordinate of the piece.
+ * @param y y coordinate of the piece.
+ * @param player ID of the player who owns the piece.
+ * @param modifier Used to create special offset values on the piece, for
+ * example for hole detection.
+ * @see updateHitMap
+ */
 void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
         unsigned char modifier)
 {
@@ -274,6 +318,13 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
     }
 }
 
+/**
+ * Update the hitmap.
+ * Actually puts the pieces from the addToHitMap()-queue into the map.
+ * Also handles the creation of holes.
+ * 
+ * @see addToHitMap
+ */
 void updateHitMap(void)
 {
 #ifdef DEBUG
@@ -314,6 +365,9 @@ void updateHitMap(void)
     }
 }
 
+/**
+ * Empties the hitmap.
+ */
 void cleanHitMap(void)
 {
 #ifdef DEBUG
@@ -335,6 +389,9 @@ void cleanHitMap(void)
     recents = NULL;
 }
 
+/**
+ * Logic of the main gameplay.
+ */
 void logicGame(void)
 {
     int i;
@@ -404,6 +461,9 @@ void logicGame(void)
     SDL_UnlockSurface(screen);
 }
 
+/**
+ * Logic of the startup phase of the game.
+ */
 void logicGameStart(void)
 {
     Uint32 timenow = SDL_GetTicks();
@@ -425,6 +485,9 @@ void logicGameStart(void)
     }
 }
 
+/**
+ * Display blinking arrows at the beginning of a game.
+ */
 void displayGameStart(void)
 {
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
@@ -453,6 +516,11 @@ void displayGameStart(void)
     }
 }
 
+/**
+ * Redraws the whole game screen.
+ * Should only be called as a last restort when the whole screen needs to
+ * be redrawn.
+ */
 void refreshGameScreen(void)
 {
     unsigned char *target;
@@ -498,6 +566,12 @@ void refreshGameScreen(void)
     }
 }
 
+/**
+ * Creates a broadcast message.
+ *
+ * @param p ID of the player which is to be made a broadcast for.
+ * @param killer Cause of death.
+ */
 void makeBroadcast(struct player *p, unsigned char killer)
 {
     int i;
@@ -564,6 +638,9 @@ void makeBroadcast(struct player *p, unsigned char killer)
     for (i = 0; i < nbroad; ++i) SDL_FreeSurface(tmp[i]);
 }
 
+/**
+ * Empties the broadcast message queue.
+ */
 void cleanBroadcast(void)
 {
     int i;
@@ -573,6 +650,9 @@ void cleanBroadcast(void)
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
 }
 
+/**
+ * Draws the game scores onto the screen.
+ */
 void drawScores(void)
 {
     int i;
@@ -601,6 +681,9 @@ void drawScores(void)
     }
 }
 
+/**
+ * Starts a new round.
+ */
 void newRound(void)
 {
     int i;
@@ -628,11 +711,17 @@ void newRound(void)
     printf(")\n");
 }
 
+/**
+ * Initializes the main menu.
+ */
 void initMainMenu(void)
 {
     colorBalls();
 }
 
+/**
+ * Logic for the main menu.
+ */
 void logicMainMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
@@ -663,6 +752,9 @@ void logicMainMenu(void)
     handleMenu(&menuMain);
 }
 
+/**
+ * Displays the main menu screen.
+ */
 void displayMainMenu(void)
 {
     int i;
@@ -705,6 +797,9 @@ void displayMainMenu(void)
     }
 }
 
+/**
+ * Logic of the settings menu.
+ */
 void logicSettingsMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
@@ -736,6 +831,9 @@ void logicSettingsMenu(void)
     handleMenu(&menuSettings);
 }
 
+/**
+ * Display the settings menu screen.
+ */
 void displaySettingsMenu(void)
 {
     char *c[menuSettings.choices];
@@ -759,6 +857,9 @@ void displaySettingsMenu(void)
     }
 }
 
+/**
+ * Logic for the player menu.
+ */
 void logicPlayerMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
@@ -774,6 +875,9 @@ void logicPlayerMenu(void)
     handleMenu(&menuPlayer);
 }
 
+/**
+ * Display the player menu screen.
+ */
 void displayPlayerMenu(void)
 {
     char *c[menuPlayer.choices];
@@ -794,6 +898,9 @@ void displayPlayerMenu(void)
     }
 }
 
+/**
+ * Logic for the player configuration.
+ */
 void logicPConfMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
@@ -829,6 +936,9 @@ void logicPConfMenu(void)
     handleMenu(&menuPConf);
 }
 
+/**
+ * Display the player configuration screen.
+ */
 void displayPConfMenu(void)
 {
     char *c[menuPConf.choices];
@@ -865,6 +975,11 @@ void displayPConfMenu(void)
     }
 }
 
+/**
+ * Handles a general menu.
+ *
+ * @param m The menu to do handling of.
+ */
 void handleMenu(struct menu *m)
 {
     if (keyDown[SPEC_DOWN]) {
@@ -881,6 +996,14 @@ void handleMenu(struct menu *m)
     }
 }
 
+/**
+ * Displays a general menu.
+ * The menu structure is separated from the strings, so that arbitrary
+ * strings can be used.
+ *
+ * @param c All the strings to be shown in the menu.
+ * @param m The menu to be shown.
+ */
 void displayMenu(char *c[], struct menu *m)
 {
     int i;
@@ -914,6 +1037,11 @@ void displayMenu(char *c[], struct menu *m)
     }
 }
 
+/**
+ * Initializes the application window and screen.
+ *
+ * @return 1 if the initialization was successful, 0 if not.
+ */
 int initScreen(void)
 {
     SDL_FreeSurface(screen);
@@ -932,6 +1060,14 @@ int initScreen(void)
     return 1;
 }
 
+/**
+ * Puts a pixel on a surface.
+ *
+ * @param x x coordinate of the pixel destination.
+ * @param y y coordinate of the pixel destination.
+ * @param c Desired color of the pixel.
+ * @param target Points to which SDL_Surface the pixel should be put.
+ */
 void putPixel(int x, int y, SDL_Color c, unsigned char *target)
 {
     target += 4 * ((WINDOW_W * y) + x);
@@ -940,6 +1076,14 @@ void putPixel(int x, int y, SDL_Color c, unsigned char *target)
     target[2] = c.r;
 }
 
+/**
+ * Fills a surface with a color.
+ * All white pixels in the surface will be replaced with the specified
+ * color.
+ *
+ * @param c Color to fill the surface with.
+ * @param sprite Surface to be filled.
+ */
 void colorFill(SDL_Color c, SDL_Surface *sprite)
 {
     int xx, yy;
@@ -954,6 +1098,12 @@ void colorFill(SDL_Color c, SDL_Surface *sprite)
     }
 }
 
+/**
+ * Loads an image file.
+ *
+ * @param filename Name of the file to be loaded.
+ * @return The loaded image, NULL if it failed.
+ */
 SDL_Surface *loadImage(const char filename[])
 {
     SDL_Surface *loadedImage = IMG_Load(filename);
@@ -968,6 +1118,9 @@ SDL_Surface *loadImage(const char filename[])
     return optimizedImage;
 }
 
+/**
+ * Initializes the starter colors.
+ */
 void initColors(void)
 {
     SDL_Color *c = &colors[0];
@@ -988,6 +1141,9 @@ void initColors(void)
     c->r = 0x60; c->g = 0x60; c->b = 0x60;
 }
 
+/**
+ * Colors the balls for the main menu.
+ */
 void colorBalls(void)
 {
     int i;
@@ -1007,6 +1163,11 @@ void colorBalls(void)
     SDL_UnlockSurface(*s);
 }
 
+/**
+ * Initializes SDL.
+ *
+ * @return 1 if the initialization was successful, 0 if not.
+ */
 int init(void)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -1024,6 +1185,12 @@ int init(void)
     return 1;
 }
 
+/**
+ * Loads every file to be used in the game.
+ * Also prepares them (clipping, duplicating).
+ *
+ * @return 1 if all files loaded successfully, 0 if not.
+ */
 int loadFiles(void)
 {
     int x, y, i;
@@ -1086,23 +1253,47 @@ int loadFiles(void)
     return 1;
 }
 
+/**
+ * Prints a message that confirms a loaded file.
+ *
+ * @param name Name of the file.
+ * @param sprite The loaded image file.
+ */
 void confirmLoading(char *name, SDL_Surface *sprite)
 {
     printf("Loaded: %s\t(w:%d h:%d bpp:%d)\n", name, sprite->w, sprite->h,
             sprite->format->BitsPerPixel);
 }
 
+/**
+ * Turns a pressed key on.
+ * 
+ * @param key The pressed key.
+ */
 void keyPress(unsigned char key) {
     keyDown[key] = 1;
 }
 
+/**
+ * Turns a pressed key off.
+ * 
+ * @param key The released key.
+ */
 void keyRelease(unsigned char key)
 {
     keyDown[key] = 0;
 }
 
+/**
+ * Display nothing.
+ */
 void displayVoid(void) {}
 
+/**
+ * Exits the game.
+ *
+ * @param status Exit status.
+ */
 void exitGame(int status)
 {
     free(hitmap);
