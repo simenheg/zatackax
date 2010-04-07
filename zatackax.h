@@ -128,7 +128,7 @@ SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
 SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
-static SDL_Color colors[8];
+static SDL_Color colors[9];
 static struct player players[MAX_PLAYERS];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;

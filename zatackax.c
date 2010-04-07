@@ -412,7 +412,10 @@ void logicGame(void)
 
             struct player *p = &players[i];
 
-            if (p->alive) {
+            if (alivecount <= 1) {
+                SDL_FreeSurface(screen);
+                newRound();
+            } else if (p->alive) {
 
                 unsigned int curx, cury;
 
@@ -449,9 +452,6 @@ void logicGame(void)
                     p->prevx = curx;
                     p->prevy = cury;
                 }
-            } else if (alivecount <= 1) {
-                SDL_FreeSurface(screen);
-                newRound();
             }
         } else {
             break;
@@ -1124,21 +1124,15 @@ SDL_Surface *loadImage(const char filename[])
 void initColors(void)
 {
     SDL_Color *c = &colors[0];
-    c->r = 0xFF; c->g = 0x00; c->b = 0x00;
-    ++c;
-    c->r = 0x00; c->g = 0x00; c->b = 0xFF;
-    ++c;
-    c->r = 0x00; c->g = 0xFF; c->b = 0x00;
-    ++c;
-    c->r = 0xFF; c->g = 0xFF; c->b = 0x00;
-    ++c;
-    c->r = 0xFF; c->g = 0x00; c->b = 0xFF;
-    ++c;
-    c->r = 0x00; c->g = 0xFF; c->b = 0xFF;
-    ++c;
-    c->r = 0xFF; c->g = 0xFF; c->b = 0xFF;
-    ++c;
-    c->r = 0x60; c->g = 0x60; c->b = 0x60;
+    c->r = 0xFF; c->g = 0x00; c->b = 0x00; ++c; /* Red */
+    c->r = 0x00; c->g = 0x00; c->b = 0xFF; ++c; /* Blue */
+    c->r = 0x00; c->g = 0xFF; c->b = 0x00; ++c; /* Green */
+    c->r = 0xFF; c->g = 0xFF; c->b = 0x00; ++c; /* Yellow */
+    c->r = 0xFF; c->g = 0x00; c->b = 0xFF; ++c; /* Pink */
+    c->r = 0x00; c->g = 0xFF; c->b = 0xFF; ++c; /* Cyan */
+    c->r = 0xFF; c->g = 0xFF; c->b = 0xFF; ++c; /* White */
+    c->r = 0xFF; c->g = 0x80; c->b = 0x00; ++c; /* Orange */
+    c->r = 0x60; c->g = 0x60; c->b = 0x60; ++c; /* Grey */
 }
 
 /**
