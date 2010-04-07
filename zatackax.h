@@ -54,6 +54,7 @@
 #define ZATA_SPEED          0.09                /* Speed of the zata */
 #define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
 #define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
+#define N_COLORS            8                   /* Available colors */
 
 /* MENUS */
 #define MENU_BUF                32  /* Maxiumum menu string length */
@@ -121,6 +122,7 @@ static struct recentMapPiece *recents;
 static unsigned char editPlayer = 0;
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
 static TTF_Font *font_menu = NULL;
+static TTF_Font *font_menub = NULL;
 static TTF_Font *font_score = NULL;
 static TTF_Font *font_broadc = NULL;
 static TTF_Font *font_broadcb = NULL;
@@ -128,7 +130,7 @@ SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
 SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
-static SDL_Color colors[9];
+static SDL_Color colors[N_COLORS];
 static struct player players[MAX_PLAYERS];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
@@ -154,6 +156,7 @@ void initPlayers2(void);
 void killPlayer(unsigned char killed, unsigned char killer);
 struct vel spawn(void);
 void respawn(struct player *p);
+void setColor(bool up);
 
 /* HITMAP */
 void initHitMap(unsigned int w, unsigned int h);

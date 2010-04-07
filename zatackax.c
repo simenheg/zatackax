@@ -217,6 +217,28 @@ void respawn(struct player *p)
 }
 
 /**
+ * Sets the color of the current edited player up or down.
+ *
+ * @param up 1 if the color should be set one higher, 0 if one lower.
+ */
+void setColor(bool up)
+{
+    if (up) {
+        if ((&players[editPlayer])->color == N_COLORS - 1) {
+            (&players[editPlayer])->color = 0;
+        } else {
+            ++((&players[editPlayer])->color);
+        }
+    } else {
+        if ((&players[editPlayer])->color == 0) {
+            (&players[editPlayer])->color = N_COLORS - 1;
+        } else {
+            --((&players[editPlayer])->color);
+        }
+    }
+}
+
+/**
  * Initializes the hitmap.
  *
  * @param w Width of the map.
@@ -905,6 +927,9 @@ void logicPConfMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuPConf.choice) {
+            case 0:
+                setColor(1);
+                break;
             case 3:
                 curScene = curScene->parentScene;
                 break;
@@ -915,21 +940,11 @@ void logicPConfMenu(void)
     } else if (keyDown[SPEC_LEFT]) {
         keyDown[SPEC_LEFT] = 0;
         if (menuPConf.choice == 0) {
-            if ((&players[editPlayer])->color == 0) {
-                (&players[editPlayer])->color =
-                    (sizeof(colors) / sizeof(SDL_Color)) - 1;
-            } else {
-                --((&players[editPlayer])->color);
-            }
+            setColor(0);
         }
     } else if (keyDown[SPEC_RIGHT]) {
         if (menuPConf.choice == 0) {
-            if ((&players[editPlayer])->color ==
-                    (sizeof(colors) / sizeof(SDL_Color)) - 1) {
-                (&players[editPlayer])->color = 0;
-            } else {
-                ++((&players[editPlayer])->color);
-            }
+            setColor(1);
         }
         keyDown[SPEC_RIGHT] = 0;
     }
@@ -948,27 +963,6 @@ void displayPConfMenu(void)
     c[3] = "BACK";
 
     displayMenu(c, &menuPConf);
-
-    /* !!! This is only temporarily */
-    SDL_Rect offset1 = {
-        (WINDOW_W / 2)              /* window offset */
-            + 40                    /* temp. offset */            
-            ,
-        (WINDOW_H / 2)              /* window offset */
-            - 55                    /* temp. offset */
-            , 0, 0
-    };
-    SDL_Rect offset2 = {
-        (WINDOW_W / 2)              /* window offset */
-            - 40 - ball->w          /* temp. offset */            
-            ,
-        (WINDOW_H / 2)              /* window offset */
-            - 55                    /* temp. offset */
-            , 0, 0
-    };
-    colorBalls();
-    SDL_BlitSurface(pballs[editPlayer], NULL, screen, &offset1);
-    SDL_BlitSurface(pballs[editPlayer], NULL, screen, &offset2);
 
     if (SDL_Flip(screen) == -1) {
         exit(1);
@@ -1015,9 +1009,15 @@ void displayMenu(char *c[], struct menu *m)
     for (i = 0; i < m->choices; ++i, ++mid) {
 
         if (i == m->choice) {
-            msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuTextH);
+                msg = TTF_RenderUTF8_Shaded(font_menub, c[i],
+                        i == 0 && curScene == &pConfMenu
+                        ? colors[(&players[editPlayer])->color]
+                        : cMenuTextH, cMenuBG);
         } else {
-            msg = TTF_RenderUTF8_Solid(font_menu, c[i], cMenuText);
+                msg = TTF_RenderUTF8_Solid(font_menu, c[i],
+                        i == 0 && curScene == &pConfMenu
+                        ? colors[(&players[editPlayer])->color]
+                        : cMenuText);
         }
 
         SDL_Rect offset = {
@@ -1132,7 +1132,6 @@ void initColors(void)
     c->r = 0x00; c->g = 0xFF; c->b = 0xFF; ++c; /* Cyan */
     c->r = 0xFF; c->g = 0xFF; c->b = 0xFF; ++c; /* White */
     c->r = 0xFF; c->g = 0x80; c->b = 0x00; ++c; /* Orange */
-    c->r = 0x60; c->g = 0x60; c->b = 0x60; ++c; /* Grey */
 }
 
 /**
@@ -1193,6 +1192,10 @@ int loadFiles(void)
     if ((arrows = loadImage("data/gfx/arrowsheet.png")) == NULL) return 0;
     if ((ball = loadImage("data/gfx/ball.png")) == NULL) return 0;
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
+                    MENU_FONT_SIZE)) == NULL) {
+        return 0;
+    }
+    if ((font_menub = TTF_OpenFont("data/fonts/jura/JuraMedium.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
     }
