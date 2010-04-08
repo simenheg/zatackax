@@ -80,7 +80,7 @@ void initPlayers1(void)
         p->color = i;
         switch (i) {
             case 0:
-                p->lkey = SPEC_LEFT; p->rkey = SPEC_RIGHT;
+                p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
                 break;
             case 1:
                 p->lkey = 'a'; p->rkey = 's';
@@ -764,11 +764,11 @@ void logicMainMenu(void)
                 break;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
-    } else if (keyDown[SPEC_LEFT]) {
-        keyDown[SPEC_LEFT] = 0;
+    } else if (keyDown[SDLK_LEFT]) {
+        keyDown[SDLK_LEFT] = 0;
         if (menuMain.choice == 0 && nPlayers > 1) --nPlayers;
-    } else if (keyDown[SPEC_RIGHT]) {
-        keyDown[SPEC_RIGHT] = 0;
+    } else if (keyDown[SDLK_RIGHT]) {
+        keyDown[SDLK_RIGHT] = 0;
         if (menuMain.choice == 0 && nPlayers < MAX_PLAYERS) ++nPlayers;
     }
     handleMenu(&menuMain);
@@ -937,16 +937,16 @@ void logicPConfMenu(void)
                 break;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
-    } else if (keyDown[SPEC_LEFT]) {
-        keyDown[SPEC_LEFT] = 0;
+    } else if (keyDown[SDLK_LEFT]) {
+        keyDown[SDLK_LEFT] = 0;
         if (menuPConf.choice == 0) {
             setColor(0);
         }
-    } else if (keyDown[SPEC_RIGHT]) {
+    } else if (keyDown[SDLK_RIGHT]) {
         if (menuPConf.choice == 0) {
             setColor(1);
         }
-        keyDown[SPEC_RIGHT] = 0;
+        keyDown[SDLK_RIGHT] = 0;
     }
     handleMenu(&menuPConf);
 }
@@ -957,9 +957,23 @@ void logicPConfMenu(void)
 void displayPConfMenu(void)
 {
     char *c[menuPConf.choices];
+
+    char s1[MENU_BUF] = "LEFT BUTTON: ";
+    char s2[MENU_BUF] = "RIGHT BUTTON: ";
+
+    char tmpKey[6];
+    char *lkey = keyName((&players[editPlayer])->lkey);
+    char *rkey = keyName((&players[editPlayer])->rkey);
+    snprintf(tmpKey, 6 * sizeof(char), "%s", lkey);
+    free(lkey);
+    strncat(s1, tmpKey, 6);
+    snprintf(tmpKey, 6 * sizeof(char), "%s", rkey);
+    free(rkey);
+    strncat(s2, tmpKey, 6);
+
     c[0] = "COLOR";
-    c[1] = "LEFT BUTTON";
-    c[2] = "RIGHT BUTTON";
+    c[1] = s1;
+    c[2] = s2;
     c[3] = "BACK";
 
     displayMenu(c, &menuPConf);
@@ -1267,7 +1281,7 @@ void confirmLoading(char *name, SDL_Surface *sprite)
  * 
  * @param key The pressed key.
  */
-void keyPress(unsigned char key) {
+void keyPress(unsigned int key) {
     keyDown[key] = 1;
 }
 
@@ -1276,9 +1290,39 @@ void keyPress(unsigned char key) {
  * 
  * @param key The released key.
  */
-void keyRelease(unsigned char key)
+void keyRelease(unsigned int key)
 {
     keyDown[key] = 0;
+}
+
+/**
+ * Generates an appropriate name for a given key.
+ *
+ * @param key Key to be named.
+ * @return The name of the key.
+ */
+char *keyName(unsigned int key)
+{
+    char *keyname = malloc(6 * sizeof(char));
+    memset(keyname, '\0', 6 * sizeof(char));
+
+    if (key >= SDLK_a && key <= SDLK_z) {
+        snprintf(keyname, 2, "%c", key);
+    } else {
+        switch (key) {
+            case SDLK_LEFT:
+                snprintf(keyname, 5, "left"); break;
+            case SDLK_RIGHT:
+                snprintf(keyname, 6, "right"); break;
+            case SDLK_UP:
+                snprintf(keyname, 3, "up"); break;
+            case SDLK_DOWN:
+                snprintf(keyname, 5, "down"); break;
+            default:
+                break;
+        }
+    }
+    return keyname;
 }
 
 /**

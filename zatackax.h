@@ -200,8 +200,9 @@ void colorBalls(void);
 int init(void);
 int loadFiles(void);
 void confirmLoading(char *name, SDL_Surface *sprite);
-void keyPress(unsigned char key);
-void keyRelease(unsigned char key);
+void keyPress(unsigned int key);
+void keyRelease(unsigned int key);
+char *keyName(unsigned int key);
 void displayVoid(void);
 void exitGame(int status);
 
