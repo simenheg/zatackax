@@ -141,6 +141,13 @@ static int countdown;
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
+
+/* 0: Don't catch it
+ * 1: Set as (editPlayer)'s new left key
+ * 2: Set as (editPlayer)'s new right key
+ */
+static bool catchNextKey = 0;
+
 static unsigned int randomizer = 1; /* Help distribute better random
                                        values */
 

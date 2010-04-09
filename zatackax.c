@@ -930,6 +930,14 @@ void logicPConfMenu(void)
             case 0:
                 setColor(1);
                 break;
+            case 1:
+                (&players[editPlayer])->lkey = SDLK_CLEAR;
+                catchNextKey = 1;
+                break;
+            case 2:
+                (&players[editPlayer])->rkey = SDLK_CLEAR;
+                catchNextKey = 2;
+                break;
             case 3:
                 curScene = curScene->parentScene;
                 break;
@@ -960,18 +968,21 @@ void displayPConfMenu(void)
 
     char s1[MENU_BUF] = "LEFT BUTTON: ";
     char s2[MENU_BUF] = "RIGHT BUTTON: ";
+    char s3[MENU_BUF] = "~ PLAYER ";
 
     char tmpKey[6];
     char *lkey = keyName((&players[editPlayer])->lkey);
     char *rkey = keyName((&players[editPlayer])->rkey);
     snprintf(tmpKey, 6 * sizeof(char), "%s", lkey);
     free(lkey);
-    strncat(s1, tmpKey, 6);
+    strncat(s1, tmpKey, 5);
     snprintf(tmpKey, 6 * sizeof(char), "%s", rkey);
     free(rkey);
-    strncat(s2, tmpKey, 6);
+    strncat(s2, tmpKey, 5);
+    snprintf(tmpKey, 4 * sizeof(char), "%d ~", editPlayer + 1);
+    strncat(s3, tmpKey, 3);
 
-    c[0] = "COLOR";
+    c[0] = s3;
     c[1] = s1;
     c[2] = s2;
     c[3] = "BACK";
@@ -1023,15 +1034,15 @@ void displayMenu(char *c[], struct menu *m)
     for (i = 0; i < m->choices; ++i, ++mid) {
 
         if (i == m->choice) {
-                msg = TTF_RenderUTF8_Shaded(font_menub, c[i],
-                        i == 0 && curScene == &pConfMenu
-                        ? colors[(&players[editPlayer])->color]
-                        : cMenuTextH, cMenuBG);
+            msg = TTF_RenderUTF8_Shaded(font_menub, c[i],
+                    i == 0 && curScene == &pConfMenu
+                    ? colors[(&players[editPlayer])->color]
+                    : cMenuTextH, cMenuBG);
         } else {
-                msg = TTF_RenderUTF8_Solid(font_menu, c[i],
-                        i == 0 && curScene == &pConfMenu
-                        ? colors[(&players[editPlayer])->color]
-                        : cMenuText);
+            msg = TTF_RenderUTF8_Solid(font_menu, c[i],
+                    i == 0 && curScene == &pConfMenu
+                    ? colors[(&players[editPlayer])->color]
+                    : cMenuText);
         }
 
         SDL_Rect offset = {
@@ -1306,10 +1317,13 @@ char *keyName(unsigned int key)
     char *keyname = malloc(6 * sizeof(char));
     memset(keyname, '\0', 6 * sizeof(char));
 
-    if (key >= SDLK_a && key <= SDLK_z) {
+    if ((key >= SDLK_a && key <= SDLK_z)
+            || (key >= SDLK_0 && key <= SDLK_9)) {
         snprintf(keyname, 2, "%c", key);
     } else {
         switch (key) {
+            case SDLK_UNKNOWN:
+                snprintf(keyname, 5, "none"); break;
             case SDLK_LEFT:
                 snprintf(keyname, 5, "left"); break;
             case SDLK_RIGHT:
@@ -1393,7 +1407,30 @@ int main(void)
 #ifdef DEBUG
                     printf("Pressed: %c (%d)\n", k, k);
 #endif
-                    keyDown[k] = 1;
+                    if (catchNextKey) {
+                        char *keyname = malloc(6 * sizeof(char));
+                        memset(keyname, '\0', 6 * sizeof(char));
+                        keyname = keyName(k);
+                        if (keyname[0] == '\0') {
+#ifdef DEBUG
+                            printf("Unknown key\n");
+#endif
+                            k = 0;
+                        } else {
+#ifdef DEBUG
+                            printf("Set new key: %s\n", keyname);
+#endif
+                        }
+                        if (catchNextKey == 1) {
+                            (&players[editPlayer])->lkey = k;
+                        } else {
+                            (&players[editPlayer])->rkey = k;
+                        }
+                        free(keyname);
+                        catchNextKey = 0;
+                    } else {
+                        keyDown[k] = 1;
+                    }
                 }
             } else if (event.type == SDL_KEYUP) {
                 keyDown[event.key.keysym.sym] = 0;
