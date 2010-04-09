@@ -27,10 +27,7 @@
 #define SCORE_SPACING       25
 
 /* SPECIAL KEYS */
-#define SPEC_UP             273
-#define SPEC_DOWN           274
-#define SPEC_RIGHT          275
-#define SPEC_LEFT           276 
+#define MAX_KEYNAME         8   /* Maximum length of key name */
 
 /* PLAYERS */
 #define MAX_PLAYERS         8   /* Maximal number of players */

@@ -970,15 +970,15 @@ void displayPConfMenu(void)
     char s2[MENU_BUF] = "RIGHT BUTTON: ";
     char s3[MENU_BUF] = "~ PLAYER ";
 
-    char tmpKey[6];
+    char tmpKey[MAX_KEYNAME];
     char *lkey = keyName((&players[editPlayer])->lkey);
     char *rkey = keyName((&players[editPlayer])->rkey);
-    snprintf(tmpKey, 6 * sizeof(char), "%s", lkey);
+    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", lkey);
     free(lkey);
-    strncat(s1, tmpKey, 5);
-    snprintf(tmpKey, 6 * sizeof(char), "%s", rkey);
+    strncat(s1, tmpKey, MAX_KEYNAME - 1);
+    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", rkey);
     free(rkey);
-    strncat(s2, tmpKey, 5);
+    strncat(s2, tmpKey, MAX_KEYNAME - 1);
     snprintf(tmpKey, 4 * sizeof(char), "%d ~", editPlayer + 1);
     strncat(s3, tmpKey, 3);
 
@@ -1001,11 +1001,11 @@ void displayPConfMenu(void)
  */
 void handleMenu(struct menu *m)
 {
-    if (keyDown[SPEC_DOWN]) {
-        keyDown[SPEC_DOWN] = 0;
+    if (keyDown[SDLK_DOWN]) {
+        keyDown[SDLK_DOWN] = 0;
         ++(m->choice);
-    } else if (keyDown[SPEC_UP]) {
-        keyDown[SPEC_UP] = 0;
+    } else if (keyDown[SDLK_UP]) {
+        keyDown[SDLK_UP] = 0;
         --(m->choice);
     }
     if (m->choice >= m->choices) {
@@ -1314,12 +1314,14 @@ void keyRelease(unsigned int key)
  */
 char *keyName(unsigned int key)
 {
-    char *keyname = malloc(6 * sizeof(char));
-    memset(keyname, '\0', 6 * sizeof(char));
+    char *keyname = malloc(MAX_KEYNAME * sizeof(char));
+    memset(keyname, '\0', MAX_KEYNAME * sizeof(char));
 
     if ((key >= SDLK_a && key <= SDLK_z)
             || (key >= SDLK_0 && key <= SDLK_9)) {
         snprintf(keyname, 2, "%c", key);
+    } else if (key >= SDLK_F1 && key <= SDLK_F15) {
+        snprintf(keyname, 4, "F%d", key - SDLK_F1 + 1);
     } else {
         switch (key) {
             case SDLK_UNKNOWN:
@@ -1332,6 +1334,48 @@ char *keyName(unsigned int key)
                 snprintf(keyname, 3, "up"); break;
             case SDLK_DOWN:
                 snprintf(keyname, 5, "down"); break;
+            case SDLK_DELETE:
+                snprintf(keyname, 4, "del"); break;
+            case SDLK_INSERT:
+                snprintf(keyname, 4, "ins"); break;
+            case SDLK_HOME:
+                snprintf(keyname, 5, "home"); break;
+            case SDLK_END:
+                snprintf(keyname, 4, "end"); break;
+            case SDLK_PAGEUP:
+                snprintf(keyname, 6, "pg up"); break;
+            case SDLK_PAGEDOWN:
+                snprintf(keyname, 6, "pg dn"); break;
+            case SDLK_RSHIFT:
+                snprintf(keyname, 8, "r-shift"); break;
+            case SDLK_LSHIFT:
+                snprintf(keyname, 8, "l-shift"); break;
+            case SDLK_RCTRL:
+                snprintf(keyname, 7, "r-ctrl"); break;
+            case SDLK_LCTRL:
+                snprintf(keyname, 7, "l-ctrl"); break;
+            case SDLK_RALT:
+                snprintf(keyname, 6, "r-alt"); break;
+            case SDLK_LALT:
+                snprintf(keyname, 6, "l-alt"); break;
+            case SDLK_RSUPER:
+                snprintf(keyname, 8, "r-super"); break;
+            case SDLK_LSUPER:
+                snprintf(keyname, 8, "l-super"); break;
+            case SDLK_TAB:
+                snprintf(keyname, 4, "tab"); break;
+            case SDLK_PERIOD:
+                snprintf(keyname, 2, "."); break;
+            case SDLK_COMMA:
+                snprintf(keyname, 2, ","); break;
+            case SDLK_MINUS:
+                snprintf(keyname, 2, "-"); break;
+            case SDLK_PLUS:
+                snprintf(keyname, 2, "+"); break;
+            case SDLK_BACKSLASH:
+                snprintf(keyname, 2, "\\"); break;
+            case SDLK_LESS:
+                snprintf(keyname, 2, "<"); break;
             default:
                 break;
         }
@@ -1408,8 +1452,9 @@ int main(void)
                     printf("Pressed: %c (%d)\n", k, k);
 #endif
                     if (catchNextKey) {
-                        char *keyname = malloc(6 * sizeof(char));
-                        memset(keyname, '\0', 6 * sizeof(char));
+                        char *keyname = malloc(
+                                MAX_KEYNAME * sizeof(char));
+                        memset(keyname, '\0', MAX_KEYNAME * sizeof(char));
                         keyname = keyName(k);
                         if (keyname[0] == '\0') {
 #ifdef DEBUG
