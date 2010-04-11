@@ -30,6 +30,7 @@
 #define MAX_KEYNAME         8   /* Maximum length of key name */
 
 /* PLAYERS */
+#define MIN_PLAYERS         2   /* Minimum number of players */
 #define MAX_PLAYERS         8   /* Maximal number of players */
 #define DEFAULT_N_PLAYERS   2   /* Default number of players */
 
@@ -160,6 +161,7 @@ void initPlayers2(void);
 void killPlayer(unsigned char killed, unsigned char killer);
 struct vel spawn(void);
 void respawn(struct player *p);
+void trespawn(struct player *p);
 void setColor(bool up);
 
 /* HITMAP */

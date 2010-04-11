@@ -174,27 +174,29 @@ void killPlayer(unsigned char killed, unsigned char killer)
  */
 struct vel spawn(void)
 {
-    long rnd1, rnd2, rnd3, rnd4;
+    double rnd;
     struct vel initPos;
     Uint32 timeseed = SDL_GetTicks();
 
-    if (randomizer > 100000) {
+    if (randomizer > RAND_MAX) {
         randomizer = 1;
     }
 
-    srand(timeseed);
-    rnd1 = rand() * randomizer++;
-    rnd2 = rand() * randomizer;
-    randomizer += randomizer;
-    rnd3 = rand() * randomizer++;
-    rnd4 = rand() * randomizer++;
+    srand(timeseed * randomizer++);
+    rnd = (double)rand() / RAND_MAX;
     initPos.x = SPAWN_SPACE_MIN
-        + (rnd1 % (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
+        + (rnd * (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
+    srand(timeseed * randomizer++);
+    rnd = (double)rand() / RAND_MAX;
     initPos.y = SPAWN_SPACE_MIN
-        + (rnd2 % (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
-    initPos.dir = rnd3 * (2 * PI) / RAND_MAX;
+        + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
+    srand(timeseed * randomizer++);
+    rnd = (double)rand() / RAND_MAX;
+    initPos.holecount = (rnd * (HOLE_FREQ - HOLE_FIRST_DELAY));
+    srand(timeseed * randomizer++);
+    rnd = (double)rand() / RAND_MAX;
+    initPos.dir = rnd * (2 * PI);
     if (initPos.dir < 0) initPos.dir *= -1;
-    initPos.holecount = (rnd4 % (HOLE_FREQ - HOLE_FIRST_DELAY));
 
     return initPos;
 }
@@ -214,6 +216,25 @@ void respawn(struct player *p)
     p->prevx = p->posx;
     p->prevy = p->posy;
     p->holecount = initPos.holecount;
+}
+
+/**
+ * Spawns a player for tournament mode.
+ *
+ * @param p The player which is to be spawned.
+ */
+void trespawn(struct player *p)
+{
+    Uint32 timeseed = SDL_GetTicks();
+    srand(timeseed);
+    p->alive = 1;
+    p->posx = (WINDOW_W / 2) + (p->active == 1 ? -120 : 120);
+    p->posy = WINDOW_H / 2;
+    p->dir = p->active == 1 ? 0 : PI;
+    p->prevx = p->posx;
+    p->prevy = p->posy;
+    p->holecount = ((++randomizer * rand())
+            % (HOLE_FREQ - HOLE_FIRST_DELAY));
 }
 
 /**
@@ -766,7 +787,7 @@ void logicMainMenu(void)
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
-        if (menuMain.choice == 0 && nPlayers > 1) --nPlayers;
+        if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) --nPlayers;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
         if (menuMain.choice == 0 && nPlayers < MAX_PLAYERS) ++nPlayers;
