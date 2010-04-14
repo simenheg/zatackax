@@ -12,6 +12,9 @@
 
 #define PI                  3.14159265358
 
+/* MISC */
+#define STRBUF              32
+
 /* DEFAULT WINDOW DIMENSIONS */
 #define DEFAULT_WINDOW_W    800
 #define DEFAULT_WINDOW_H    600
@@ -136,9 +139,12 @@ static Uint32 prevtime = 0;
 static Uint32 delta = 1;
 static unsigned int alivecount = 0;
 static int countdown;
+
+static const char *settingNames[] = {"fullscreen", "holes", "broadcasts"};
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
+static bool *settings[3] = {&fullscreen, &holes, &broadcasts};
 
 /* 0: Don't catch it
  * 1: Set as (editPlayer)'s new left key
@@ -206,6 +212,8 @@ void colorBalls(void);
 int init(void);
 int loadFiles(void);
 void confirmLoading(char *name, SDL_Surface *sprite);
+void saveSettings(char *filename);
+void restoreSettings(char *filename);
 void keyPress(unsigned int key);
 void keyRelease(unsigned int key);
 char *keyName(unsigned int key);

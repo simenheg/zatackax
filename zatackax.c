@@ -1309,6 +1309,87 @@ void confirmLoading(char *name, SDL_Surface *sprite)
 }
 
 /**
+ * Saves the current settings to a configfile.
+ *
+ * @param filename Name of the file to save current settings to.
+ */
+void saveSettings(char *filename)
+{
+    unsigned int i;
+    FILE *savefile = NULL;
+
+    if ((savefile = fopen(filename, "w")) == NULL) {
+#ifdef DEBUG
+        fprintf(stderr, "Couldn't open file '%s' for writing.\n",
+                filename);
+#endif
+        return;
+    } else {
+        for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
+            fprintf(savefile, "%s = %d\n", settingNames[i], *settings[i]);
+        }
+    }
+
+#ifdef DEBUG
+    if (ferror(savefile)) {
+        fprintf(stderr, "Error writing to file '%s'.\n", filename);
+    }
+#endif
+
+    fclose(savefile);
+}
+
+/**
+ * Restores previous settings from a configure file.
+ *
+ * @param filename Name of the file to load the settings from.
+ */
+void restoreSettings(char *filename)
+{
+    FILE *savefile = NULL;
+
+    if ((savefile = fopen(filename, "r")) == NULL) {
+#ifdef DEBUG
+        fprintf(stderr, "Couldn't restore settings from file %s.\n",
+                filename);
+#endif
+        return;
+    } else {
+
+        char settingHandle[STRBUF];
+        bool settingBool;
+        unsigned int i;
+        int line = 0;
+        bool valid;
+
+        for (;;) {
+            if ((fscanf(savefile, "%s = %c\n", settingHandle,
+                            &settingBool)) != EOF) {
+                valid = 0;
+                for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
+                    if (strncmp(settingNames[i], settingHandle, STRBUF)
+                            == 0) {
+                        /* We have a matched setting */
+                        *settings[i] = settingBool - 48;
+                        valid = 1;
+                        break;
+                    }
+                }
+                if (valid == 0) {
+                    fprintf(stderr, "Unknown config format in '%s', line "
+                            "%d: %s\n", filename, line, settingHandle);
+                }
+                ++line;
+            } else {
+                break;
+            }
+        }
+    }
+
+    fclose(savefile);
+}
+
+/**
  * Turns a pressed key on.
  * 
  * @param key The pressed key.
@@ -1423,6 +1504,8 @@ void exitGame(int status)
     screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
             SDL_SWSURFACE);
 
+    saveSettings(".zataconf");
+
     printf("Bye!\n");
 
     exit(status);
@@ -1432,6 +1515,8 @@ int main(void)
 {
     WINDOW_W = DEFAULT_WINDOW_W;
     WINDOW_H = DEFAULT_WINDOW_H;
+
+    restoreSettings(".zataconf");
 
     if (!init()) {
         return 1;
