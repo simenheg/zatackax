@@ -1328,6 +1328,10 @@ void saveSettings(char *filename)
         for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
             fprintf(savefile, "%s = %d\n", settingNames[i], *settings[i]);
         }
+        for (i = 0; i < MAX_PLAYERS; ++i) {
+            fprintf(savefile, "%dl = %d\n", i + 1, (&players[i])->lkey);
+            fprintf(savefile, "%dr = %d\n", i + 1, (&players[i])->rkey);
+        }
     }
 
 #ifdef DEBUG
@@ -1357,21 +1361,32 @@ void restoreSettings(char *filename)
     } else {
 
         char settingHandle[STRBUF];
-        bool settingBool;
+        unsigned int settingParam;
         unsigned int i;
         int line = 0;
         bool valid;
 
         for (;;) {
-            if ((fscanf(savefile, "%s = %c\n", settingHandle,
-                            &settingBool)) != EOF) {
+            if ((fscanf(savefile, "%s = %u\n", settingHandle,
+                            &settingParam)) != EOF) {
                 valid = 0;
                 for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
                     if (strncmp(settingNames[i], settingHandle, STRBUF)
                             == 0) {
                         /* We have a matched setting */
-                        *settings[i] = settingBool - 48;
+                        *settings[i] = settingParam;
                         valid = 1;
+                        break;
+                    } else if (isdigit(settingHandle[0])) {
+                        if (settingHandle[1] == 'l') {
+                            (&players[settingHandle[0] - '0' - 1])->lkey
+                                = settingParam;
+                            valid = 1;
+                        } else if (settingHandle[1] == 'r') {
+                            (&players[settingHandle[0] - '0' - 1])->rkey
+                                = settingParam;
+                            valid = 1;
+                        }
                         break;
                     }
                 }
@@ -1478,6 +1493,8 @@ char *keyName(unsigned int key)
                 snprintf(keyname, 2, "\\"); break;
             case SDLK_LESS:
                 snprintf(keyname, 2, "<"); break;
+            case SDLK_BACKSPACE:
+                snprintf(keyname, 8, "b-space"); break;
             default:
                 break;
         }
@@ -1516,6 +1533,7 @@ int main(void)
     WINDOW_W = DEFAULT_WINDOW_W;
     WINDOW_H = DEFAULT_WINDOW_H;
 
+    initPlayers1();
     restoreSettings(".zataconf");
 
     if (!init()) {
@@ -1532,7 +1550,6 @@ int main(void)
     }
 
     initColors();
-    initPlayers1();
     initPlayers2();
 
     initMainMenu();
