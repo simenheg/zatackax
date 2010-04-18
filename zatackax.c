@@ -1329,6 +1329,7 @@ void saveSettings(char *filename)
             fprintf(savefile, "%s = %d\n", settingNames[i], *settings[i]);
         }
         for (i = 0; i < MAX_PLAYERS; ++i) {
+            fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
             fprintf(savefile, "%dl = %d\n", i + 1, (&players[i])->lkey);
             fprintf(savefile, "%dr = %d\n", i + 1, (&players[i])->rkey);
         }
@@ -1378,14 +1379,24 @@ void restoreSettings(char *filename)
                         valid = 1;
                         break;
                     } else if (isdigit(settingHandle[0])) {
-                        if (settingHandle[1] == 'l') {
-                            (&players[settingHandle[0] - '0' - 1])->lkey
-                                = settingParam;
-                            valid = 1;
-                        } else if (settingHandle[1] == 'r') {
-                            (&players[settingHandle[0] - '0' - 1])->rkey
-                                = settingParam;
-                            valid = 1;
+                        switch (settingHandle[1]) {
+                            case 'c': /* Color */
+                                (&players[settingHandle[0] - '0' - 1])->
+                                    color = settingParam;
+                                valid = 1;
+                                break;
+                            case 'l': /* Left key */
+                                (&players[settingHandle[0] - '0' - 1])->
+                                    lkey = settingParam;
+                                valid = 1;
+                                break;
+                            case 'r': /* Right key */
+                                (&players[settingHandle[0] - '0' - 1])->
+                                    rkey = settingParam;
+                                valid = 1;
+                                break;
+                            default:
+                                break;
                         }
                         break;
                     }
@@ -1427,7 +1438,7 @@ void keyRelease(unsigned int key)
  * Generates an appropriate name for a given key.
  *
  * @param key Key to be named.
- * @return The name of the key.
+ * @return The name of the key, zerobytes if it's not valid.
  */
 char *keyName(unsigned int key)
 {
@@ -1560,25 +1571,12 @@ int main(void)
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
                 int k = event.key.keysym.sym;
-                if (k == SDLK_ESCAPE) {
-                    if (curScene == &game || curScene == &gameStart) {
-                        cleanHitMap();
-                        if (broadcasts) cleanBroadcast();
-                    } else if (curScene == &settingsMenu) {
-                        initMainMenu();
-                    } else if (curScene->parentScene == NULL) {
-                        exitGame(0);
-                    }
-                    curScene = curScene->parentScene;
-                } else {
+                if (k != SDLK_ESCAPE) {
 #ifdef DEBUG
                     printf("Pressed: %c (%d)\n", k, k);
 #endif
                     if (catchNextKey) {
-                        char *keyname = malloc(
-                                MAX_KEYNAME * sizeof(char));
-                        memset(keyname, '\0', MAX_KEYNAME * sizeof(char));
-                        keyname = keyName(k);
+                        char *keyname = keyName(k);
                         if (keyname[0] == '\0') {
 #ifdef DEBUG
                             printf("Unknown key\n");
@@ -1599,6 +1597,16 @@ int main(void)
                     } else {
                         keyDown[k] = 1;
                     }
+                } else {
+                    if (curScene == &game || curScene == &gameStart) {
+                        cleanHitMap();
+                        if (broadcasts) cleanBroadcast();
+                    } else if (curScene == &settingsMenu) {
+                        initMainMenu();
+                    } else if (curScene->parentScene == NULL) {
+                        exitGame(0);
+                    }
+                    curScene = curScene->parentScene;
                 }
             } else if (event.type == SDL_KEYUP) {
                 keyDown[event.key.keysym.sym] = 0;
