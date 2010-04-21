@@ -1,4 +1,5 @@
 #include "zatackax.h"
+#define DEBUG
 
 SDL_Rect arrowClip[32];
 SDL_Surface *screen = NULL;
@@ -455,8 +456,8 @@ void logicGame(void)
 
             struct player *p = &players[i];
 
-            if (alivecount <= 1) {
-                SDL_FreeSurface(screen);
+            if (alivecount < 1) {
+				SDL_FreeSurface(screen);
                 newRound();
             } else if (p->alive) {
 
@@ -516,7 +517,6 @@ void logicGameStart(void)
 #ifdef DEBUG
     fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
 #endif
-
     if (delta > 13) {
         delta = 13;
     }
@@ -546,6 +546,7 @@ void displayGameStart(void)
                 SDL_Rect offset = {(int)p->posx - 8, (int)p->posy - 8,
                     0, 0};
                 int diri = (int)((p->dir) * (32.0 / (2.0 * PI)));
+				diri %= 32;				printf("diri: %i\r\n", diri);
                 SDL_BlitSurface(p->arrow, &arrowClip[diri], screen,
                         &offset);
             } else {
@@ -555,7 +556,7 @@ void displayGameStart(void)
     }
 
     if (SDL_Flip(screen) == -1) {
-        exit(1);
+		exit(1);
     }
 }
 
@@ -605,7 +606,7 @@ void refreshGameScreen(void)
     SDL_UnlockSurface(screen);
 
     if (SDL_Flip(screen) == -1) {
-        exit(1);
+		exit(1);
     }
 }
 
@@ -836,7 +837,7 @@ void displayMainMenu(void)
     }
 
     if (SDL_Flip(screen) == -1) {
-        exit(1);
+       exit(1);
     }
 }
 
@@ -896,7 +897,7 @@ void displaySettingsMenu(void)
     displayMenu(c, &menuSettings);
 
     if (SDL_Flip(screen) == -1) {
-        exit(1);
+		exit(1);
     }
 }
 
@@ -937,7 +938,7 @@ void displayPlayerMenu(void)
     displayMenu(c, &menuPlayer);
 
     if (SDL_Flip(screen) == -1) {
-        exit(1);
+		exit(1);
     }
 }
 
@@ -1011,7 +1012,7 @@ void displayPConfMenu(void)
     displayMenu(c, &menuPConf);
 
     if (SDL_Flip(screen) == -1) {
-        exit(1);
+		exit(1);
     }
 }
 
@@ -1539,7 +1540,7 @@ void exitGame(int status)
     exit(status);
 }
 
-int main(void)
+int main( int argc, char **argv )
 {
     WINDOW_W = DEFAULT_WINDOW_W;
     WINDOW_H = DEFAULT_WINDOW_H;
@@ -1567,7 +1568,7 @@ int main(void)
 
     curScene = &mainMenu;
 
-    for (;;) {
+    for (;;) {	
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
                 int k = event.key.keysym.sym;
@@ -1579,7 +1580,7 @@ int main(void)
                         char *keyname = keyName(k);
                         if (keyname[0] == '\0') {
 #ifdef DEBUG
-                            printf("Unknown key\n");
+								printf("Unknown key\n");
 #endif
                             k = 0;
                         } else {
