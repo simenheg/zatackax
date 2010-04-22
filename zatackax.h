@@ -136,7 +136,6 @@ static struct player players[MAX_PLAYERS];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
 static Uint32 prevtime = 0;
-static Uint32 delta = 1;
 static unsigned int alivecount = 0;
 static int countdown;
 
@@ -145,12 +144,6 @@ static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
 static bool *settings[3] = {&fullscreen, &holes, &broadcasts};
-
-/* 0: Don't catch it
- * 1: Set as (editPlayer)'s new left key
- * 2: Set as (editPlayer)'s new right key
- */
-static bool catchNextKey = 0;
 
 static unsigned int randomizer = 1; /* Help distribute better random
                                        values */
@@ -169,12 +162,13 @@ struct vel spawn(void);
 void respawn(struct player *p);
 void trespawn(struct player *p);
 void setColor(bool up);
+void setNextKey(unsigned char pedit, bool left);
 
 /* HITMAP */
 void initHitMap(unsigned int w, unsigned int h);
 void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
         unsigned char modifier);
-void updateHitMap(void);
+void updateHitMap(Uint32 delta);
 void cleanHitMap(void);
 
 /* GAME */

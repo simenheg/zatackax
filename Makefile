@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g3 -std=c99 -pedantic -Wall -Wextra
-LFLAGS = -lSDLMain -lSDL -lSDL_image -lSDL_ttf
+LFLAGS = -lSDL -lSDL_image -lSDL_ttf
 CDEBUG = -DDEBUG
 
 objects = zatackax.o

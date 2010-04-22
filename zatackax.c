@@ -260,6 +260,40 @@ void setColor(bool up)
 }
 
 /**
+ * Catches and sets the next key pressed as a player's directional keys.
+ *
+ * @param pedit ID of the player to edit.
+ * @param left 1 for left key, 0 for right key.
+ */
+void setNextKey(unsigned char pedit, bool left) {
+    for (;;) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_KEYDOWN) {
+
+                int k = event.key.keysym.sym;
+                char *keyname = keyName(k);
+                if (keyname[0] == '\0') {
+#ifdef DEBUG
+                    printf("Unknown key\n");
+#endif
+                    k = 0;
+                } else {
+#ifdef DEBUG
+                    printf("Set new key: %s\n", keyname);
+#endif
+                }
+
+                if (left) (&players[pedit])->lkey = k;
+                else (&players[pedit])->rkey = k;
+
+                free(keyname);
+                return;
+            }
+        }
+    }
+}
+
+/**
  * Initializes the hitmap.
  *
  * @param w Width of the map.
@@ -366,9 +400,10 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
  * Actually puts the pieces from the addToHitMap()-queue into the map.
  * Also handles the creation of holes.
  * 
+ * @param delta Time since last update.
  * @see addToHitMap
  */
-void updateHitMap(void)
+void updateHitMap(Uint32 delta)
 {
 #ifdef DEBUG
     fprintf(stderr, "Updating hitmap...\n");
@@ -439,7 +474,7 @@ void logicGame(void)
 {
     int i;
     Uint32 timenow = SDL_GetTicks();
-    delta = timenow - prevtime;
+    Uint32 delta = timenow - prevtime;
     prevtime = timenow;
 
 #ifdef DEBUG
@@ -500,7 +535,7 @@ void logicGame(void)
             break;
         }
     }
-    updateHitMap();
+    updateHitMap(delta);
     SDL_UnlockSurface(screen);
 }
 
@@ -510,7 +545,7 @@ void logicGame(void)
 void logicGameStart(void)
 {
     Uint32 timenow = SDL_GetTicks();
-    delta = timenow - prevtime;
+    Uint32 delta = timenow - prevtime;
     prevtime = timenow;
 
 #ifdef DEBUG
@@ -953,11 +988,13 @@ void logicPConfMenu(void)
                 break;
             case 1:
                 (&players[editPlayer])->lkey = SDLK_CLEAR;
-                catchNextKey = 1;
+                displayPConfMenu(); /* Update menu before catching key */
+                setNextKey(editPlayer, 1);
                 break;
             case 2:
                 (&players[editPlayer])->rkey = SDLK_CLEAR;
-                catchNextKey = 2;
+                displayPConfMenu(); /* Update menu before catching key */
+                setNextKey(editPlayer, 0);
                 break;
             case 3:
                 curScene = curScene->parentScene;
@@ -1506,6 +1543,10 @@ char *keyName(unsigned int key)
                 snprintf(keyname, 2, "<"); break;
             case SDLK_BACKSPACE:
                 snprintf(keyname, 8, "b-space"); break;
+            case SDLK_RETURN:
+                snprintf(keyname, 6, "enter"); break;
+            case SDLK_SPACE:
+                snprintf(keyname, 6, "space"); break;
             default:
                 break;
         }
@@ -1575,28 +1616,7 @@ int main(void)
 #ifdef DEBUG
                     printf("Pressed: %c (%d)\n", k, k);
 #endif
-                    if (catchNextKey) {
-                        char *keyname = keyName(k);
-                        if (keyname[0] == '\0') {
-#ifdef DEBUG
-                            printf("Unknown key\n");
-#endif
-                            k = 0;
-                        } else {
-#ifdef DEBUG
-                            printf("Set new key: %s\n", keyname);
-#endif
-                        }
-                        if (catchNextKey == 1) {
-                            (&players[editPlayer])->lkey = k;
-                        } else {
-                            (&players[editPlayer])->rkey = k;
-                        }
-                        free(keyname);
-                        catchNextKey = 0;
-                    } else {
-                        keyDown[k] = 1;
-                    }
+                    keyDown[k] = 1;
                 } else {
                     if (curScene == &game || curScene == &gameStart) {
                         cleanHitMap();
