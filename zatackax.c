@@ -238,23 +238,24 @@ void trespawn(struct player *p)
 }
 
 /**
- * Sets the color of the current edited player up or down.
+ * Sets a player's color index up or down.
  *
+ * @param pedit ID of the player which color is to be changed.
  * @param up 1 if the color should be set one higher, 0 if one lower.
  */
-void setColor(bool up)
+void setColor(unsigned char pedit, bool up)
 {
     if (up) {
-        if ((&players[editPlayer])->color == N_COLORS - 1) {
-            (&players[editPlayer])->color = 0;
+        if ((&players[pedit])->color == N_COLORS - 1) {
+            (&players[pedit])->color = 0;
         } else {
-            ++((&players[editPlayer])->color);
+            ++((&players[pedit])->color);
         }
     } else {
-        if ((&players[editPlayer])->color == 0) {
-            (&players[editPlayer])->color = N_COLORS - 1;
+        if ((&players[pedit])->color == 0) {
+            (&players[pedit])->color = N_COLORS - 1;
         } else {
-            --((&players[editPlayer])->color);
+            --((&players[pedit])->color);
         }
     }
 }
@@ -984,7 +985,7 @@ void logicPConfMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuPConf.choice) {
             case 0:
-                setColor(1);
+                setColor(editPlayer, 1);
                 break;
             case 1:
                 (&players[editPlayer])->lkey = SDLK_CLEAR;
@@ -1006,11 +1007,11 @@ void logicPConfMenu(void)
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
         if (menuPConf.choice == 0) {
-            setColor(0);
+            setColor(editPlayer, 0);
         }
     } else if (keyDown[SDLK_RIGHT]) {
         if (menuPConf.choice == 0) {
-            setColor(1);
+            setColor(editPlayer, 1);
         }
         keyDown[SDLK_RIGHT] = 0;
     }

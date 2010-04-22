@@ -161,7 +161,7 @@ void killPlayer(unsigned char killed, unsigned char killer);
 struct vel spawn(void);
 void respawn(struct player *p);
 void trespawn(struct player *p);
-void setColor(bool up);
+void setColor(unsigned char pedit, bool up);
 void setNextKey(unsigned char pedit, bool left);
 
 /* HITMAP */
