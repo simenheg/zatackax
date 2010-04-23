@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g3 -std=c99 -pedantic -Wall -Wextra
+CFLAGS = -g3 -std=c99 -pedantic -Wall
 LFLAGS = -lSDL -lSDL_image -lSDL_ttf
 CDEBUG = -DDEBUG
 

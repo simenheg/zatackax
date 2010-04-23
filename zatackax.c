@@ -1,14 +1,5 @@
 #include "zatackax.h"
 
-SDL_Rect arrowClip[32];
-SDL_Surface *screen = NULL;
-SDL_Surface *msg = NULL;
-SDL_Surface *image = NULL;
-SDL_Surface *arrows = NULL;
-SDL_Surface *ball = NULL;
-SDL_Surface *broadcast[BROADC_LIMIT];
-SDL_Event event;
-
 struct menu menuMain = {
     3,
     0,
@@ -1581,7 +1572,7 @@ void exitGame(int status)
     exit(status);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
     WINDOW_W = DEFAULT_WINDOW_W;
     WINDOW_H = DEFAULT_WINDOW_H;
