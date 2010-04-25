@@ -69,6 +69,7 @@
 #define DEFAULT_FULLSCREEN      0
 #define DEFAULT_HOLES           1
 #define DEFAULT_BROADCASTS      1
+#define DEFAULT_DUELMODE        0
 
 typedef unsigned char bool;
 
@@ -146,11 +147,13 @@ static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
 
-static const char *settingNames[] = {"fullscreen", "holes", "broadcasts"};
+static const char *settingNames[] = {"fullscreen", "holes", "broadcasts", 
+"duelmode"};
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
-static bool *settings[3] = {&fullscreen, &holes, &broadcasts};
+static bool duelmode = DEFAULT_DUELMODE;
+static bool *settings[4] = {&fullscreen, &holes, &broadcasts, &duelmode};
 
 static unsigned int randomizer = 1; /* Help distribute better random
                                        values */
@@ -167,7 +170,7 @@ void initPlayers2(void);
 void killPlayer(unsigned char killed, unsigned char killer);
 struct vel spawn(void);
 void respawn(struct player *p);
-void trespawn(struct player *p);
+void drespawn(struct player *p);
 void setColor(unsigned char pedit, bool up);
 void setNextKey(unsigned char pedit, bool left);
 

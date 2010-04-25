@@ -6,7 +6,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    5,
+    6,
     0,
 };
 
@@ -210,11 +210,11 @@ void respawn(struct player *p)
 }
 
 /**
- * Spawns a player for tournament mode.
+ * Spawns a player for duel mode.
  *
  * @param p The player which is to be spawned.
  */
-void trespawn(struct player *p)
+void drespawn(struct player *p)
 {
     Uint32 timeseed = SDL_GetTicks();
     srand(timeseed);
@@ -771,7 +771,11 @@ void newRound(void)
         struct player *p = &players[i];
         if (p->active) {
             printf("%d ", p->score);
-            respawn(p);
+            if (duelmode) {
+                drespawn(p);
+            } else {
+                respawn(p);
+            }
         } else {
             printf(")\n");
             return;
@@ -817,7 +821,8 @@ void logicMainMenu(void)
         if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) --nPlayers;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
-        if (menuMain.choice == 0 && nPlayers < MAX_PLAYERS) ++nPlayers;
+        if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS)
+            ++nPlayers;
     }
     handleMenu(&menuMain);
 }
@@ -884,11 +889,15 @@ void logicSettingsMenu(void)
             case 2: /* Toggle broadcasts */
                 broadcasts ^= 1;
                 break;
-            case 3:
+            case 3: /* Toggle duel mode */
+                duelmode ^= 1;
+                if (duelmode) nPlayers = 2;
+                break;
+            case 4:
                 menuPlayer.choice = 0;
                 curScene = &playerMenu;
                 break;
-            case 4: /* Back */
+            case 5: /* Back */
                 keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
                 curScene = curScene->parentScene;
@@ -911,14 +920,17 @@ void displaySettingsMenu(void)
     char s1[MENU_BUF] = "FULLSCREEN ";
     char s2[MENU_BUF] = "HOLES ";
     char s3[MENU_BUF] = "BROADCASTS ";
+    char s4[MENU_BUF] = "DUEL MODE ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, holes ON_OFF, MENU_BUF - strlen(s2));
     strncat(s3, broadcasts ON_OFF, MENU_BUF - strlen(s3));
+    strncat(s4, duelmode ON_OFF, MENU_BUF - strlen(s4));
     c[0] = s1;
     c[1] = s2;
     c[2] = s3;
-    c[3] = "PLAYER CONFIG";
-    c[4] = "BACK";
+    c[3] = s4;
+    c[4] = "PLAYER CONFIG";
+    c[5] = "BACK";
 
     displayMenu(c, &menuSettings);
 
