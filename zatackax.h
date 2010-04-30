@@ -48,13 +48,13 @@
 #define HOLE_SIZE           2830 * (0.9 + ZATA_SPEED)
 #define HOLE_FIRST_DELAY    300     /* Minimum delay of first hole */
 #define HOLE_FREQ           3000    /* How often holes appears */
-#define HOLE_DELAY          76      /* Time before hole is created */
+#define HOLE_DELAY          108      /* Time before hole is created */
 
 /* ZATAS */
 #define ZATA_SIZE           4                   /* Thickness of the zata */
 #define ZATA_SPEED          0.09                /* Speed of the zata */
 #define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
-#define COUNTDOWN_TOLERANCE 25 * (ZATA_SIZE)    /* Suicide detection */
+#define COUNTDOWN_TOLERANCE 50 * (ZATA_SIZE)    /* Suicide detection */
 #define N_COLORS            8                   /* Available colors */
 
 /* MENUS */
@@ -80,13 +80,17 @@ struct player {
     double posx;
     double posy;
     double dir;
+    double speed;
     unsigned int color;
     unsigned int prevx;
     unsigned int prevy;
     unsigned int score;
     unsigned int lkey;
     unsigned int rkey;
+    unsigned int wkey;
     int holecount;
+    int wepcount;           /* Remaining weapon time, -999 if unused */
+    int (*wepFunc)(struct player*, bool);
 };
 
 struct recentMapPiece {
@@ -172,7 +176,7 @@ struct vel spawn(void);
 void respawn(struct player *p);
 void drespawn(struct player *p);
 void setColor(unsigned char pedit, bool up);
-void setNextKey(unsigned char pedit, bool left);
+void setNextKey(unsigned char pedit, unsigned char key);
 
 /* HITMAP */
 void initHitMap(unsigned int w, unsigned int h);
@@ -190,6 +194,10 @@ void makeBroadcast(struct player *p, unsigned char killer);
 void cleanBroadcast(void);
 void drawScores(void);
 void newRound(void);
+
+/* WEAPONS */
+int wepSpeedup(struct player *p, bool on);
+int wepColdwave(struct player *p, bool on);
 
 /* MENUS */
 void initMainMenu(void);

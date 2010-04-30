@@ -2,11 +2,11 @@ CC = gcc
 CFLAGS = -g3 -std=c99 -pedantic -Wall
 LFLAGS = -lSDL -lSDL_image -lSDL_ttf
 CDEBUG = -DDEBUG
+SOURCES = *.c
+HEADERS = *.h
 
-objects = zatackax.o
-
-zatackax : $(objects)
-	$(CC) $(CFLAGS) $^ -o $@ $(LFLAGS)
+zatackax : $(SOURCES) $(HEADERS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(SOURCES) -o $@
 
 debug : CFLAGS += $(CDEBUG)
 debug : zatackax

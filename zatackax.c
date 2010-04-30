@@ -16,7 +16,7 @@ struct menu menuPlayer = {
 };
 
 struct menu menuPConf = {
-    4,
+    5,
     0,
 };
 
@@ -69,30 +69,32 @@ void initPlayers1(void)
 
     for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
         p->color = i;
+        p->speed = 1.0;
         switch (i) {
             case 0:
                 p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
+                p->wkey = SDLK_UP;
                 break;
             case 1:
-                p->lkey = 'a'; p->rkey = 's';
+                p->lkey = 'z'; p->rkey = 'c'; p->wkey = 'x';
                 break;
             case 2:
-                p->lkey = 'z'; p->rkey = 'x';
+                p->lkey = 'v'; p->rkey = 'n'; p->wkey = 'b';
                 break;
             case 3:
-                p->lkey = 'q'; p->rkey = 'w';
+                p->lkey = ','; p->rkey = '-'; p->wkey = '.';
                 break;
             case 4:
-                p->lkey = 'e'; p->rkey = 'r';
+                p->lkey = 'q'; p->rkey = 'e'; p->wkey = 'w';
                 break;
             case 5:
-                p->lkey = 'd'; p->rkey = 'f';
+                p->lkey = 'r'; p->rkey = 'y'; p->wkey = 't';
                 break;
             case 6:
-                p->lkey = 'c'; p->rkey = 'v';
+                p->lkey = 'i'; p->rkey = 'p'; p->wkey = 'o';
                 break;
             case 7:
-                p->lkey = 't'; p->rkey = 'y';
+                p->lkey = SDLK_F1; p->rkey = SDLK_F3; p->wkey = SDLK_F2;
                 break;
             default:
                 break;
@@ -102,7 +104,8 @@ void initPlayers1(void)
 
 /**
  * Stage 2 of player initialization.
- * Assigns arrow sprites and resets score.
+ * Called at a later point than stage 1. Assigns arrow sprites and resets
+ * scores.
  */
 void initPlayers2(void)
 {
@@ -114,6 +117,8 @@ void initPlayers2(void)
 
         p->active = i + 1;
         p->score = 0;
+        if (i % 2 == 0) p->wepFunc = wepSpeedup;
+        else p->wepFunc = wepColdwave;
 
         /* Assign arrows */
         SDL_BlitSurface(arrows, NULL, *s, NULL);
@@ -255,9 +260,9 @@ void setColor(unsigned char pedit, bool up)
  * Catches and sets the next key pressed as a player's directional keys.
  *
  * @param pedit ID of the player to edit.
- * @param left 1 for left key, 0 for right key.
+ * @param key l - left key, r - right key, w - weapon key
  */
-void setNextKey(unsigned char pedit, bool left) {
+void setNextKey(unsigned char pedit, unsigned char key) {
     for (;;) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
@@ -275,8 +280,18 @@ void setNextKey(unsigned char pedit, bool left) {
 #endif
                 }
 
-                if (left) (&players[pedit])->lkey = k;
-                else (&players[pedit])->rkey = k;
+                switch (key) {
+                    case 'l':
+                        (&players[pedit])->lkey = k;
+                        break;
+                    case 'r':
+                        (&players[pedit])->rkey = k;
+                        break;
+                    case 'w':
+                        (&players[pedit])->wkey = k;
+                    default:
+                        break;
+                }
 
                 free(keyname);
                 return;
@@ -482,6 +497,13 @@ void logicGame(void)
 
             struct player *p = &players[i];
 
+            if (p->wepcount > 0) {
+                p->wepcount -= delta;
+                if (p->wepcount <= 0) {
+                    p->wepFunc(p, 0);
+                }
+            }
+
             if (alivecount <= 1) {
                 SDL_FreeSurface(screen);
                 newRound();
@@ -489,14 +511,17 @@ void logicGame(void)
 
                 unsigned int curx, cury;
 
+                if (p->wepcount == -999 && keyDown[p->wkey]) {
+                    p->wepcount = p->wepFunc(p, 1);
+                }
                 if (keyDown[p->lkey]) {
-                    p->dir -= 0.0022 * delta;
+                    p->dir -= 0.0022 * delta * p->speed;
                 } else if (keyDown[p->rkey]) {
-                    p->dir += 0.0022 * delta;
+                    p->dir += 0.0022 * delta * p->speed;
                 }
 
-                p->posx += ZATA_SPEED * cos(p->dir) * delta;
-                p->posy += ZATA_SPEED * sin(p->dir) * delta;
+                p->posx += ZATA_SPEED * cos(p->dir) * delta * p->speed;
+                p->posy += ZATA_SPEED * sin(p->dir) * delta * p->speed;
 
                 curx = (unsigned int)p->posx;
                 cury = (unsigned int)p->posy;
@@ -770,6 +795,11 @@ void newRound(void)
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
+
+            /* Reset weapons */
+            p->wepFunc(p, 0);
+            p->wepcount = -999;
+
             printf("%d ", p->score);
             if (duelmode) {
                 drespawn(p);
@@ -783,6 +813,47 @@ void newRound(void)
     }
 
     printf(")\n");
+}
+
+/** Weapon: speedup
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepSpeedup(struct player *p, bool on)
+{
+    if (on) {
+        p->speed = 2.0;
+    } else {
+        p->speed = 1.0;
+    }
+    return 1200;
+}
+
+/** Weapon: coldwave
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepColdwave(struct player *p, bool on)
+{
+    int i;
+    if (on) {
+        for (i = 0; i < nPlayers; ++i) {
+            struct player *target = &players[i];
+            if (target != p) {
+                target->speed = 0.3;
+            }
+        }
+    } else {
+        for (i = 0; i < nPlayers; ++i) {
+            struct player *target = &players[i];
+            if (target != p) {
+                target->speed = 1.0;
+            }
+        }
+    }
+    return 1500;
 }
 
 /**
@@ -993,14 +1064,19 @@ void logicPConfMenu(void)
             case 1:
                 (&players[editPlayer])->lkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
-                setNextKey(editPlayer, 1);
+                setNextKey(editPlayer, 'l');
                 break;
             case 2:
                 (&players[editPlayer])->rkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
-                setNextKey(editPlayer, 0);
+                setNextKey(editPlayer, 'r');
                 break;
             case 3:
+                (&players[editPlayer])->wkey = SDLK_CLEAR;
+                displayPConfMenu(); /* Update menu before catching key */
+                setNextKey(editPlayer, 'w');
+                break;
+            case 4:
                 curScene = curScene->parentScene;
                 break;
             default:
@@ -1028,26 +1104,32 @@ void displayPConfMenu(void)
 {
     char *c[menuPConf.choices];
 
-    char s1[MENU_BUF] = "LEFT BUTTON: ";
-    char s2[MENU_BUF] = "RIGHT BUTTON: ";
-    char s3[MENU_BUF] = "~ PLAYER ";
+    char s1[MENU_BUF] = "LEFT KEY: ";
+    char s2[MENU_BUF] = "RIGHT KEY: ";
+    char s3[MENU_BUF] = "WEAPON KEY: ";
+    char s4[MENU_BUF] = "~ PLAYER ";
 
     char tmpKey[MAX_KEYNAME];
     char *lkey = keyName((&players[editPlayer])->lkey);
     char *rkey = keyName((&players[editPlayer])->rkey);
+    char *wkey = keyName((&players[editPlayer])->wkey);
     snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", lkey);
     free(lkey);
     strncat(s1, tmpKey, MAX_KEYNAME - 1);
     snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", rkey);
     free(rkey);
     strncat(s2, tmpKey, MAX_KEYNAME - 1);
+    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", wkey);
+    free(wkey);
+    strncat(s3, tmpKey, MAX_KEYNAME - 1);
     snprintf(tmpKey, 4 * sizeof(char), "%d ~", editPlayer + 1);
-    strncat(s3, tmpKey, 3);
+    strncat(s4, tmpKey, 3);
 
-    c[0] = s3;
+    c[0] = s4;
     c[1] = s1;
     c[2] = s2;
-    c[3] = "BACK";
+    c[3] = s3;
+    c[4] = "BACK";
 
     displayMenu(c, &menuPConf);
 
@@ -1373,6 +1455,7 @@ void saveSettings(char *filename)
             fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
             fprintf(savefile, "%dl = %d\n", i + 1, (&players[i])->lkey);
             fprintf(savefile, "%dr = %d\n", i + 1, (&players[i])->rkey);
+            fprintf(savefile, "%dw = %d\n", i + 1, (&players[i])->wkey);
         }
     }
 
@@ -1434,6 +1517,11 @@ void restoreSettings(char *filename)
                             case 'r': /* Right key */
                                 (&players[settingHandle[0] - '0' - 1])->
                                     rkey = settingParam;
+                                valid = 1;
+                                break;
+                            case 'w': /* Weapon key */
+                                (&players[settingHandle[0] - '0' - 1])->
+                                    wkey = settingParam;
                                 valid = 1;
                                 break;
                             default:
@@ -1579,8 +1667,6 @@ void exitGame(int status)
 
     saveSettings(".zataconf");
 
-    printf("Bye!\n");
-
     exit(status);
 }
 
@@ -1606,8 +1692,6 @@ int main(int argc, char *argv[])
     }
 
     initColors();
-    initPlayers2();
-
     initMainMenu();
 
     curScene = &mainMenu;
