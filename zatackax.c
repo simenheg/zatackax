@@ -117,7 +117,7 @@ void initPlayers2(void)
 
         p->active = i + 1;
         p->score = 0;
-        if (i % 2 == 0) p->wepFunc = wepSpeedup;
+        if (i % 2 == 0) p->wepFunc = wepSharpturn;
         else p->wepFunc = wepColdwave;
 
         /* Assign arrows */
@@ -507,6 +507,7 @@ void logicGame(void)
             if (alivecount <= 1) {
                 SDL_FreeSurface(screen);
                 newRound();
+                return;
             } else if (p->alive) {
 
                 unsigned int curx, cury;
@@ -854,6 +855,18 @@ int wepColdwave(struct player *p, bool on)
         }
     }
     return 1500;
+}
+
+/** Weapon: sharpturn
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepSharpturn(struct player *p, bool on)
+{
+    if (keyDown[p->rkey]) p->dir += PI / 2;
+    else p->dir -= PI / 2;
+    return 0;
 }
 
 /**

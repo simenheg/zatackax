@@ -198,6 +198,7 @@ void newRound(void);
 /* WEAPONS */
 int wepSpeedup(struct player *p, bool on);
 int wepColdwave(struct player *p, bool on);
+int wepSharpturn(struct player *p, bool on);
 
 /* MENUS */
 void initMainMenu(void);
