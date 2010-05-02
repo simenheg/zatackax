@@ -72,10 +72,18 @@
 #define DEFAULT_BROADCASTS      1
 #define DEFAULT_DUELMODE        0
 
+/* WEAPONS */
+#define N_WEAPONS               4
+#define WEP_SPACEMOD            50
+#define PARROWSELECT_MOD_Y      20
+#define PARROWSELECT_MOD_X      14
+
 typedef unsigned char bool;
 
 struct player {
     unsigned char active;   /* 0 if activated, ID else */
+    int weapon;             /* Weapon ID */
+    int wepcount;           /* Remaining weapon time, -999 if unused */
     bool alive;
     bool invertedKeys;
     SDL_Surface *arrow;
@@ -91,8 +99,6 @@ struct player {
     unsigned int rkey;
     unsigned int wkey;
     int holecount;
-    int wepcount;           /* Remaining weapon time, -999 if unused */
-    int (*wepFunc)(struct player*, bool);
 };
 
 struct recentMapPiece {
@@ -172,6 +178,7 @@ static SDL_Surface *wiConf = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
+static struct SDL_Surface *wepIcons[N_WEAPONS + 1];
 
 /* FONTS */
 static TTF_Font *font_menu = NULL;
@@ -212,11 +219,15 @@ int wepSpeedup(struct player *p, bool on);
 int wepFrostwave(struct player *p, bool on);
 int wepSharpturn(struct player *p, bool on);
 int wepConfusion(struct player *p, bool on);
+int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
+    wepFrostwave, wepConfusion, wepSharpturn};
 
 /* MENUS */
 void initMainMenu(void);
 void logicMainMenu(void);
 void displayMainMenu(void);
+void logicWepMenu(void);
+void displayWepMenu(void);
 void logicSettingsMenu(void);
 void displaySettingsMenu(void);
 void logicPlayerMenu(void);

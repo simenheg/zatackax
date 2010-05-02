@@ -26,6 +26,12 @@ static struct scene mainMenu = {
     NULL
 };
 
+static struct scene wepMenu = {
+    logicWepMenu,
+    displayWepMenu,
+    &mainMenu
+};
+
 static struct scene gameStart = {
     logicGameStart,
     displayGameStart,
@@ -71,6 +77,7 @@ void initPlayers1(void)
         p->color = i;
         p->speed = 1.0;
         p->invertedKeys = 0;
+        p->weapon = 0;
         switch (i) {
             case 0:
                 p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
@@ -118,9 +125,10 @@ void initPlayers2(void)
 
         p->active = i + 1;
         p->score = 0;
-        p->wepcount = -999;
-        if (i % 2 == 0) p->wepFunc = wepSpeedup;
-        else p->wepFunc = wepFrostwave;
+
+        if (weapons) {
+            p->wepcount = -999;
+        }
 
         /* Assign arrows */
         SDL_BlitSurface(arrows, NULL, *s, NULL);
@@ -502,7 +510,7 @@ void logicGame(void)
             if (p->wepcount > 0) {
                 p->wepcount -= delta;
                 if (p->wepcount <= 0) {
-                    p->wepFunc(p, 0);
+                    wepFunc[p->weapon](p, 0);
                 }
             }
 
@@ -515,7 +523,7 @@ void logicGame(void)
                 unsigned int curx, cury;
 
                 if (p->wepcount == -999 && keyDown[p->wkey]) {
-                    p->wepcount = p->wepFunc(p, 1);
+                    p->wepcount = wepFunc[p->weapon](p, 1);
                 }
                 if (keyDown[p->lkey]) {
                     p->dir -= 0.0022 * delta * p->speed;
@@ -801,7 +809,7 @@ void newRound(void)
 
             /* Reset weapons */
             if (p->wepcount != -999) {
-                p->wepFunc(p, 0);
+                wepFunc[p->weapon](p, 0);
                 p->wepcount = -999;
             }
 
@@ -909,7 +917,11 @@ void logicMainMenu(void)
             case 0:
                 initPlayers2();
                 newRound();
-                curScene = &gameStart;
+                if (weapons) {
+                    curScene = &wepMenu;
+                } else {
+                    curScene = &gameStart;
+                }
                 break;
             case 1:
                 menuSettings.choice = 0;
@@ -979,6 +991,83 @@ void displayMainMenu(void)
 }
 
 /**
+ * Logic of the weapon selection menu.
+ */
+void logicWepMenu(void) {
+
+    int i;
+    struct player *p;
+
+    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) curScene = &gameStart;
+
+    for (p = &players[0], i = 0; i < nPlayers; ++i, ++p) {
+        if (keyDown[p->lkey]) {
+            if (p->weapon == 0) p->weapon = N_WEAPONS - 1;
+            else p->weapon--;
+            keyDown[p->lkey] = 0;
+        } else if (keyDown[p->rkey]) {
+            if (p->weapon == N_WEAPONS - 1) p->weapon = 0;
+            else p->weapon++;
+            keyDown[p->rkey] = 0;
+        }
+    }
+}
+
+/**
+ * Displays the weapon selection menu.
+ */
+void displayWepMenu(void) {
+
+    int i, j;
+    struct player *p;
+    int mid = -(N_WEAPONS / 2);
+    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
+                0x00, 0x00, 0x00));
+
+    for (i = 0; i < N_WEAPONS; ++i, ++mid) {
+        SDL_Rect offset = {
+            (WINDOW_W / 2)              /* offset */
+                - (wepIcons[0]->w / 2)  /* centralize */
+                + (mid * ((wepIcons[0]->w / 2) + WEP_SPACEMOD))
+                - ((N_WEAPONS % 2) - 1)
+                * (WEP_SPACEMOD / 1.2)
+                ,
+            (WINDOW_H / 2)              /* offset */
+                - (wepIcons[0]->h / 2)  /* centralize */
+                , 0, 0
+        };
+
+        SDL_BlitSurface(wepIcons[0], NULL, screen, &offset);
+        SDL_BlitSurface(wepIcons[i + 1], NULL, screen, &offset);
+
+        /* Draw weapon selection arrows */
+        offset.y -= PARROWSELECT_MOD_Y;
+        for (j = 0; j < nPlayers; ++j) {
+            if (j == MAX_PLAYERS / 2) {
+                offset.y += wepIcons[0]->h + PARROWSELECT_MOD_Y * 1.2;
+                offset.x -= PARROWSELECT_MOD_X * (MAX_PLAYERS / 2);
+            }
+            p = &players[j];
+            if (j != 0) offset.x += PARROWSELECT_MOD_X;
+            if (p->weapon == i) {
+                int diri;
+                if (j >= MAX_PLAYERS / 2) {
+                    diri = (int)((3.0 * PI / 2.0) * (32.0 / (2.0 * PI)));
+                } else {
+                    diri = (int)((PI / 2.0) * (32.0 / (2.0 * PI)));
+                }
+                SDL_BlitSurface(p->arrow, &arrowClip[diri], screen,
+                        &offset);
+            }
+        }
+    }
+
+    if (SDL_Flip(screen) == -1) {
+        exit(1);
+    }
+}
+
+/**
  * Logic of the settings menu.
  */
 void logicSettingsMenu(void)
@@ -1032,10 +1121,10 @@ void displaySettingsMenu(void)
     char s4[MENU_BUF] = "BROADCASTS ";
     char s5[MENU_BUF] = "DUEL MODE ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
-    strncat(s2, weapons ON_OFF, MENU_BUF - strlen(s5));
-    strncat(s3, holes ON_OFF, MENU_BUF - strlen(s2));
-    strncat(s4, broadcasts ON_OFF, MENU_BUF - strlen(s3));
-    strncat(s5, duelmode ON_OFF, MENU_BUF - strlen(s4));
+    strncat(s2, weapons ON_OFF, MENU_BUF - strlen(s2));
+    strncat(s3, holes ON_OFF, MENU_BUF - strlen(s3));
+    strncat(s4, broadcasts ON_OFF, MENU_BUF - strlen(s4));
+    strncat(s5, duelmode ON_OFF, MENU_BUF - strlen(s5));
     c[0] = s1;
     c[1] = s2;
     c[2] = s3;
@@ -1471,6 +1560,12 @@ int loadFiles(void)
                 ball->format->Rmask, ball->format->Gmask,
                 ball->format->Bmask, 0);
     }
+
+    /* Initialize weapon pointer array */
+    wepIcons[0] = wiBg;
+    wepIcons[1] = wiSpeed;
+    wepIcons[2] = wiFrost;
+    wepIcons[3] = wiConf;
 
     return 1;
 }
