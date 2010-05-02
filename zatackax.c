@@ -6,7 +6,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    6,
+    7,
     0,
 };
 
@@ -989,21 +989,24 @@ void logicSettingsMenu(void)
                 fullscreen ^= 1;
                 initScreen();
                 break;
-            case 1: /* Toggle holes */
+            case 1: /* Toggle weapons */
+                weapons ^= 1;
+                break;
+            case 2: /* Toggle holes */
                 holes ^= 1;
                 break;
-            case 2: /* Toggle broadcasts */
+            case 3: /* Toggle broadcasts */
                 broadcasts ^= 1;
                 break;
-            case 3: /* Toggle duel mode */
+            case 4: /* Toggle duel mode */
                 duelmode ^= 1;
                 if (duelmode) nPlayers = 2;
                 break;
-            case 4:
+            case 5:
                 menuPlayer.choice = 0;
                 curScene = &playerMenu;
                 break;
-            case 5: /* Back */
+            case 6: /* Back */
                 keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
                 curScene = curScene->parentScene;
@@ -1024,19 +1027,22 @@ void displaySettingsMenu(void)
     char *c[menuSettings.choices];
 
     char s1[MENU_BUF] = "FULLSCREEN ";
-    char s2[MENU_BUF] = "HOLES ";
-    char s3[MENU_BUF] = "BROADCASTS ";
-    char s4[MENU_BUF] = "DUEL MODE ";
+    char s2[MENU_BUF] = "WEAPONS ";
+    char s3[MENU_BUF] = "HOLES ";
+    char s4[MENU_BUF] = "BROADCASTS ";
+    char s5[MENU_BUF] = "DUEL MODE ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
-    strncat(s2, holes ON_OFF, MENU_BUF - strlen(s2));
-    strncat(s3, broadcasts ON_OFF, MENU_BUF - strlen(s3));
-    strncat(s4, duelmode ON_OFF, MENU_BUF - strlen(s4));
+    strncat(s2, weapons ON_OFF, MENU_BUF - strlen(s5));
+    strncat(s3, holes ON_OFF, MENU_BUF - strlen(s2));
+    strncat(s4, broadcasts ON_OFF, MENU_BUF - strlen(s3));
+    strncat(s5, duelmode ON_OFF, MENU_BUF - strlen(s4));
     c[0] = s1;
     c[1] = s2;
     c[2] = s3;
     c[3] = s4;
-    c[4] = "PLAYER CONFIG";
-    c[5] = "BACK";
+    c[4] = s5;
+    c[5] = "PLAYER CONFIG";
+    c[6] = "BACK";
 
     displayMenu(c, &menuSettings);
 
@@ -1393,8 +1399,19 @@ int loadFiles(void)
     int x, y, i;
     SDL_Surface **p;
 
+    /* Load images and fonts */
     if ((arrows = loadImage("data/gfx/arrowsheet.png")) == NULL) return 0;
     if ((ball = loadImage("data/gfx/ball.png")) == NULL) return 0;
+    if ((wiBg = loadImage("data/gfx/wi_bg.png")) == NULL) return 0;
+    if ((wiSpeed = loadImage("data/gfx/wi_lightningspeed.png")) == NULL) {
+        return 0;
+    }
+    if ((wiFrost = loadImage("data/gfx/wi_frostwave.png")) == NULL) {
+        return 0;
+    }
+    if ((wiConf = loadImage("data/gfx/wi_confusion.png")) == NULL) {
+        return 0;
+    }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
@@ -1419,6 +1436,10 @@ int loadFiles(void)
 #ifdef DEBUG
     confirmLoading("arrowsheet.png", arrows);
     confirmLoading("ball.png", ball);
+    confirmLoading("wi_bg.png", wiBg);
+    confirmLoading("wi_lightningspeed.png", wiSpeed);
+    confirmLoading("wi_frostwave.png", wiFrost);
+    confirmLoading("wi_confusion.png", wiConf);
 #endif
 
     /* Clip arrow sprite sheet */

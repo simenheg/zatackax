@@ -67,6 +67,7 @@
 #define TRIANGLE_PANNING_Y      6.5
 #define ON_OFF                  ? "[on]" : "[off]"
 #define DEFAULT_FULLSCREEN      0
+#define DEFAULT_WEAPONS         1
 #define DEFAULT_HOLES           1
 #define DEFAULT_BROADCASTS      1
 #define DEFAULT_DUELMODE        0
@@ -128,37 +129,27 @@ static unsigned char *hitmap;
 static struct recentMapPiece *recents;
 static unsigned char editPlayer = 0;
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
-static TTF_Font *font_menu = NULL;
-static TTF_Font *font_menub = NULL;
-static TTF_Font *font_score = NULL;
-static TTF_Font *font_broadc = NULL;
-static TTF_Font *font_broadcb = NULL;
 const SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 const SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 const SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
 const SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
 static SDL_Color colors[N_COLORS];
 static SDL_Rect arrowClip[32];
-static SDL_Surface *screen = NULL;
-static SDL_Surface *msg = NULL;
-static SDL_Surface *arrows = NULL;
-static SDL_Surface *ball = NULL;
-static SDL_Surface *broadcast[BROADC_LIMIT];
 static SDL_Event event;
 static struct player players[MAX_PLAYERS];
-static struct SDL_Surface **parrows;
-static struct SDL_Surface **pballs;
 static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
 
-static const char *settingNames[] = {"fullscreen", "holes", "broadcasts", 
-"duelmode"};
 static bool fullscreen = DEFAULT_FULLSCREEN;
+static bool weapons = DEFAULT_WEAPONS;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
 static bool duelmode = DEFAULT_DUELMODE;
-static bool *settings[4] = {&fullscreen, &holes, &broadcasts, &duelmode};
+static const char *settingNames[] = {"fullscreen", "weapons", "holes",
+    "broadcasts", "duelmode"};
+static bool *settings[5] = {&fullscreen, &weapons, &holes, &broadcasts,
+    &duelmode};
 
 static unsigned int randomizer = 1; /* Help distribute better random
                                        values */
@@ -168,6 +159,26 @@ static unsigned int WINDOW_H;       /* Window height */
 static unsigned int keyDown[322];   /* 322 is the number of
                                        possible SDL keys
                                        (see SDL_keysym.h) */
+
+/* SURFACES */
+static SDL_Surface *screen = NULL;
+static SDL_Surface *msg = NULL;
+static SDL_Surface *arrows = NULL;
+static SDL_Surface *ball = NULL;
+static SDL_Surface *wiBg = NULL;
+static SDL_Surface *wiSpeed = NULL;
+static SDL_Surface *wiFrost = NULL;
+static SDL_Surface *wiConf = NULL;
+static SDL_Surface *broadcast[BROADC_LIMIT];
+static struct SDL_Surface **parrows;
+static struct SDL_Surface **pballs;
+
+/* FONTS */
+static TTF_Font *font_menu = NULL;
+static TTF_Font *font_menub = NULL;
+static TTF_Font *font_score = NULL;
+static TTF_Font *font_broadc = NULL;
+static TTF_Font *font_broadcb = NULL;
 
 /* PLAYER */
 void initPlayers1(void);
