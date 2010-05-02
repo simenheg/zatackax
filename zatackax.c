@@ -507,7 +507,7 @@ void logicGame(void)
 
             struct player *p = &players[i];
 
-            if (p->wepcount > 0) {
+            if (weapons && p->wepcount > 0) {
                 p->wepcount -= delta;
                 if (p->wepcount <= 0) {
                     wepFunc[p->weapon](p, 0);
@@ -522,7 +522,7 @@ void logicGame(void)
 
                 unsigned int curx, cury;
 
-                if (p->wepcount == -999 && keyDown[p->wkey]) {
+                if (weapons && (p->wepcount == -999 && keyDown[p->wkey])) {
                     p->wepcount = wepFunc[p->weapon](p, 1);
                 }
                 if (keyDown[p->lkey]) {
@@ -808,7 +808,7 @@ void newRound(void)
         if (p->active) {
 
             /* Reset weapons */
-            if (p->wepcount != -999) {
+            if (weapons && p->wepcount != -999) {
                 wepFunc[p->weapon](p, 0);
                 p->wepcount = -999;
             }
@@ -1501,6 +1501,9 @@ int loadFiles(void)
     if ((wiConf = loadImage("data/gfx/wi_confusion.png")) == NULL) {
         return 0;
     }
+    if ((wiTurn = loadImage("data/gfx/wi_sharpturn.png")) == NULL) {
+        return 0;
+    }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
@@ -1529,6 +1532,7 @@ int loadFiles(void)
     confirmLoading("wi_lightningspeed.png", wiSpeed);
     confirmLoading("wi_frostwave.png", wiFrost);
     confirmLoading("wi_confusion.png", wiConf);
+    confirmLoading("wi_confusion.png", wiTurn);
 #endif
 
     /* Clip arrow sprite sheet */
@@ -1566,6 +1570,7 @@ int loadFiles(void)
     wepIcons[1] = wiSpeed;
     wepIcons[2] = wiFrost;
     wepIcons[3] = wiConf;
+    wepIcons[4] = wiTurn;
 
     return 1;
 }

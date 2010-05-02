@@ -175,6 +175,7 @@ static SDL_Surface *wiBg = NULL;
 static SDL_Surface *wiSpeed = NULL;
 static SDL_Surface *wiFrost = NULL;
 static SDL_Surface *wiConf = NULL;
+static SDL_Surface *wiTurn = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
