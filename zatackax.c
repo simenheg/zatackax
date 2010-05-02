@@ -70,6 +70,7 @@ void initPlayers1(void)
     for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
         p->color = i;
         p->speed = 1.0;
+        p->invertedKeys = 0;
         switch (i) {
             case 0:
                 p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
@@ -117,7 +118,8 @@ void initPlayers2(void)
 
         p->active = i + 1;
         p->score = 0;
-        if (i % 2 == 0) p->wepFunc = wepSharpturn;
+        p->wepcount = -999;
+        if (i % 2 == 0) p->wepFunc = wepConfusion;
         else p->wepFunc = wepColdwave;
 
         /* Assign arrows */
@@ -798,8 +800,10 @@ void newRound(void)
         if (p->active) {
 
             /* Reset weapons */
-            p->wepFunc(p, 0);
-            p->wepcount = -999;
+            if (p->wepcount != -999) {
+                p->wepFunc(p, 0);
+                p->wepcount = -999;
+            }
 
             printf("%d ", p->score);
             if (duelmode) {
@@ -839,19 +843,11 @@ int wepSpeedup(struct player *p, bool on)
 int wepColdwave(struct player *p, bool on)
 {
     int i;
-    if (on) {
-        for (i = 0; i < nPlayers; ++i) {
-            struct player *target = &players[i];
-            if (target != p) {
-                target->speed = 0.3;
-            }
-        }
-    } else {
-        for (i = 0; i < nPlayers; ++i) {
-            struct player *target = &players[i];
-            if (target != p) {
-                target->speed = 1.0;
-            }
+    for (i = 0; i < nPlayers; ++i) {
+        struct player *target = &players[i];
+        if (target != p) {
+            if (on) target->speed = 0.3;
+            else target->speed = 1.0;
         }
     }
     return 1500;
@@ -867,6 +863,32 @@ int wepSharpturn(struct player *p, bool on)
     if (keyDown[p->rkey]) p->dir += PI / 2;
     else p->dir -= PI / 2;
     return 0;
+}
+
+/** Weapon: confusion
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepConfusion(struct player *p, bool on)
+{
+    int i;
+    for (i = 0; i < nPlayers; ++i) {
+        struct player *target = &players[i];
+        if (target != p) {
+            unsigned int tmpkey = target->lkey;
+            if (on && !target->invertedKeys) {
+                target->invertedKeys = 1;
+                target->lkey = target->rkey;
+                target->rkey = tmpkey;
+            } else if (!on && target->invertedKeys) {
+                target->invertedKeys = 0;
+                target->lkey = target->rkey;
+                target->rkey = tmpkey;
+            }
+        }
+    }
+    return 2000;
 }
 
 /**

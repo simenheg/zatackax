@@ -76,6 +76,7 @@ typedef unsigned char bool;
 struct player {
     unsigned char active;   /* 0 if activated, ID else */
     bool alive;
+    bool invertedKeys;
     SDL_Surface *arrow;
     double posx;
     double posy;
@@ -199,6 +200,7 @@ void newRound(void);
 int wepSpeedup(struct player *p, bool on);
 int wepColdwave(struct player *p, bool on);
 int wepSharpturn(struct player *p, bool on);
+int wepConfusion(struct player *p, bool on);
 
 /* MENUS */
 void initMainMenu(void);
