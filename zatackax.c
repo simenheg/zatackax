@@ -120,7 +120,7 @@ void initPlayers2(void)
         p->score = 0;
         p->wepcount = -999;
         if (i % 2 == 0) p->wepFunc = wepSpeedup;
-        else p->wepFunc = wepColdwave;
+        else p->wepFunc = wepFrostwave;
 
         /* Assign arrows */
         SDL_BlitSurface(arrows, NULL, *s, NULL);
@@ -820,7 +820,7 @@ void newRound(void)
     printf(")\n");
 }
 
-/** Weapon: speedup
+/** Weapon: lightning speed
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -835,12 +835,12 @@ int wepSpeedup(struct player *p, bool on)
     return 1200;
 }
 
-/** Weapon: coldwave
+/** Weapon: frostwave
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
  */
-int wepColdwave(struct player *p, bool on)
+int wepFrostwave(struct player *p, bool on)
 {
     int i;
     for (i = 0; i < nPlayers; ++i) {
