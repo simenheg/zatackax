@@ -119,7 +119,7 @@ void initPlayers2(void)
         p->active = i + 1;
         p->score = 0;
         p->wepcount = -999;
-        if (i % 2 == 0) p->wepFunc = wepConfusion;
+        if (i % 2 == 0) p->wepFunc = wepSpeedup;
         else p->wepFunc = wepColdwave;
 
         /* Assign arrows */
