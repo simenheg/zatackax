@@ -899,6 +899,18 @@ int wepConfusion(struct player *p, bool on)
     return 2000;
 }
 
+/** Weapon: timestep
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepTimestep(struct player *p, bool on)
+{
+    p->posx += 100 * cos(p->dir);
+    p->posy += 100 * sin(p->dir);
+    return 0;
+}
+
 /**
  * Initializes the main menu.
  */
@@ -1504,6 +1516,9 @@ int loadFiles(void)
     if ((wiTurn = loadImage("data/gfx/wi_sharpturn.png")) == NULL) {
         return 0;
     }
+    if ((wiStep = loadImage("data/gfx/wi_timestep.png")) == NULL) {
+        return 0;
+    }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
@@ -1533,6 +1548,7 @@ int loadFiles(void)
     confirmLoading("wi_frostwave.png", wiFrost);
     confirmLoading("wi_confusion.png", wiConf);
     confirmLoading("wi_confusion.png", wiTurn);
+    confirmLoading("wi_timestep.png", wiStep);
 #endif
 
     /* Clip arrow sprite sheet */
@@ -1571,6 +1587,7 @@ int loadFiles(void)
     wepIcons[2] = wiFrost;
     wepIcons[3] = wiConf;
     wepIcons[4] = wiTurn;
+    wepIcons[5] = wiStep;
 
     return 1;
 }
