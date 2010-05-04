@@ -219,8 +219,14 @@ void respawn(struct player *p)
     p->posx = initPos.x;
     p->posy = initPos.y;
     p->dir = initPos.dir;
+
+    p->initposx = p->posx;
+    p->initposy = p->posy;
+    p->initdir = p->dir;
+
     p->prevx = p->posx;
     p->prevy = p->posy;
+
     p->holecount = initPos.holecount;
 }
 
@@ -237,6 +243,11 @@ void drespawn(struct player *p)
     p->posx = (WINDOW_W / 2) + (p->active == 1 ? -120 : 120);
     p->posy = WINDOW_H / 2;
     p->dir = p->active == 1 ? 0 : PI;
+
+    p->initposx = p->initposx;
+    p->initposy = p->initposy;
+    p->initdir = p->dir;
+
     p->prevx = p->posx;
     p->prevy = p->posy;
     p->holecount = ((++randomizer * rand())
@@ -911,6 +922,24 @@ int wepTimestep(struct player *p, bool on)
     return 0;
 }
 
+/** Weapon: mole
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepMole(struct player *p, bool on)
+{
+    p->posx = p->initposx;
+    p->posy = p->initposy;
+    p->dir = p->initdir + PI;
+
+    /* (if 4.9 results in random suicides, tune this up slightly) */
+    p->posx += 4.9 * cos(p->dir);
+    p->posy += 4.9 * sin(p->dir);
+
+    return 0;
+}
+
 /**
  * Initializes the main menu.
  */
@@ -1519,6 +1548,9 @@ int loadFiles(void)
     if ((wiStep = loadImage("data/gfx/wi_timestep.png")) == NULL) {
         return 0;
     }
+    if ((wiMole = loadImage("data/gfx/wi_mole.png")) == NULL) {
+        return 0;
+    }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
@@ -1549,6 +1581,7 @@ int loadFiles(void)
     confirmLoading("wi_confusion.png", wiConf);
     confirmLoading("wi_confusion.png", wiTurn);
     confirmLoading("wi_timestep.png", wiStep);
+    confirmLoading("wi_mole.png", wiMole);
 #endif
 
     /* Clip arrow sprite sheet */
@@ -1588,6 +1621,7 @@ int loadFiles(void)
     wepIcons[3] = wiConf;
     wepIcons[4] = wiTurn;
     wepIcons[5] = wiStep;
+    wepIcons[6] = wiMole;
 
     return 1;
 }

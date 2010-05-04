@@ -73,7 +73,7 @@
 #define DEFAULT_DUELMODE        0
 
 /* WEAPONS */
-#define N_WEAPONS               5
+#define N_WEAPONS               6
 #define WEP_SPACEMOD            50
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
@@ -87,9 +87,9 @@ struct player {
     bool alive;
     bool invertedKeys;
     SDL_Surface *arrow;
-    double posx;
-    double posy;
-    double dir;
+    double posx, initposx;
+    double posy, initposy;
+    double dir, initdir;
     double speed;
     unsigned int color;
     unsigned int prevx;
@@ -177,6 +177,7 @@ static SDL_Surface *wiFrost = NULL;
 static SDL_Surface *wiConf = NULL;
 static SDL_Surface *wiTurn = NULL;
 static SDL_Surface *wiStep = NULL;
+static SDL_Surface *wiMole = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
@@ -222,8 +223,9 @@ int wepFrostwave(struct player *p, bool on);
 int wepSharpturn(struct player *p, bool on);
 int wepConfusion(struct player *p, bool on);
 int wepTimestep(struct player *p, bool on);
+int wepMole(struct player *p, bool on);
 int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
-    wepFrostwave, wepConfusion, wepSharpturn, wepTimestep};
+    wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole};
 
 /* MENUS */
 void initMainMenu(void);
