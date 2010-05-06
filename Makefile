@@ -14,4 +14,4 @@ debug : zatackax
 zatackax.o : zatackax.h
 
 clean :
-	rm -f zatackax $(objects)
+	rm -f zatackax zatackax.o

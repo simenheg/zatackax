@@ -41,6 +41,9 @@
 #define START_ROUND_WAIT    1500    /* Miliseconds until the game starts */
 #define SPAWN_SPACE_MIN     100     /* Minimal spawning distance from
                                        screen edges */
+#define ZATA_SPAWN_SPACING  20      /* Minimal spawning distance between
+                                       zatas */
+#define TRY_SPAWN_THIS_HARD 40      /* Try this many times to make a fit */
 
 /* HOLES */
 /* Hole size.
@@ -48,7 +51,7 @@
 #define HOLE_SIZE           2830 * (0.9 + ZATA_SPEED)
 #define HOLE_FIRST_DELAY    300     /* Minimum delay of first hole */
 #define HOLE_FREQ           3000    /* How often holes appears */
-#define HOLE_DELAY          108      /* Time before hole is created */
+#define HOLE_DELAY          108     /* Time before hole is created */
 
 /* ZATAS */
 #define ZATA_SIZE           4                   /* Thickness of the zata */

@@ -214,10 +214,30 @@ struct vel spawn(void)
  */
 void respawn(struct player *p)
 {
-    struct vel initPos = spawn();
+    struct vel initPos;
+    int posOK = 1;
+    int n = TRY_SPAWN_THIS_HARD;
+
+    while (posOK && n != 0) {
+        int i;
+        posOK = p->active - 1;
+        initPos = spawn();
+        p->posx = initPos.x;
+        p->posy = initPos.y;
+        for (i = 0; i < p->active - 1; ++i) {
+            struct player *comp = &players[i];
+            /* Securing spawning space between zatas. This may cause
+             * trouble at small maps (will never get a fit).
+             * ZATA_SPAWN_SPACING cuts off the waiting. */
+            if (abs(p->posx - comp->posx) > ZATA_SPAWN_SPACING
+                    && abs(p->posy - comp->posy) > ZATA_SPAWN_SPACING) {
+                --posOK;
+            }
+        }
+        --n;
+    }
+
     p->alive = 1;
-    p->posx = initPos.x;
-    p->posy = initPos.y;
     p->dir = initPos.dir;
 
     p->initposx = p->posx;
