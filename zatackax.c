@@ -264,8 +264,8 @@ void drespawn(struct player *p)
     p->posy = WINDOW_H / 2;
     p->dir = p->active == 1 ? 0 : PI;
 
-    p->initposx = p->initposx;
-    p->initposy = p->initposy;
+    p->initposx = p->posx;
+    p->initposy = p->posy;
     p->initdir = p->dir;
 
     p->prevx = p->posx;
