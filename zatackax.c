@@ -1579,10 +1579,6 @@ int loadFiles(void)
                     MENU_FONT_SIZE)) == NULL) {
         return 0;
     }
-    if ((font_score = TTF_OpenFont("data/fonts/OCR-A/tarzeau-OCR-A.ttf",
-                    MENU_FONT_SIZE)) == NULL) {
-        return 0;
-    }
     if ((font_broadc = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-r.ttf",
                     BROADC_FONT_SIZE)) == NULL) {
         return 0;
@@ -1591,6 +1587,7 @@ int loadFiles(void)
                     , BROADC_FONT_SIZE)) == NULL) {
         return 0;
     }
+    font_score = font_menub;
 
 #ifdef DEBUG
     confirmLoading("arrowsheet.png", arrows);
@@ -1892,7 +1889,7 @@ void exitGame(int status)
     screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
             SDL_SWSURFACE);
 
-    saveSettings(".zataconf");
+    saveSettings(".zatackax");
 
     exit(status);
 }
@@ -1903,7 +1900,7 @@ int main(int argc, char *argv[])
     WINDOW_H = DEFAULT_WINDOW_H;
 
     initPlayers1();
-    restoreSettings(".zataconf");
+    restoreSettings(".zatackax");
 
     if (!init()) {
         return 1;
