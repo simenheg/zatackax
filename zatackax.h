@@ -227,6 +227,7 @@ int wepSharpturn(struct player *p, bool on);
 int wepConfusion(struct player *p, bool on);
 int wepTimestep(struct player *p, bool on);
 int wepMole(struct player *p, bool on);
+void resetWeapons(void);
 int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
     wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole};
 

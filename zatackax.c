@@ -834,16 +834,12 @@ void newRound(void)
     curScene = &gameStart;
 
     printf(" -- New round! --  ( Score: ");
+
+    if (weapons) resetWeapons();
+
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
-
-            /* Reset weapons */
-            if (weapons && p->wepcount != -999) {
-                wepFunc[p->weapon](p, 0);
-                p->wepcount = -999;
-            }
-
             printf("%d ", p->score);
             if (duelmode) {
                 drespawn(p);
@@ -859,7 +855,8 @@ void newRound(void)
     printf(")\n");
 }
 
-/** Weapon: lightning speed
+/**
+ * Weapon: lightning speed
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -874,7 +871,8 @@ int wepSpeedup(struct player *p, bool on)
     return 1200;
 }
 
-/** Weapon: frostwave
+/**
+ * Weapon: frostwave
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -892,7 +890,8 @@ int wepFrostwave(struct player *p, bool on)
     return 1500;
 }
 
-/** Weapon: sharpturn
+/**
+ * Weapon: sharpturn
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -904,7 +903,8 @@ int wepSharpturn(struct player *p, bool on)
     return 0;
 }
 
-/** Weapon: confusion
+/**
+ * Weapon: confusion
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -930,7 +930,8 @@ int wepConfusion(struct player *p, bool on)
     return 2000;
 }
 
-/** Weapon: timestep
+/**
+ * Weapon: timestep
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -942,7 +943,8 @@ int wepTimestep(struct player *p, bool on)
     return 0;
 }
 
-/** Weapon: mole
+/**
+ * Weapon: mole
  *
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
@@ -958,6 +960,23 @@ int wepMole(struct player *p, bool on)
     p->posy += 4.9 * sin(p->dir);
 
     return 0;
+}
+
+/**
+ * Negates all active weapon effects.
+ */
+void resetWeapons(void)
+{
+    int i;
+    for (i = 0; i < MAX_PLAYERS; ++i) {
+        struct player *p = &players[i];
+        if (p->active) {
+            if (p->wepcount != -999) {
+                wepFunc[p->weapon](p, 0);
+                p->wepcount = -999;
+            }
+        }
+    }
 }
 
 /**
@@ -1933,6 +1952,7 @@ int main(int argc, char *argv[])
                     if (curScene == &game || curScene == &gameStart) {
                         cleanHitMap();
                         if (broadcasts) cleanBroadcast();
+                        if (weapons) resetWeapons();
                     } else if (curScene == &settingsMenu) {
                         initMainMenu();
                     } else if (curScene->parentScene == NULL) {
