@@ -6,7 +6,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    7,
+    8,
     0,
 };
 
@@ -995,7 +995,7 @@ void logicMainMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuMain.choice) {
             case 0:
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 initPlayers2();
                 newRound();
                 if (weapons) {
@@ -1005,7 +1005,7 @@ void logicMainMenu(void)
                 }
                 break;
             case 1:
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 menuSettings.choice = 0;
                 curScene = &settingsMenu;
                 break;
@@ -1081,7 +1081,7 @@ void logicWepMenu(void) {
     struct player *p;
 
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
-        playSound(SOUND_BEEP);
+        playSound(SOUND_BEEP, sound);
         curScene = &gameStart;
     }
 
@@ -1160,34 +1160,38 @@ void logicSettingsMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuSettings.choice) {
             case 0: /* Toggle fullscreen */
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 fullscreen ^= 1;
                 initScreen();
                 break;
-            case 1: /* Toggle weapons */
-                playSound(SOUND_BEEP);
+            case 1: /* Toggle sound */
+                sound ^= 1;
+                playSound(SOUND_BEEP, sound);
+                break;
+            case 2: /* Toggle weapons */
+                playSound(SOUND_BEEP, sound);
                 weapons ^= 1;
                 break;
-            case 2: /* Toggle holes */
-                playSound(SOUND_BEEP);
+            case 3: /* Toggle holes */
+                playSound(SOUND_BEEP, sound);
                 holes ^= 1;
                 break;
-            case 3: /* Toggle broadcasts */
-                playSound(SOUND_BEEP);
+            case 4: /* Toggle broadcasts */
+                playSound(SOUND_BEEP, sound);
                 broadcasts ^= 1;
                 break;
-            case 4: /* Toggle duel mode */
-                playSound(SOUND_BEEP);
+            case 5: /* Toggle duel mode */
+                playSound(SOUND_BEEP, sound);
                 duelmode ^= 1;
                 if (duelmode) nPlayers = 2;
                 break;
-            case 5:
-                playSound(SOUND_BEEP);
+            case 6:
+                playSound(SOUND_BEEP, sound);
                 menuPlayer.choice = 0;
                 curScene = &playerMenu;
                 break;
-            case 6: /* Back */
-                playSound(SOUND_PEEB);
+            case 7: /* Back */
+                playSound(SOUND_PEEB, sound);
                 keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
                 curScene = curScene->parentScene;
@@ -1208,22 +1212,25 @@ void displaySettingsMenu(void)
     char *c[menuSettings.choices];
 
     char s1[MENU_BUF] = "FULLSCREEN ";
-    char s2[MENU_BUF] = "WEAPONS ";
-    char s3[MENU_BUF] = "HOLES ";
-    char s4[MENU_BUF] = "BROADCASTS ";
-    char s5[MENU_BUF] = "DUEL MODE ";
+    char s2[MENU_BUF] = "SOUND ";
+    char s3[MENU_BUF] = "WEAPONS ";
+    char s4[MENU_BUF] = "HOLES ";
+    char s5[MENU_BUF] = "BROADCASTS ";
+    char s6[MENU_BUF] = "DUEL MODE ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
-    strncat(s2, weapons ON_OFF, MENU_BUF - strlen(s2));
-    strncat(s3, holes ON_OFF, MENU_BUF - strlen(s3));
-    strncat(s4, broadcasts ON_OFF, MENU_BUF - strlen(s4));
-    strncat(s5, duelmode ON_OFF, MENU_BUF - strlen(s5));
+    strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
+    strncat(s3, weapons ON_OFF, MENU_BUF - strlen(s3));
+    strncat(s4, holes ON_OFF, MENU_BUF - strlen(s4));
+    strncat(s5, broadcasts ON_OFF, MENU_BUF - strlen(s5));
+    strncat(s6, duelmode ON_OFF, MENU_BUF - strlen(s6));
     c[0] = s1;
     c[1] = s2;
     c[2] = s3;
     c[3] = s4;
     c[4] = s5;
-    c[5] = "PLAYER CONFIG";
-    c[6] = "BACK";
+    c[5] = s6;
+    c[6] = "PLAYER CONFIG";
+    c[7] = "BACK";
 
     displayMenu(c, &menuSettings);
 
@@ -1239,10 +1246,10 @@ void logicPlayerMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         if (menuPlayer.choice == 8) {
-            playSound(SOUND_PEEB);
+            playSound(SOUND_PEEB, sound);
             curScene = curScene->parentScene;
         } else {
-            playSound(SOUND_BEEP);
+            playSound(SOUND_BEEP, sound);
             editPlayer = menuPlayer.choice;
             menuPConf.choice = 0;
             curScene = &pConfMenu;
@@ -1283,29 +1290,29 @@ void logicPConfMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuPConf.choice) {
             case 0:
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 setColor(editPlayer, 1);
                 break;
             case 1:
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 (&players[editPlayer])->lkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'l');
                 break;
             case 2:
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 (&players[editPlayer])->rkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'r');
                 break;
             case 3:
-                playSound(SOUND_BEEP);
+                playSound(SOUND_BEEP, sound);
                 (&players[editPlayer])->wkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'w');
                 break;
             case 4:
-                playSound(SOUND_PEEB);
+                playSound(SOUND_PEEB, sound);
                 curScene = curScene->parentScene;
                 break;
             default:
@@ -1375,11 +1382,11 @@ void displayPConfMenu(void)
 void handleMenu(struct menu *m)
 {
     if (keyDown[SDLK_DOWN]) {
-        playSound(SOUND_BEEP);
+        playSound(SOUND_BEEP, sound);
         keyDown[SDLK_DOWN] = 0;
         ++(m->choice);
     } else if (keyDown[SDLK_UP]) {
-        playSound(SOUND_BEEP);
+        playSound(SOUND_BEEP, sound);
         keyDown[SDLK_UP] = 0;
         --(m->choice);
     }
@@ -2004,7 +2011,7 @@ int main(int argc, char *argv[])
                     } else if (curScene->parentScene == NULL) {
                         exitGame(0);
                     }
-                    playSound(SOUND_PEEB);
+                    playSound(SOUND_PEEB, sound);
                     curScene = curScene->parentScene;
                 }
             } else if (event.type == SDL_KEYUP) {

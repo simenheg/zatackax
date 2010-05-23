@@ -36,8 +36,9 @@ int initSound(void)
  * Plays a sound.
  *
  * @param sound One of the sounds stated in enum sounds (see sound.h).
+ * @param play 1 if the sound is to be played, 0 else.
  */
-void playSound(unsigned int sound)
+void playSound(unsigned int sound, int play) 
 {
-    Mix_PlayChannel(-1, sounds[sound], 0);
+    if (play) Mix_PlayChannel(-1, sounds[sound], 0);
 }

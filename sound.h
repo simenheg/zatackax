@@ -10,6 +10,6 @@ enum sounds {
 };
 
 int initSound(void);
-void playSound(unsigned int sound);
+void playSound(unsigned int sound, int play);
 
 #endif
