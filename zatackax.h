@@ -195,7 +195,7 @@ static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
 static struct SDL_Surface *wepIcons[N_WEAPONS + 1];
-static struct SDL_Surface *smallWepIcons[N_WEAPONS + 1];
+static struct SDL_Surface *smallWepIcons[N_WEAPONS];
 
 /* FONTS */
 static TTF_Font *font_menu = NULL;
