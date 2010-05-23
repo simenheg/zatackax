@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g3 -std=c99 -pedantic -Wall
-LFLAGS = -lSDL -lSDL_image -lSDL_ttf
+LFLAGS = -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
 CDEBUG = -DDEBUG
 SOURCES = *.c
 HEADERS = *.h
@@ -11,7 +11,5 @@ zatackax : $(SOURCES) $(HEADERS)
 debug : CFLAGS += $(CDEBUG)
 debug : zatackax
 
-zatackax.o : zatackax.h
-
 clean :
-	rm -f zatackax zatackax.o
+	rm -f zatackax *.o

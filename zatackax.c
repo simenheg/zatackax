@@ -995,6 +995,7 @@ void logicMainMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuMain.choice) {
             case 0:
+                playSound(SOUND_BEEP);
                 initPlayers2();
                 newRound();
                 if (weapons) {
@@ -1004,6 +1005,7 @@ void logicMainMenu(void)
                 }
                 break;
             case 1:
+                playSound(SOUND_BEEP);
                 menuSettings.choice = 0;
                 curScene = &settingsMenu;
                 break;
@@ -1078,7 +1080,10 @@ void logicWepMenu(void) {
     int i;
     struct player *p;
 
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) curScene = &gameStart;
+    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+        playSound(SOUND_BEEP);
+        curScene = &gameStart;
+    }
 
     for (p = &players[0], i = 0; i < nPlayers; ++i, ++p) {
         if (keyDown[p->lkey]) {
@@ -1155,27 +1160,34 @@ void logicSettingsMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuSettings.choice) {
             case 0: /* Toggle fullscreen */
+                playSound(SOUND_BEEP);
                 fullscreen ^= 1;
                 initScreen();
                 break;
             case 1: /* Toggle weapons */
+                playSound(SOUND_BEEP);
                 weapons ^= 1;
                 break;
             case 2: /* Toggle holes */
+                playSound(SOUND_BEEP);
                 holes ^= 1;
                 break;
             case 3: /* Toggle broadcasts */
+                playSound(SOUND_BEEP);
                 broadcasts ^= 1;
                 break;
             case 4: /* Toggle duel mode */
+                playSound(SOUND_BEEP);
                 duelmode ^= 1;
                 if (duelmode) nPlayers = 2;
                 break;
             case 5:
+                playSound(SOUND_BEEP);
                 menuPlayer.choice = 0;
                 curScene = &playerMenu;
                 break;
             case 6: /* Back */
+                playSound(SOUND_PEEB);
                 keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
                 curScene = curScene->parentScene;
@@ -1227,8 +1239,10 @@ void logicPlayerMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         if (menuPlayer.choice == 8) {
+            playSound(SOUND_PEEB);
             curScene = curScene->parentScene;
         } else {
+            playSound(SOUND_BEEP);
             editPlayer = menuPlayer.choice;
             menuPConf.choice = 0;
             curScene = &pConfMenu;
@@ -1269,24 +1283,29 @@ void logicPConfMenu(void)
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuPConf.choice) {
             case 0:
+                playSound(SOUND_BEEP);
                 setColor(editPlayer, 1);
                 break;
             case 1:
+                playSound(SOUND_BEEP);
                 (&players[editPlayer])->lkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'l');
                 break;
             case 2:
+                playSound(SOUND_BEEP);
                 (&players[editPlayer])->rkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'r');
                 break;
             case 3:
+                playSound(SOUND_BEEP);
                 (&players[editPlayer])->wkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'w');
                 break;
             case 4:
+                playSound(SOUND_PEEB);
                 curScene = curScene->parentScene;
                 break;
             default:
@@ -1356,9 +1375,11 @@ void displayPConfMenu(void)
 void handleMenu(struct menu *m)
 {
     if (keyDown[SDLK_DOWN]) {
+        playSound(SOUND_BEEP);
         keyDown[SDLK_DOWN] = 0;
         ++(m->choice);
     } else if (keyDown[SDLK_UP]) {
+        playSound(SOUND_BEEP);
         keyDown[SDLK_UP] = 0;
         --(m->choice);
     }
@@ -1543,9 +1564,15 @@ void colorBalls(void)
 int init(void)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+        fprintf(stderr, "ERROR: Could not initialize SDL.\n");
+        return 0;
+    }
+    if (initSound() == -1) {
+        fprintf(stderr, "ERROR: Could not initialize sound.\n");
         return 0;
     }
     if (TTF_Init() == -1) {
+        fprintf(stderr, "ERROR: Could not initialize fonts.\n");
         return 0;
     }
 
@@ -1569,41 +1596,60 @@ int loadFiles(void)
     SDL_Surface **p;
 
     /* Load images and fonts */
-    if ((arrows = loadImage("data/gfx/arrowsheet.png")) == NULL) return 0;
-    if ((ball = loadImage("data/gfx/ball.png")) == NULL) return 0;
-    if ((wiBg = loadImage("data/gfx/wi_bg.png")) == NULL) return 0;
+    if ((arrows = loadImage("data/gfx/arrowsheet.png")) == NULL) {
+        fileNotFound("data/gfx/arrowsheet.png");
+        return 0;
+    }
+    if ((ball = loadImage("data/gfx/ball.png")) == NULL) {
+        fileNotFound("data/gfx/ball.png");
+        return 0;
+    }
+    if ((wiBg = loadImage("data/gfx/wi_bg.png")) == NULL) {
+        fileNotFound("data/gfx/wi_bg.png");
+        return 0;
+    }
     if ((wiSpeed = loadImage("data/gfx/wi_lightningspeed.png")) == NULL) {
+        fileNotFound("data/gfx/wi_lightningspeed.png");
         return 0;
     }
     if ((wiFrost = loadImage("data/gfx/wi_frostwave.png")) == NULL) {
+        fileNotFound("data/gfx/wi_frostwave.png");
         return 0;
     }
     if ((wiConf = loadImage("data/gfx/wi_confusion.png")) == NULL) {
+        fileNotFound("data/gfx/wi_confusion.png");
         return 0;
     }
     if ((wiTurn = loadImage("data/gfx/wi_sharpturn.png")) == NULL) {
+        fileNotFound("data/gfx/wi_sharpturn.png");
         return 0;
     }
     if ((wiStep = loadImage("data/gfx/wi_timestep.png")) == NULL) {
+        fileNotFound("data/gfx/wi_timestep.png");
         return 0;
     }
     if ((wiMole = loadImage("data/gfx/wi_mole.png")) == NULL) {
+        fileNotFound("data/gfx/wi_mole.png");
         return 0;
     }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
+        fileNotFound("data/fonts/jura/JuraLight.ttf");
         return 0;
     }
     if ((font_menub = TTF_OpenFont("data/fonts/jura/JuraMedium.ttf",
                     MENU_FONT_SIZE)) == NULL) {
+        fileNotFound("data/fonts/jura/JuraMedium.ttf");
         return 0;
     }
     if ((font_broadc = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-r.ttf",
                     BROADC_FONT_SIZE)) == NULL) {
+        fileNotFound("data/fonts/ankacoder/AnkaCoder-r.ttf");
         return 0;
     }
     if ((font_broadcb = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-b.ttf"
                     , BROADC_FONT_SIZE)) == NULL) {
+        fileNotFound("data/fonts/ankacoder/AnkaCoder-b.ttf");
         return 0;
     }
     font_score = font_menub;
@@ -1930,7 +1976,7 @@ int main(int argc, char *argv[])
     }
 
     if (!loadFiles()) {
-        fprintf(stderr, "Failed to load files.\n");
+        fprintf(stderr, "ERROR: Failed to load files.\n");
         return 1;
     }
 
@@ -1958,6 +2004,7 @@ int main(int argc, char *argv[])
                     } else if (curScene->parentScene == NULL) {
                         exitGame(0);
                     }
+                    playSound(SOUND_PEEB);
                     curScene = curScene->parentScene;
                 }
             } else if (event.type == SDL_KEYUP) {

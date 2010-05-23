@@ -9,6 +9,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+#include "sound.h"
+#include "error.h"
 
 #define PI                  3.14159265358
 
