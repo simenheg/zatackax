@@ -180,15 +180,22 @@ static SDL_Surface *arrows = NULL;
 static SDL_Surface *ball = NULL;
 static SDL_Surface *wiBg = NULL;
 static SDL_Surface *wiSpeed = NULL;
+static SDL_Surface *wisSpeed = NULL;
 static SDL_Surface *wiFrost = NULL;
+static SDL_Surface *wisFrost = NULL;
 static SDL_Surface *wiConf = NULL;
+static SDL_Surface *wisConf = NULL;
 static SDL_Surface *wiTurn = NULL;
+static SDL_Surface *wisTurn = NULL;
 static SDL_Surface *wiStep = NULL;
+static SDL_Surface *wisStep = NULL;
 static SDL_Surface *wiMole = NULL;
+static SDL_Surface *wisMole = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
 static struct SDL_Surface *wepIcons[N_WEAPONS + 1];
+static struct SDL_Surface *smallWepIcons[N_WEAPONS + 1];
 
 /* FONTS */
 static TTF_Font *font_menu = NULL;

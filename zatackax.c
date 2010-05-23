@@ -555,6 +555,7 @@ void logicGame(void)
 
                 if (weapons && (p->wepcount == -999 && keyDown[p->wkey])) {
                     p->wepcount = wepFunc[p->weapon](p, 1);
+                    refreshGameScreen();
                 }
                 if (keyDown[p->lkey]) {
                     p->dir -= 0.0022 * delta * p->speed;
@@ -800,6 +801,15 @@ void drawScores(void)
     for (i = 0; i < nPlayers; ++i) {
         SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
         p = &players[i];
+        if (weapons) {
+            offset.y += 4;
+            if (p->wepcount == -999) {
+                SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
+                        &offset);
+            }
+            offset.y -= 4;
+            offset.x += 20;
+        }
         snprintf(score_str, SCORE_BUF, "%d", p->score);
         scoreText = TTF_RenderUTF8_Shaded(font_score, score_str,
                 colors[p->color], cMenuBG);
@@ -938,8 +948,8 @@ int wepConfusion(struct player *p, bool on)
  */
 int wepTimestep(struct player *p, bool on)
 {
-    p->posx += 100 * cos(p->dir);
-    p->posy += 100 * sin(p->dir);
+    p->posx += 90 * cos(p->dir);
+    p->posy += 90 * sin(p->dir);
     return 0;
 }
 
@@ -1619,24 +1629,48 @@ int loadFiles(void)
         fileNotFound("data/gfx/wi_lightningspeed.png");
         return 0;
     }
+    if ((wisSpeed = loadImage("data/gfx/wis_lightningspeed.png")) == NULL) {
+        fileNotFound("data/gfx/wis_lightningspeed.png");
+        return 0;
+    }
     if ((wiFrost = loadImage("data/gfx/wi_frostwave.png")) == NULL) {
         fileNotFound("data/gfx/wi_frostwave.png");
+        return 0;
+    }
+    if ((wisFrost = loadImage("data/gfx/wis_frostwave.png")) == NULL) {
+        fileNotFound("data/gfx/wis_frostwave.png");
         return 0;
     }
     if ((wiConf = loadImage("data/gfx/wi_confusion.png")) == NULL) {
         fileNotFound("data/gfx/wi_confusion.png");
         return 0;
     }
+    if ((wisConf = loadImage("data/gfx/wis_confusion.png")) == NULL) {
+        fileNotFound("data/gfx/wis_confusion.png");
+        return 0;
+    }
     if ((wiTurn = loadImage("data/gfx/wi_sharpturn.png")) == NULL) {
         fileNotFound("data/gfx/wi_sharpturn.png");
+        return 0;
+    }
+    if ((wisTurn = loadImage("data/gfx/wis_sharpturn.png")) == NULL) {
+        fileNotFound("data/gfx/wis_sharpturn.png");
         return 0;
     }
     if ((wiStep = loadImage("data/gfx/wi_timestep.png")) == NULL) {
         fileNotFound("data/gfx/wi_timestep.png");
         return 0;
     }
+    if ((wisStep = loadImage("data/gfx/wis_timestep.png")) == NULL) {
+        fileNotFound("data/gfx/wis_timestep.png");
+        return 0;
+    }
     if ((wiMole = loadImage("data/gfx/wi_mole.png")) == NULL) {
         fileNotFound("data/gfx/wi_mole.png");
+        return 0;
+    }
+    if ((wisMole = loadImage("data/gfx/wis_mole.png")) == NULL) {
+        fileNotFound("data/gfx/wis_mole.png");
         return 0;
     }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
@@ -1705,12 +1739,12 @@ int loadFiles(void)
 
     /* Initialize weapon pointer array */
     wepIcons[0] = wiBg;
-    wepIcons[1] = wiSpeed;
-    wepIcons[2] = wiFrost;
-    wepIcons[3] = wiConf;
-    wepIcons[4] = wiTurn;
-    wepIcons[5] = wiStep;
-    wepIcons[6] = wiMole;
+    wepIcons[1] = wiSpeed; smallWepIcons[0] = wisSpeed;
+    wepIcons[2] = wiFrost; smallWepIcons[1] = wisFrost;
+    wepIcons[3] = wiConf; smallWepIcons[2] = wisConf;
+    wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
+    wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
+    wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
 
     return 1;
 }
