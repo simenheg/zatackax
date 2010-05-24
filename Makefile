@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -g3 -std=c99 -pedantic -Wall
 LFLAGS = -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
 CDEBUG = -DDEBUG
-SOURCES = *.c
-HEADERS = *.h
+SOURCES = src/*.c
+HEADERS = src/*.h
 
 zatackax : $(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) $(LFLAGS) $(SOURCES) -o $@
