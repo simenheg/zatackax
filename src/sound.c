@@ -2,7 +2,8 @@
 
 static Mix_Chunk *beep = NULL;
 static Mix_Chunk *peeb = NULL;
-static Mix_Chunk *sounds[2];
+static Mix_Chunk *seSpeed = NULL;
+static Mix_Chunk *sounds[3];
 
 /**
  * Initializes the mixer and loads sound files.
@@ -28,6 +29,12 @@ int initSound(void)
         return -1;
     }
     sounds[1] = peeb;
+
+    if ((seSpeed = Mix_LoadWAV("data/sound/lightningspeed.wav")) == NULL) {
+        fileNotFound("data/sound/lightningspeed.wav");
+        return -1;
+    }
+    sounds[2] = seSpeed;
 
     return 0;
 }

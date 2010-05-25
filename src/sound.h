@@ -6,7 +6,8 @@
 
 enum sounds {
     SOUND_BEEP,
-    SOUND_PEEB
+    SOUND_PEEB,
+    SOUND_SPEED
 };
 
 int initSound(void);

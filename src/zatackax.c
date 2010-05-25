@@ -874,6 +874,7 @@ void newRound(void)
 int wepSpeedup(struct player *p, bool on)
 {
     if (on) {
+        playSound(SOUND_SPEED, sound);
         p->speed = 2.0;
     } else {
         p->speed = 1.0;
