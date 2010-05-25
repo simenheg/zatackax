@@ -3,7 +3,8 @@
 static Mix_Chunk *beep = NULL;
 static Mix_Chunk *peeb = NULL;
 static Mix_Chunk *seSpeed = NULL;
-static Mix_Chunk *sounds[3];
+static Mix_Chunk *seStep = NULL;
+static Mix_Chunk *sounds[N_SOUNDS];
 
 /**
  * Initializes the mixer and loads sound files.
@@ -35,6 +36,12 @@ int initSound(void)
         return -1;
     }
     sounds[2] = seSpeed;
+
+    if ((seStep = Mix_LoadWAV("data/sound/timestep.wav")) == NULL) {
+        fileNotFound("data/sound/timestep.wav");
+        return -1;
+    }
+    sounds[3] = seStep;
 
     return 0;
 }
