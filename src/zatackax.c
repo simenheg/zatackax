@@ -1833,7 +1833,7 @@ int loadFiles(void)
     wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
     wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
     wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
-	wepIcons[7] = wiSwitch;
+	wepIcons[7] = wiSwitch; smallWepIcons[6] = wisMole;
 
     return 1;
 }
