@@ -949,7 +949,7 @@ int wepSwitch(struct player *p, bool on)
 	
 	i = ++randomizer * rand();
 	i %= nPlayers;
-	while (!valid) {		
+	while (!valid) {
 		if (i != p->active-1)
 			valid = 1;
 		else
@@ -1017,7 +1017,7 @@ int wepConfusion(struct player *p, bool on)
             }
         }
     }
-    return 2000;
+    return 1800;
 }
 
 /**
@@ -1756,6 +1756,10 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_mole.png");
         return 0;
     }
+    if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
+        fileNotFound("data/gfx/wi_switch.png");
+        return 0;
+    }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         fileNotFound("data/fonts/jura/JuraLight.ttf");
@@ -1788,6 +1792,7 @@ int loadFiles(void)
     confirmLoading("wi_confusion.png", wiTurn);
     confirmLoading("wi_timestep.png", wiStep);
     confirmLoading("wi_mole.png", wiMole);
+    confirmLoading("wi_switch.png", wiSwitch);
 #endif
 
     /* Clip arrow sprite sheet */
@@ -1828,7 +1833,7 @@ int loadFiles(void)
     wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
     wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
     wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
-	wepIcons[7] = wiBg;
+	wepIcons[7] = wiSwitch;
 
     return 1;
 }

@@ -191,6 +191,7 @@ static SDL_Surface *wiStep = NULL;
 static SDL_Surface *wisStep = NULL;
 static SDL_Surface *wiMole = NULL;
 static SDL_Surface *wisMole = NULL;
+static SDL_Surface *wiSwitch = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
