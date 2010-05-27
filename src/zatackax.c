@@ -939,60 +939,58 @@ int wepSharpturn(struct player *p, bool on)
  */
 int wepSwitch(struct player *p, bool on)
 {
-	int i, r;
+    int i, r;
     bool valid = 0;
-	Uint32 timeseed = SDL_GetTicks();
+    Uint32 timeseed = SDL_GetTicks();
     srand(timeseed);
-	
-	if (nPlayers == 2)
-		return 0;
-	
-	i = ++randomizer * rand();
-	i %= nPlayers;
-	while (!valid) {
-		if (i != p->active-1)
-			valid = 1;
-		else
-			i++;
-			
-		i %= nPlayers;
-	}
-	valid = 0;
-	r = ++randomizer * rand();
-	r %= nPlayers;
-	
-	while (!valid) {	
-		if ( (r != p->active-1) && (r != i) )
-			valid = 1;
-		else
-			r++;
-			
-		r %= nPlayers;
-	}
-		
-	struct player *target1 = &players[i];
-	struct player *target2 = &players[r];	
-	double posx = target2->posx;
-	double posy = target2->posy;
-	double dir = target2->dir;
-				
-	posx += 5 * cos(target2->dir);
-	posy += 5 * sin(target2->dir);
-						
-	target1->posx += 5 * cos(target1->dir);
-	target1->posy += 5 * sin(target1->dir);
-				
-	target2->posx = target1->posx;
-	target2->posy = target1->posy;
-	target2->dir = target1->dir;
-				
-	target1->posx = posx;
-	target1->posy = posy;
-	target1->dir = dir;
-	
+
+    if (alivecount == 2)
+        return 0;
+
+    i = ++randomizer * rand();
+    i %= alivecount;
+    while (!valid) {
+        if (i != p->active - 1)
+            valid = 1;
+        else
+            ++i;
+        i %= alivecount;
+    }
+
+    valid = 0;
+    r = ++randomizer * rand();
+    r %= alivecount;
+    while (!valid) {
+        if ((r != p->active - 1) && (r != i))
+            valid = 1;
+        else
+            ++r;
+        r %= alivecount;
+    }
+
+    struct player *target1 = &players[i];
+    struct player *target2 = &players[r];
+    double posx = target2->posx;
+    double posy = target2->posy;
+    double dir = target2->dir;
+
+    posx += 4.9 * cos(target2->dir);
+    posy += 4.9 * sin(target2->dir);
+
+    target1->posx += 4.9 * cos(target1->dir);
+    target1->posy += 4.9 * sin(target1->dir);
+
+    target2->posx = target1->posx;
+    target2->posy = target1->posy;
+    target2->dir = target1->dir;
+
+    target1->posx = posx;
+    target1->posy = posy;
+    target1->dir = dir;
+
     return 0;
 }
- 
+
 /**
  * Weapon: confusion
  *
@@ -1833,7 +1831,7 @@ int loadFiles(void)
     wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
     wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
     wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
-	wepIcons[7] = wiSwitch; smallWepIcons[6] = wisMole;
+    wepIcons[7] = wiSwitch; smallWepIcons[6] = wisMole;
 
     return 1;
 }
