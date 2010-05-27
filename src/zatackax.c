@@ -974,11 +974,11 @@ int wepSwitch(struct player *p, bool on)
     double posy = target2->posy;
     double dir = target2->dir;
 
-    posx += 4.9 * cos(target2->dir);
-    posy += 4.9 * sin(target2->dir);
+    posx += MIN_TELEPORT_SPACE * cos(target2->dir);
+    posy += MIN_TELEPORT_SPACE * sin(target2->dir);
 
-    target1->posx += 4.9 * cos(target1->dir);
-    target1->posy += 4.9 * sin(target1->dir);
+    target1->posx += MIN_TELEPORT_SPACE * cos(target1->dir);
+    target1->posy += MIN_TELEPORT_SPACE * sin(target1->dir);
 
     target2->posx = target1->posx;
     target2->posy = target1->posy;
@@ -1046,9 +1046,8 @@ int wepMole(struct player *p, bool on)
     p->posy = p->initposy;
     p->dir = p->initdir + PI;
 
-    /* (if 4.9 results in random suicides, tune this up slightly) */
-    p->posx += 4.9 * cos(p->dir);
-    p->posy += 4.9 * sin(p->dir);
+    p->posx += MIN_TELEPORT_SPACE * cos(p->dir);
+    p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
 
     return 0;
 }
@@ -1758,6 +1757,10 @@ int loadFiles(void)
         fileNotFound("data/gfx/wi_switch.png");
         return 0;
     }
+    if ((wisSwitch = loadImage("data/gfx/wis_switch.png")) == NULL) {
+        fileNotFound("data/gfx/wis_switch.png");
+        return 0;
+    }
     if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
                     MENU_FONT_SIZE)) == NULL) {
         fileNotFound("data/fonts/jura/JuraLight.ttf");
@@ -1831,7 +1834,7 @@ int loadFiles(void)
     wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
     wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
     wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
-    wepIcons[7] = wiSwitch; smallWepIcons[6] = wisMole;
+    wepIcons[7] = wiSwitch; smallWepIcons[6] = wisSwitch;
 
     return 1;
 }

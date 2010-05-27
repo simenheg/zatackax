@@ -83,6 +83,8 @@
 #define WEP_SPACEMOD            50
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
+#define MIN_TELEPORT_SPACE      4.9 /* If 4.9 results in random suicides,
+                                       tune this up slightly */
 
 typedef unsigned char bool;
 
@@ -192,6 +194,7 @@ static SDL_Surface *wisStep = NULL;
 static SDL_Surface *wiMole = NULL;
 static SDL_Surface *wisMole = NULL;
 static SDL_Surface *wiSwitch = NULL;
+static SDL_Surface *wisSwitch = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
