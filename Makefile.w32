@@ -1,0 +1,19 @@
+CC = gcc
+CFLAGS = -g3 -std=c99 -pedantic -Wall -Wextra
+LFLAGS = -lmingw32 -lsdlmain -lsdl -lsdl_image -lsdl_ttf -lsdl_mixer
+CDEBUG = -DDEBUG
+
+objects = src/zatackax.o src/sound.o src/error.o
+
+zatackax : $(objects)
+	$(CC) $(CFLAGS) $^ -o $@ $(LFLAGS)
+
+debug : CFLAGS += $(CDEBUG)
+debug : zatackax
+
+src/zatackax.o : src/zatackax.h src/sound.o src/error.o
+src/error.o	: src/error.h
+src/sound.o : src/sound.h 
+
+clean :
+	rm -f zatackax $(objects)
