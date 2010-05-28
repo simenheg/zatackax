@@ -882,6 +882,12 @@ void newRound(void)
     printf(")\n");
 }
 
+int legalWeps(void)
+{
+    if (nPlayers == 2) return N_WEAPONS - N_ILLEGAL_2P_WEPS;
+    return N_WEAPONS;
+}
+
 /**
  * Weapon: lightning speed
  *
@@ -928,66 +934,6 @@ int wepSharpturn(struct player *p, bool on)
 {
     if (keyDown[p->rkey]) p->dir += PI / 2;
     else p->dir -= PI / 2;
-    return 0;
-}
-
-/**
- * Weapon: Switch-aroo
- * 
- * @param p Weapon user.
- * @param on 1 to use weapon, 0 to disable weapon.
- */
-int wepSwitch(struct player *p, bool on)
-{
-    int i, r;
-    bool valid = 0;
-    Uint32 timeseed = SDL_GetTicks();
-    srand(timeseed);
-
-    if (alivecount == 2)
-        return 0;
-
-    i = ++randomizer * rand();
-    i %= alivecount;
-    while (!valid) {
-        if (i != p->active - 1)
-            valid = 1;
-        else
-            ++i;
-        i %= alivecount;
-    }
-
-    valid = 0;
-    r = ++randomizer * rand();
-    r %= alivecount;
-    while (!valid) {
-        if ((r != p->active - 1) && (r != i))
-            valid = 1;
-        else
-            ++r;
-        r %= alivecount;
-    }
-
-    struct player *target1 = &players[i];
-    struct player *target2 = &players[r];
-    double posx = target2->posx;
-    double posy = target2->posy;
-    double dir = target2->dir;
-
-    posx += MIN_TELEPORT_SPACE * cos(target2->dir);
-    posy += MIN_TELEPORT_SPACE * sin(target2->dir);
-
-    target1->posx += MIN_TELEPORT_SPACE * cos(target1->dir);
-    target1->posy += MIN_TELEPORT_SPACE * sin(target1->dir);
-
-    target2->posx = target1->posx;
-    target2->posy = target1->posy;
-    target2->dir = target1->dir;
-
-    target1->posx = posx;
-    target1->posy = posy;
-    target1->dir = dir;
-
     return 0;
 }
 
@@ -1048,6 +994,66 @@ int wepMole(struct player *p, bool on)
 
     p->posx += MIN_TELEPORT_SPACE * cos(p->dir);
     p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
+
+    return 0;
+}
+
+/**
+ * Weapon: switch-aroo
+ * 
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepSwitch(struct player *p, bool on)
+{
+    int i, r;
+    bool valid = 0;
+    Uint32 timeseed = SDL_GetTicks();
+    srand(timeseed);
+
+    if (alivecount == 2)
+        return 0;
+
+    i = ++randomizer * rand();
+    i %= alivecount;
+    while (!valid) {
+        if (i != p->active - 1)
+            valid = 1;
+        else
+            ++i;
+        i %= alivecount;
+    }
+
+    valid = 0;
+    r = ++randomizer * rand();
+    r %= alivecount;
+    while (!valid) {
+        if ((r != p->active - 1) && (r != i))
+            valid = 1;
+        else
+            ++r;
+        r %= alivecount;
+    }
+
+    struct player *target1 = &players[i];
+    struct player *target2 = &players[r];
+    double posx = target2->posx;
+    double posy = target2->posy;
+    double dir = target2->dir;
+
+    posx += MIN_TELEPORT_SPACE * cos(target2->dir);
+    posy += MIN_TELEPORT_SPACE * sin(target2->dir);
+
+    target1->posx += MIN_TELEPORT_SPACE * cos(target1->dir);
+    target1->posy += MIN_TELEPORT_SPACE * sin(target1->dir);
+
+    target2->posx = target1->posx;
+    target2->posy = target1->posy;
+    target2->dir = target1->dir;
+
+    target1->posx = posx;
+    target1->posy = posy;
+    target1->dir = dir;
 
     return 0;
 }
@@ -1177,11 +1183,11 @@ void logicWepMenu(void) {
 
     for (p = &players[0], i = 0; i < nPlayers; ++i, ++p) {
         if (keyDown[p->lkey]) {
-            if (p->weapon == 0) p->weapon = N_WEAPONS - 1;
+            if (p->weapon == 0) p->weapon = legalWeps() - 1;
             else p->weapon--;
             keyDown[p->lkey] = 0;
         } else if (keyDown[p->rkey]) {
-            if (p->weapon == N_WEAPONS - 1) p->weapon = 0;
+            if (p->weapon == legalWeps() - 1) p->weapon = 0;
             else p->weapon++;
             keyDown[p->rkey] = 0;
         }
@@ -1195,16 +1201,17 @@ void displayWepMenu(void) {
 
     int i, j;
     struct player *p;
-    int mid = -(N_WEAPONS / 2);
+    int nweps = legalWeps();
+    int mid = -(nweps / 2);
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                 0x00, 0x00, 0x00));
 
-    for (i = 0; i < N_WEAPONS; ++i, ++mid) {
+    for (i = 0; i < nweps; ++i, ++mid) {
         SDL_Rect offset = {
             (WINDOW_W / 2)              /* offset */
                 - (wepIcons[0]->w / 2)  /* centralize */
                 + (mid * ((wepIcons[0]->w / 2) + WEP_SPACEMOD))
-                - ((N_WEAPONS % 2) - 1)
+                - ((nweps % 2) - 1)
                 * (WEP_SPACEMOD / 1.2)
                 ,
             (WINDOW_H / 2)              /* offset */

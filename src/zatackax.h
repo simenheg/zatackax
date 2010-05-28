@@ -80,6 +80,7 @@
 
 /* WEAPONS */
 #define N_WEAPONS               7
+#define N_ILLEGAL_2P_WEPS       1
 #define WEP_SPACEMOD            50
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
@@ -236,13 +237,14 @@ void drawScores(void);
 void newRound(void);
 
 /* WEAPONS */
+int legalWeps(void);
 int wepSpeedup(struct player *p, bool on);
 int wepFrostwave(struct player *p, bool on);
 int wepSharpturn(struct player *p, bool on);
 int wepConfusion(struct player *p, bool on);
 int wepTimestep(struct player *p, bool on);
-int wepSwitch(struct player *p, bool on);
 int wepMole(struct player *p, bool on);
+int wepSwitch(struct player *p, bool on);
 void resetWeapons(void);
 int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
     wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole, wepSwitch};
