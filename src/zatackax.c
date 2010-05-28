@@ -882,6 +882,12 @@ void newRound(void)
     printf(")\n");
 }
 
+/**
+ * Returns the number of legal weapons for the current number of players.
+ * This is used to filter out weapons that are unusable in 2-player mode.
+ *
+ * @return Number of legal weapons for the current number of players.
+ */
 int legalWeps(void)
 {
     if (nPlayers == 2) return N_WEAPONS - N_ILLEGAL_2P_WEPS;
@@ -994,6 +1000,29 @@ int wepMole(struct player *p, bool on)
 
     p->posx += MIN_TELEPORT_SPACE * cos(p->dir);
     p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
+
+    return 0;
+}
+
+/**
+ * Weapon: warp
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepWarp(struct player *p, bool on)
+{
+    double rnd;
+    Uint32 timeseed = SDL_GetTicks();
+
+    srand(timeseed * randomizer++);
+    rnd = (double)rand() / RAND_MAX;
+    p->posx = SPAWN_SPACE_MIN
+        + (rnd * (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
+    srand(timeseed * randomizer++);
+    rnd = (double)rand() / RAND_MAX;
+    p->posy = SPAWN_SPACE_MIN
+        + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
 
     return 0;
 }
@@ -1760,6 +1789,14 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_mole.png");
         return 0;
     }
+    if ((wiWarp = loadImage("data/gfx/wi_warp.png")) == NULL) {
+        fileNotFound("data/gfx/wi_warp.png");
+        return 0;
+    }
+    if ((wisWarp = loadImage("data/gfx/wis_warp.png")) == NULL) {
+        fileNotFound("data/gfx/wis_warp.png");
+        return 0;
+    }
     if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
         fileNotFound("data/gfx/wi_switch.png");
         return 0;
@@ -1800,6 +1837,7 @@ int loadFiles(void)
     confirmLoading("wi_confusion.png", wiTurn);
     confirmLoading("wi_timestep.png", wiStep);
     confirmLoading("wi_mole.png", wiMole);
+    confirmLoading("wi_warp.png", wiWarp);
     confirmLoading("wi_switch.png", wiSwitch);
 #endif
 
@@ -1841,7 +1879,8 @@ int loadFiles(void)
     wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
     wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
     wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
-    wepIcons[7] = wiSwitch; smallWepIcons[6] = wisSwitch;
+    wepIcons[7] = wiWarp; smallWepIcons[6] = wisWarp;
+    wepIcons[8] = wiSwitch; smallWepIcons[7] = wisSwitch;
 
     return 1;
 }

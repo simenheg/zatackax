@@ -79,7 +79,7 @@
 #define DEFAULT_DUELMODE        0
 
 /* WEAPONS */
-#define N_WEAPONS               7
+#define N_WEAPONS               8
 #define N_ILLEGAL_2P_WEPS       1
 #define WEP_SPACEMOD            50
 #define PARROWSELECT_MOD_Y      20
@@ -194,6 +194,8 @@ static SDL_Surface *wiStep = NULL;
 static SDL_Surface *wisStep = NULL;
 static SDL_Surface *wiMole = NULL;
 static SDL_Surface *wisMole = NULL;
+static SDL_Surface *wiWarp = NULL;
+static SDL_Surface *wisWarp = NULL;
 static SDL_Surface *wiSwitch = NULL;
 static SDL_Surface *wisSwitch = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
@@ -244,10 +246,12 @@ int wepSharpturn(struct player *p, bool on);
 int wepConfusion(struct player *p, bool on);
 int wepTimestep(struct player *p, bool on);
 int wepMole(struct player *p, bool on);
+int wepWarp(struct player *p, bool on);
 int wepSwitch(struct player *p, bool on);
 void resetWeapons(void);
 int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
-    wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole, wepSwitch};
+    wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole,
+    wepWarp, wepSwitch};
 
 /* MENUS */
 void initMainMenu(void);
