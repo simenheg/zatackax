@@ -1,9 +1,15 @@
-Code
---------------
-Project leader  Simen Heggestøyl        <simenheg@gmail.com>
-Contributor     Patrick Bauge Skevik    <patrisk@student.matnat.uio.no>
+Simen Heggestøyl - <simenheg@gmail.com>
+    * project maintainer
+    * main code
+    * graphics
+    * sounds
 
-Fonts
---------------
-Anka/Coder      Andrey Makarov          (makarov at openfontlibrary.org)
-Jura            Daniel Johnson          (Daniel_J at openfontlibrary.org)
+Patrick Bauge Skevik - <patrisk@student.matnat.uio.no>
+    * windows maintainer
+    * code patches
+
+Andrey Makarov - (makarov at openfontlibrary.org)
+    * Anka/Coder font
+
+Daniel Johnson - (Daniel_J at openfontlibrary.org)
+    * Jura font
