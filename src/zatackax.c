@@ -33,7 +33,7 @@ struct menu menuPlayer = {
 };
 
 struct menu menuPConf = {
-    5,
+    6,
     0,
 };
 
@@ -95,6 +95,7 @@ void initPlayers1(void)
         p->speed = 1.0;
         p->invertedKeys = 0;
         p->weapon = 0;
+        p->ai = 0;
         switch (i) {
             case 0:
                 p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
@@ -320,7 +321,8 @@ void setColor(unsigned char pedit, bool up)
  * @param pedit ID of the player to edit.
  * @param key l - left key, r - right key, w - weapon key
  */
-void setNextKey(unsigned char pedit, unsigned char key) {
+void setNextKey(unsigned char pedit, unsigned char key)
+{
     for (;;) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
@@ -574,10 +576,21 @@ void logicGame(void)
                     p->wepcount = wepFunc[p->weapon](p, 1);
                     refreshGameScreen();
                 }
-                if (keyDown[p->lkey]) {
-                    p->dir -= 0.0022 * delta * p->speed;
-                } else if (keyDown[p->rkey]) {
-                    p->dir += 0.0022 * delta * p->speed;
+
+                if (p->ai) {
+                    char c = pollAi(p->posx, p->posy, p->dir, p->active,
+                            hitmap);
+                    if (c == 'l') {
+                        p->dir -= 0.0022 * delta * p->speed;
+                    } else if (c == 'r') {
+                        p->dir += 0.0022 * delta * p->speed;
+                    }
+                } else {
+                    if (keyDown[p->lkey]) {
+                        p->dir -= 0.0022 * delta * p->speed;
+                    } else if (keyDown[p->rkey]) {
+                        p->dir += 0.0022 * delta * p->speed;
+                    }
                 }
 
                 p->posx += ZATA_SPEED * cos(p->dir) * delta * p->speed;
@@ -1200,7 +1213,8 @@ void displayMainMenu(void)
 /**
  * Logic of the weapon selection menu.
  */
-void logicWepMenu(void) {
+void logicWepMenu(void)
+{
 
     int i;
     struct player *p;
@@ -1226,8 +1240,8 @@ void logicWepMenu(void) {
 /**
  * Displays the weapon selection menu.
  */
-void displayWepMenu(void) {
-
+void displayWepMenu(void)
+{
     int i, j;
     struct player *p;
     int nweps = legalWeps();
@@ -1419,17 +1433,15 @@ void logicPConfMenu(void)
                 playSound(SOUND_BEEP, sound);
                 setColor(editPlayer, 1);
                 break;
-            case 1:
+            case 1: /* Toggle AI */
+                playSound(SOUND_BEEP, sound);
+                (&players[editPlayer])->ai ^= 1;
+                break;
+            case 2:
                 playSound(SOUND_BEEP, sound);
                 (&players[editPlayer])->lkey = SDLK_CLEAR;
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'l');
-                break;
-            case 2:
-                playSound(SOUND_BEEP, sound);
-                (&players[editPlayer])->rkey = SDLK_CLEAR;
-                displayPConfMenu(); /* Update menu before catching key */
-                setNextKey(editPlayer, 'r');
                 break;
             case 3:
                 playSound(SOUND_BEEP, sound);
@@ -1438,6 +1450,12 @@ void logicPConfMenu(void)
                 setNextKey(editPlayer, 'w');
                 break;
             case 4:
+                playSound(SOUND_BEEP, sound);
+                (&players[editPlayer])->rkey = SDLK_CLEAR;
+                displayPConfMenu(); /* Update menu before catching key */
+                setNextKey(editPlayer, 'r');
+                break;
+            case 5:
                 playSound(SOUND_PEEB, sound);
                 curScene = curScene->parentScene;
                 break;
@@ -1466,32 +1484,41 @@ void displayPConfMenu(void)
 {
     char *c[menuPConf.choices];
 
-    char s1[MENU_BUF] = "LEFT KEY: ";
-    char s2[MENU_BUF] = "RIGHT KEY: ";
-    char s3[MENU_BUF] = "WEAPON KEY: ";
-    char s4[MENU_BUF] = "~ PLAYER ";
+    char s1[MENU_BUF] = "~ PLAYER ";
+    char s2[MENU_BUF] = "AI ";
+    char s3[MENU_BUF] = "LEFT KEY: ";
+    char s4[MENU_BUF] = "WEAPON KEY: ";
+    char s5[MENU_BUF] = "RIGHT KEY: ";
 
     char tmpKey[MAX_KEYNAME];
-    char *lkey = keyName((&players[editPlayer])->lkey);
-    char *rkey = keyName((&players[editPlayer])->rkey);
-    char *wkey = keyName((&players[editPlayer])->wkey);
+    struct player *p = (&players[editPlayer]);
+    char *lkey = keyName(p->lkey);
+    char *rkey = keyName(p->rkey);
+    char *wkey = keyName(p->wkey);
+
+    snprintf(tmpKey, 4 * sizeof(char), "%d ~", editPlayer + 1);
+    strncat(s1, tmpKey, 3);
+
+    strncat(s2, p->ai ON_OFF, MENU_BUF - strlen(s2));
+
     snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", lkey);
     free(lkey);
-    strncat(s1, tmpKey, MAX_KEYNAME - 1);
-    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", rkey);
-    free(rkey);
-    strncat(s2, tmpKey, MAX_KEYNAME - 1);
+    strncat(s3, tmpKey, MAX_KEYNAME - 1);
+
     snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", wkey);
     free(wkey);
-    strncat(s3, tmpKey, MAX_KEYNAME - 1);
-    snprintf(tmpKey, 4 * sizeof(char), "%d ~", editPlayer + 1);
-    strncat(s4, tmpKey, 3);
+    strncat(s4, tmpKey, MAX_KEYNAME - 1);
 
-    c[0] = s4;
-    c[1] = s1;
-    c[2] = s2;
-    c[3] = s3;
-    c[4] = "BACK";
+    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", rkey);
+    free(rkey);
+    strncat(s5, tmpKey, MAX_KEYNAME - 1);
+
+    c[0] = s1;
+    c[1] = s2;
+    c[2] = s3;
+    c[3] = s4;
+    c[4] = s5;
+    c[5] = "BACK";
 
     displayMenu(c, &menuPConf);
 
@@ -1919,9 +1946,10 @@ void saveSettings(char *filename)
         }
         for (i = 0; i < MAX_PLAYERS; ++i) {
             fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
+            fprintf(savefile, "%da = %d\n", i + 1, (&players[i])->ai);
             fprintf(savefile, "%dl = %d\n", i + 1, (&players[i])->lkey);
-            fprintf(savefile, "%dr = %d\n", i + 1, (&players[i])->rkey);
             fprintf(savefile, "%dw = %d\n", i + 1, (&players[i])->wkey);
+            fprintf(savefile, "%dr = %d\n", i + 1, (&players[i])->rkey);
         }
     }
 
@@ -1975,19 +2003,24 @@ void restoreSettings(char *filename)
                                     color = settingParam;
                                 valid = 1;
                                 break;
+                            case 'a': /* AI */
+                                (&players[settingHandle[0] - '0' - 1])->
+                                    ai = settingParam;
+                                valid = 1;
+                                break;
                             case 'l': /* Left key */
                                 (&players[settingHandle[0] - '0' - 1])->
                                     lkey = settingParam;
                                 valid = 1;
                                 break;
-                            case 'r': /* Right key */
-                                (&players[settingHandle[0] - '0' - 1])->
-                                    rkey = settingParam;
-                                valid = 1;
-                                break;
                             case 'w': /* Weapon key */
                                 (&players[settingHandle[0] - '0' - 1])->
                                     wkey = settingParam;
+                                valid = 1;
+                                break;
+                            case 'r': /* Right key */
+                                (&players[settingHandle[0] - '0' - 1])->
+                                    rkey = settingParam;
                                 valid = 1;
                                 break;
                             default:

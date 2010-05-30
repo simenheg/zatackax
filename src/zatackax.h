@@ -11,6 +11,7 @@
 #include <SDL/SDL_ttf.h>
 #include "sound.h"
 #include "error.h"
+#include "ai.h"
 
 #define PI                  3.14159265358
 
@@ -95,6 +96,7 @@ struct player {
     int wepcount;           /* Remaining weapon time, -999 if unused */
     bool alive;
     bool invertedKeys;
+    bool ai;                /* Player is AI-controlled */
     SDL_Surface *arrow;
     double posx, initposx;
     double posy, initposy;
