@@ -572,14 +572,60 @@ void logicGame(void)
 
                 unsigned int curx, cury;
 
-                if (weapons && (p->wepcount == -999 && keyDown[p->wkey])) {
-                    p->wepcount = wepFunc[p->weapon](p, 1);
-                    refreshGameScreen();
+                if (weapons && p->wepcount == -999) {
+                    if (p->ai) {
+                        Uint32 timeseed = SDL_GetTicks();
+                        srand(timeseed);
+                        if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
+                            p->wepcount = wepFunc[p->weapon](p, 1);
+                            refreshGameScreen();
+                        }
+                    } else if (keyDown[p->wkey]) {
+                        p->wepcount = wepFunc[p->weapon](p, 1);
+                        refreshGameScreen();
+                    }
                 }
 
                 if (p->ai) {
+
+                    /* quick and dirty ai-debugging. This should never
+                     * be turned on */
+                    /*
+                       refreshGameScreen();
+                       int checkx = p->posx + 40 * cos(p->dir + PI/2);
+                       int checky = p->posy + 40 * sin(p->dir + PI/2);
+                       SDL_Rect a = {checkx, checky, 4, 4};
+                       SDL_FillRect(screen, &a, SDL_MapRGB(screen->format,
+                       0x55, 0x77, 0x99)); 
+                       checkx = p->posx + 40 * cos(p->dir - PI/2);
+                       checky = p->posy + 40 * sin(p->dir - PI/2);
+                       SDL_Rect b = {checkx, checky, 4, 4};
+                       SDL_FillRect(screen, &b, SDL_MapRGB(screen->format,
+                       0x55, 0x77, 0x99)); 
+                       checkx = p->posx + 70 * cos(p->dir);
+                       checky = p->posy + 70 * sin(p->dir);
+                       SDL_Rect d = {checkx, checky, 4, 4};
+                       SDL_FillRect(screen, &d, SDL_MapRGB(screen->format,
+                       0x55, 0x77, 0x99)); 
+                       checkx = p->posx + 80 * cos(p->dir);
+                       checky = p->posy + 80 * sin(p->dir);
+                       SDL_Rect e = {checkx, checky, 4, 4};
+                       SDL_FillRect(screen, &e, SDL_MapRGB(screen->format,
+                       0xFF, 0x30, 0x30)); 
+                       checkx = p->posx + 60 * cos(p->dir + PI/4);
+                       checky = p->posy + 60 * sin(p->dir + PI/4);
+                       SDL_Rect f = {checkx, checky, 4, 4};
+                       SDL_FillRect(screen, &f, SDL_MapRGB(screen->format,
+                       0x66, 0x66, 0x66)); 
+                       checkx = p->posx + 60 * cos(p->dir - PI/4);
+                       checky = p->posy + 60 * sin(p->dir - PI/4);
+                       SDL_Rect g = {checkx, checky, 4, 4};
+                       SDL_FillRect(screen, &g, SDL_MapRGB(screen->format,
+                       0x66, 0x66, 0x66));
+                       */
+
                     char c = pollAi(p->posx, p->posy, p->dir, p->active,
-                            hitmap);
+                            hitmap, WINDOW_W, WINDOW_H);
                     if (c == 'l') {
                         p->dir -= 0.0022 * delta * p->speed;
                     } else if (c == 'r') {

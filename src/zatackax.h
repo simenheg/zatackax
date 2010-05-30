@@ -12,8 +12,7 @@
 #include "sound.h"
 #include "error.h"
 #include "ai.h"
-
-#define PI                  3.14159265358
+#include "common.h"
 
 /* MISC */
 #define STRBUF              32
@@ -87,8 +86,6 @@
 #define PARROWSELECT_MOD_X      14
 #define MIN_TELEPORT_SPACE      4.9 /* If 4.9 results in random suicides,
                                        tune this up slightly */
-
-typedef unsigned char bool;
 
 struct player {
     unsigned char active;   /* 0 if activated, ID else */
