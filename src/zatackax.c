@@ -162,6 +162,17 @@ void initPlayers2(void)
 }
 
 /**
+ * Sets all selected weapons back to first.
+ */
+void deselectWeapons(void)
+{
+    int i;
+    for (i = 0; i < nPlayers; ++i) {
+        (&players[i])->weapon = 0;
+    }
+}
+
+/**
  * Kills target player.
  *
  * @param killed ID of the player that was killed.
@@ -1202,7 +1213,10 @@ void logicMainMenu(void)
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
-        if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) --nPlayers;
+        if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) {
+            --nPlayers;
+            deselectWeapons();
+        }
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
         if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS)
