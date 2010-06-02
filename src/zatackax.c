@@ -613,8 +613,8 @@ void logicGame(void)
                        SDL_Rect b = {checkx, checky, 4, 4};
                        SDL_FillRect(screen, &b, SDL_MapRGB(screen->format,
                        0x55, 0x77, 0x99)); 
-                       checkx = p->posx + 70 * cos(p->dir);
-                       checky = p->posy + 70 * sin(p->dir);
+                       checkx = p->posx + 85 * cos(p->dir);
+                       checky = p->posy + 85 * sin(p->dir);
                        SDL_Rect d = {checkx, checky, 4, 4};
                        SDL_FillRect(screen, &d, SDL_MapRGB(screen->format,
                        0x55, 0x77, 0x99)); 
