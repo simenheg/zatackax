@@ -240,6 +240,7 @@ void newRound(void);
 
 /* WEAPONS */
 int legalWeps(void);
+void assignAiWeapons(void);
 int wepSpeedup(struct player *p, bool on);
 int wepFrostwave(struct player *p, bool on);
 int wepSharpturn(struct player *p, bool on);

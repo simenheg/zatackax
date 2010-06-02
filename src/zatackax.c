@@ -965,6 +965,22 @@ int legalWeps(void)
 }
 
 /**
+ * Let's the AI pick weapons at random.
+ */
+void assignAiWeapons(void)
+{
+    int i;
+    for (i = 0; i < nPlayers; ++i) {
+        struct player *p = &players[i];
+        if (p->ai) {
+            srand(SDL_GetTicks() * ++randomizer);
+            double rnd = (double)rand() / RAND_MAX;
+            p->weapon = (int)(rnd * legalWeps());
+        }
+    }
+}
+
+/**
  * Weapon: lightning speed
  *
  * @param p Weapon user.
@@ -1194,6 +1210,7 @@ void logicMainMenu(void)
                 initPlayers2();
                 newRound();
                 if (weapons) {
+                    assignAiWeapons();
                     curScene = &wepMenu;
                 } else {
                     curScene = &gameStart;

@@ -17,7 +17,6 @@
 
 #include "ai.h"
 
-#define COWARDNESS_WALL     80
 #define COWARDNESS_FRONT    85
 #define COWARDNESS_SIDES    40
 #define COWARDNESS_DIAGS    60
@@ -57,10 +56,10 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             checky = posy + i * sin(dir + PI / 4);
             if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
                 return 'r';
-                result = hitmap[w * checky + checkx];
-                if (result != id + 8 && result != id + 16 && result != 0) {
-                    return 'l';
-                }
+            result = hitmap[w * checky + checkx];
+            if (result != id + 8 && result != id + 16 && result != 0) {
+                return 'l';
+            }
         }
         if (i < COWARDNESS_SIDES) {
             /* right side */
@@ -85,15 +84,13 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
         /* front */
         checkx = posx + i * cos(dir);
         checky = posy + i * sin(dir);
-            if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
-                return 'r';
+        if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
+            return 'r';
         result = hitmap[w * checky + checkx];
         if (result != id + 8 && result != id + 16 && result != 0) {
             if (result == id) {
-                /* fprintf(stderr, "myself: %d\n", result); */
                 return 'l';
             } else {
-                /* fprintf(stderr, "other: %d\n", result); */
                 return 'r';
             }
         }
