@@ -410,8 +410,10 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
 
     SDL_LockSurface(screen);
 
-    for (i = -TOLERANCE; i < TOLERANCE; ++i) {
-        for (j = -TOLERANCE; j < TOLERANCE; ++j) {
+    for (i = -TOLERANCE; i <= TOLERANCE; ++i) {
+        for (j = -TOLERANCE; j <= TOLERANCE; ++j) {
+
+            if (abs(i) + abs(j) > TOLERANCE + 1) continue;
 
             int xpx = x + i;
             int ypx = y + j;
