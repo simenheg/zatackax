@@ -12,7 +12,7 @@ debug : CFLAGS += $(CDEBUG)
 debug : zatackax
 
 src/zatackax.o : src/zatackax.h src/sound.h src/error.h src/ai.h src/common.h
-src/error.o	: src/error.h src/common.h
+src/error.o : src/error.h src/common.h
 src/sound.o : src/sound.h src/error.h src/common.h
 src/ai.o : src/ai.h src/common.h
 
