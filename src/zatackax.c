@@ -23,7 +23,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    8,
+    9,
     0,
 };
 
@@ -191,15 +191,35 @@ void killPlayer(unsigned char killed, unsigned char killer)
         if (pt->active) {
             if (pt->alive) {
                 pt->score++;
+                if (pt->score == scorecap) {
+                    playerWon(i);
+                    endRound();
+                    curScene = &mainMenu;
+                }
             }
         } else {
             break;
         }
     }
 
-    if (broadcasts) makeBroadcast(p, killer);
+    if (broadcasts && !winnerDeclared)
+        makeBroadcast(p, killer);
 
     refreshGameScreen(); /* Update scores */
+}
+
+/**
+ * Shows which player won the game.
+ * TODO: Make this more splashy! Maybe some winning screen, or even a plain
+ * "Player X won!" text in the middle of the screen.
+ * Also missing tie handling.
+ *
+ * @param id ID of the player that won.
+ */
+void playerWon(unsigned char id)
+{
+    winnerDeclared = 1;
+    printf(" -- Player %d won! --\n", id + 1);
 }
 
 /**
@@ -566,6 +586,10 @@ void logicGame(void)
     }
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
+
+        if (winnerDeclared)
+            return;
+
         if (players[i].active) {
 
             struct player *p = &players[i];
@@ -795,6 +819,8 @@ void refreshGameScreen(void)
 
 /**
  * Creates a broadcast message.
+ * TODO: This should be made more flexible, so that we can do general
+ * broadcast strings.
  *
  * @param p ID of the player which is to be made a broadcast for.
  * @param killer Cause of death.
@@ -935,6 +961,7 @@ void newRound(void)
     printf(" -- New round! --  ( Score: ");
 
     if (weapons) resetWeapons();
+    winnerDeclared = 0;
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
@@ -952,6 +979,16 @@ void newRound(void)
     }
 
     printf(")\n");
+}
+
+/**
+ * Ends the current round.
+ */
+void endRound(void)
+{
+    cleanHitMap();
+    if (broadcasts) cleanBroadcast();
+    if (weapons) resetWeapons();
 }
 
 /**
@@ -1404,12 +1441,16 @@ void logicSettingsMenu(void)
                 duelmode ^= 1;
                 if (duelmode) nPlayers = 2;
                 break;
-            case 6:
+            case 6: /* Score cap */
+                if (scorecap < SCORE_CAP_MAX - 10)
+                    scorecap += 10;
+                break;
+            case 7:
                 playSound(SOUND_BEEP, sound);
                 menuPlayer.choice = 0;
                 curScene = &playerMenu;
                 break;
-            case 7: /* Back */
+            case 8: /* Back */
                 playSound(SOUND_PEEB, sound);
                 keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
@@ -1419,6 +1460,19 @@ void logicSettingsMenu(void)
                 break;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+    } else if (keyDown[SDLK_LEFT]) {
+        keyDown[SDLK_LEFT] = 0;
+        if (menuSettings.choice == 6 && scorecap > 0) {
+            --scorecap;
+        }
+    } else if (keyDown[SDLK_RIGHT]) {
+        keyDown[SDLK_RIGHT] = 0;
+        if (menuSettings.choice == 6 && scorecap < SCORE_CAP_MAX) {
+            ++scorecap;
+        }
+    } else if (keyDown[SDLK_BACKSPACE]) {
+        if (menuSettings.choice == 6)
+            scorecap = 0;
     }
     handleMenu(&menuSettings);
 }
@@ -1429,6 +1483,7 @@ void logicSettingsMenu(void)
 void displaySettingsMenu(void)
 {
     char *c[menuSettings.choices];
+    char tmpCap[SCORE_BUF];
 
     char s1[MENU_BUF] = "FULLSCREEN ";
     char s2[MENU_BUF] = "SOUND ~EXPERIMENTAL!~ ";
@@ -1436,20 +1491,28 @@ void displaySettingsMenu(void)
     char s4[MENU_BUF] = "HOLES ";
     char s5[MENU_BUF] = "BROADCASTS ";
     char s6[MENU_BUF] = "DUEL MODE ";
+    char s7[MENU_BUF] = "SCORE CAP: ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
     strncat(s3, weapons ON_OFF, MENU_BUF - strlen(s3));
     strncat(s4, holes ON_OFF, MENU_BUF - strlen(s4));
     strncat(s5, broadcasts ON_OFF, MENU_BUF - strlen(s5));
     strncat(s6, duelmode ON_OFF, MENU_BUF - strlen(s6));
+    if (scorecap == 0) {
+        strncat(s7, "∞", MENU_BUF);
+    } else {
+        snprintf(tmpCap, SCORE_BUF, "%d", scorecap);
+        strncat(s7, tmpCap, MENU_BUF - SCORE_BUF);
+    }
     c[0] = s1;
     c[1] = s2;
     c[2] = s3;
     c[3] = s4;
     c[4] = s5;
     c[5] = s6;
-    c[6] = "PLAYER CONFIG";
-    c[7] = "BACK";
+    c[6] = s7;
+    c[7] = "PLAYER CONFIG";
+    c[8] = "BACK";
 
     displayMenu(c, &menuSettings);
 
@@ -2023,6 +2086,7 @@ void saveSettings(char *filename)
         for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
             fprintf(savefile, "%s = %d\n", settingNames[i], *settings[i]);
         }
+        fprintf(savefile, "scorecap = %d\n", scorecap);
         for (i = 0; i < MAX_PLAYERS; ++i) {
             fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
             fprintf(savefile, "%da = %d\n", i + 1, (&players[i])->ai);
@@ -2075,37 +2139,41 @@ void restoreSettings(char *filename)
                         *settings[i] = settingParam;
                         valid = 1;
                         break;
-                    } else if (isdigit(settingHandle[0])) {
-                        switch (settingHandle[1]) {
-                            case 'c': /* Color */
-                                (&players[settingHandle[0] - '0' - 1])->
-                                    color = settingParam;
-                                valid = 1;
-                                break;
-                            case 'a': /* AI */
-                                (&players[settingHandle[0] - '0' - 1])->
-                                    ai = settingParam;
-                                valid = 1;
-                                break;
-                            case 'l': /* Left key */
-                                (&players[settingHandle[0] - '0' - 1])->
-                                    lkey = settingParam;
-                                valid = 1;
-                                break;
-                            case 'w': /* Weapon key */
-                                (&players[settingHandle[0] - '0' - 1])->
-                                    wkey = settingParam;
-                                valid = 1;
-                                break;
-                            case 'r': /* Right key */
-                                (&players[settingHandle[0] - '0' - 1])->
-                                    rkey = settingParam;
-                                valid = 1;
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
+                    }
+                }
+                if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
+                {
+                    scorecap = settingParam;
+                    valid = 1;
+                } else if (!valid && isdigit(settingHandle[0])) {
+                    switch (settingHandle[1]) {
+                        case 'c': /* Color */
+                            (&players[settingHandle[0] - '0' - 1])->
+                                color = settingParam;
+                            valid = 1;
+                            break;
+                        case 'a': /* AI */
+                            (&players[settingHandle[0] - '0' - 1])->
+                                ai = settingParam;
+                            valid = 1;
+                            break;
+                        case 'l': /* Left key */
+                            (&players[settingHandle[0] - '0' - 1])->
+                                lkey = settingParam;
+                            valid = 1;
+                            break;
+                        case 'w': /* Weapon key */
+                            (&players[settingHandle[0] - '0' - 1])->
+                                wkey = settingParam;
+                            valid = 1;
+                            break;
+                        case 'r': /* Right key */
+                            (&players[settingHandle[0] - '0' - 1])->
+                                rkey = settingParam;
+                            valid = 1;
+                            break;
+                        default:
+                            break;
                     }
                 }
                 if (valid == 0) {
@@ -2285,9 +2353,7 @@ int main(int argc, char *argv[])
                     keyDown[k] = 1;
                 } else {
                     if (curScene == &game || curScene == &gameStart) {
-                        cleanHitMap();
-                        if (broadcasts) cleanBroadcast();
-                        if (weapons) resetWeapons();
+                        endRound();
                     } else if (curScene == &settingsMenu) {
                         initMainMenu();
                     } else if (curScene->parentScene == NULL) {

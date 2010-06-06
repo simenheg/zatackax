@@ -30,6 +30,7 @@
 /* SCORES */
 #define SCORE_BUF           8
 #define SCORE_SPACING       25
+#define SCORE_CAP_MAX       65536
 
 /* SPECIAL KEYS */
 #define MAX_KEYNAME         8   /* Maximum length of key name */
@@ -154,7 +155,9 @@ static struct player players[MAX_PLAYERS];
 static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
+static bool winnerDeclared = 0;
 
+static int scorecap = 0;
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool sound = DEFAULT_SOUND;
 static bool weapons = DEFAULT_WEAPONS;
@@ -215,6 +218,7 @@ void initPlayers1(void);
 void initPlayers2(void);
 void deselectWeapons(void);
 void killPlayer(unsigned char killed, unsigned char killer);
+void playerWon(unsigned char id);
 struct vel spawn(void);
 void respawn(struct player *p);
 void drespawn(struct player *p);
@@ -237,6 +241,7 @@ void makeBroadcast(struct player *p, unsigned char killer);
 void cleanBroadcast(void);
 void drawScores(void);
 void newRound(void);
+void endRound(void);
 
 /* WEAPONS */
 int legalWeps(void);
