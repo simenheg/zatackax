@@ -156,6 +156,7 @@ static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
 static bool winnerDeclared = 0;
+static bool screenFreeze = 0;
 
 static int scorecap = 0;
 static bool fullscreen = DEFAULT_FULLSCREEN;

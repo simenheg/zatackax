@@ -193,6 +193,7 @@ void killPlayer(unsigned char killed, unsigned char killer)
                 pt->score++;
                 if (pt->score == scorecap) {
                     playerWon(i);
+                    screenFreeze = 1;
                     endRound();
                     curScene = &mainMenu;
                 }
@@ -2345,6 +2346,9 @@ int main(int argc, char *argv[])
     for (;;) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
+
+                screenFreeze = 0;
+
                 int k = event.key.keysym.sym;
                 if (k != SDLK_ESCAPE) {
 #ifdef DEBUG
@@ -2376,8 +2380,10 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        curScene->logicFunc();
-        curScene->displayFunc();
+        if (!screenFreeze)
+            curScene->logicFunc();
+        if (!screenFreeze)
+            curScene->displayFunc();
     }
 
     return 0;
