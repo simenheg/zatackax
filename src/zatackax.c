@@ -570,8 +570,10 @@ void cleanHitMap(void)
 
 /**
  * Logic of the main gameplay.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicGame(void)
+int logicGame(void)
 {
     int i;
     Uint32 timenow = SDL_GetTicks();
@@ -589,7 +591,7 @@ void logicGame(void)
     for (i = 0; i < MAX_PLAYERS; ++i) {
 
         if (winnerDeclared)
-            return;
+            return 0;
 
         if (players[i].active) {
 
@@ -605,7 +607,7 @@ void logicGame(void)
             if (alivecount <= 1) {
                 SDL_FreeSurface(screen);
                 newRound();
-                return;
+                return 0;
             } else if (p->alive) {
 
                 unsigned int curx, cury;
@@ -711,12 +713,15 @@ void logicGame(void)
     }
     updateHitMap(delta);
     SDL_UnlockSurface(screen);
+    return 1;
 }
 
 /**
  * Logic of the startup phase of the game.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicGameStart(void)
+int logicGameStart(void)
 {
     Uint32 timenow = SDL_GetTicks();
     Uint32 delta = timenow - prevtime;
@@ -735,6 +740,7 @@ void logicGameStart(void)
     } else {
         curScene = &game;
     }
+    return 1;
 }
 
 /**
@@ -1240,8 +1246,10 @@ void initMainMenu(void)
 
 /**
  * Logic for the main menu.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicMainMenu(void)
+int logicMainMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuMain.choice) {
@@ -1268,18 +1276,21 @@ void logicMainMenu(void)
                 break;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        return 1;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
         if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) {
             --nPlayers;
             deselectWeapons();
         }
+        return 1;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
         if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS)
             ++nPlayers;
+        return 1;
     }
-    handleMenu(&menuMain);
+    return handleMenu(&menuMain);
 }
 
 /**
@@ -1329,8 +1340,10 @@ void displayMainMenu(void)
 
 /**
  * Logic of the weapon selection menu.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicWepMenu(void)
+int logicWepMenu(void)
 {
 
     int i;
@@ -1346,12 +1359,15 @@ void logicWepMenu(void)
             if (p->weapon == 0) p->weapon = legalWeps() - 1;
             else p->weapon--;
             keyDown[p->lkey] = 0;
+            return 1;
         } else if (keyDown[p->rkey]) {
             if (p->weapon == legalWeps() - 1) p->weapon = 0;
             else p->weapon++;
             keyDown[p->rkey] = 0;
+            return 1;
         }
     }
+    return 0;
 }
 
 /**
@@ -1411,8 +1427,10 @@ void displayWepMenu(void)
 
 /**
  * Logic of the settings menu.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicSettingsMenu(void)
+int logicSettingsMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuSettings.choice) {
@@ -1461,21 +1479,26 @@ void logicSettingsMenu(void)
                 break;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        return 1;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
         if (menuSettings.choice == 6 && scorecap > 0) {
             --scorecap;
         }
+        return 1;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
         if (menuSettings.choice == 6 && scorecap < SCORE_CAP_MAX) {
             ++scorecap;
         }
+        return 1;
     } else if (keyDown[SDLK_BACKSPACE]) {
+        keyDown[SDLK_BACKSPACE] = 0;
         if (menuSettings.choice == 6)
             scorecap = 0;
+        return 1;
     }
-    handleMenu(&menuSettings);
+    return handleMenu(&menuSettings);
 }
 
 /**
@@ -1524,8 +1547,10 @@ void displaySettingsMenu(void)
 
 /**
  * Logic for the player menu.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicPlayerMenu(void)
+int logicPlayerMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         if (menuPlayer.choice == 8) {
@@ -1538,8 +1563,9 @@ void logicPlayerMenu(void)
             curScene = &pConfMenu;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        return 1;
     }
-    handleMenu(&menuPlayer);
+    return handleMenu(&menuPlayer);
 }
 
 /**
@@ -1567,8 +1593,10 @@ void displayPlayerMenu(void)
 
 /**
  * Logic for the player configuration.
+ *
+ * @return 1 if something has changed, and needs to be redrawn, 0 else.
  */
-void logicPConfMenu(void)
+int logicPConfMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         switch (menuPConf.choice) {
@@ -1606,6 +1634,7 @@ void logicPConfMenu(void)
                 break;
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        return 1;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
         if (menuPConf.choice == 0) {
@@ -1617,7 +1646,7 @@ void logicPConfMenu(void)
         }
         keyDown[SDLK_RIGHT] = 0;
     }
-    handleMenu(&menuPConf);
+    return handleMenu(&menuPConf);
 }
 
 /**
@@ -1675,22 +1704,27 @@ void displayPConfMenu(void)
  *
  * @param m The menu to do handling of.
  */
-void handleMenu(struct menu *m)
+int handleMenu(struct menu *m)
 {
     if (keyDown[SDLK_DOWN]) {
         playSound(SOUND_BEEP, sound);
         keyDown[SDLK_DOWN] = 0;
         ++(m->choice);
+        return 1;
     } else if (keyDown[SDLK_UP]) {
         playSound(SOUND_BEEP, sound);
         keyDown[SDLK_UP] = 0;
         --(m->choice);
+        return 1;
     }
     if (m->choice >= m->choices) {
         m->choice = 0;
+        return 1;
     } else if (m->choice < 0) {
         m->choice = m->choices - 1;
+        return 1;
     }
+    return 0;
 }
 
 /**
@@ -2342,6 +2376,7 @@ int main(int argc, char *argv[])
     initMainMenu();
 
     curScene = &mainMenu;
+    curScene->displayFunc();
 
     for (;;) {
         while (SDL_PollEvent(&event)) {
@@ -2365,6 +2400,7 @@ int main(int argc, char *argv[])
                     }
                     playSound(SOUND_PEEB, sound);
                     curScene = curScene->parentScene;
+                    curScene->displayFunc();
                 }
             } else if (event.type == SDL_KEYUP) {
                 keyDown[event.key.keysym.sym] = 0;
@@ -2380,10 +2416,10 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        if (!screenFreeze)
-            curScene->logicFunc();
-        if (!screenFreeze)
-            curScene->displayFunc();
+        if (!screenFreeze) {
+            if (curScene->logicFunc())
+                curScene->displayFunc();
+        }
     }
 
     return 0;

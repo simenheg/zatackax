@@ -121,7 +121,7 @@ struct vel {
 };
 
 struct scene {
-    void (*logicFunc)(void);
+    int (*logicFunc)(void);
     void (*displayFunc)(void);
     struct scene *parentScene;
 };
@@ -234,8 +234,8 @@ void updateHitMap(Uint32 delta);
 void cleanHitMap(void);
 
 /* GAME */
-void logicGame(void);
-void logicGameStart(void);
+int logicGame(void);
+int logicGameStart(void);
 void displayGameStart(void);
 void refreshGameScreen(void);
 void makeBroadcast(struct player *p, unsigned char killer);
@@ -262,17 +262,17 @@ int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
 
 /* MENUS */
 void initMainMenu(void);
-void logicMainMenu(void);
+int logicMainMenu(void);
 void displayMainMenu(void);
-void logicWepMenu(void);
+int logicWepMenu(void);
 void displayWepMenu(void);
-void logicSettingsMenu(void);
+int logicSettingsMenu(void);
 void displaySettingsMenu(void);
-void logicPlayerMenu(void);
+int logicPlayerMenu(void);
 void displayPlayerMenu(void);
-void logicPConfMenu(void);
+int logicPConfMenu(void);
 void displayPConfMenu(void);
-void handleMenu(struct menu *m);
+int handleMenu(struct menu *m);
 void displayMenu(char *c[], struct menu *m);
 
 /* GRAPHICS */
