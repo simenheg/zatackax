@@ -1635,16 +1635,23 @@ int logicPConfMenu(void)
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
         return 1;
-    } else if (keyDown[SDLK_LEFT]) {
-        keyDown[SDLK_LEFT] = 0;
-        if (menuPConf.choice == 0) {
+    } else if (menuPConf.choice == 0) {
+        if (keyDown[SDLK_LEFT]) {
+            keyDown[SDLK_LEFT] = 0;
+            playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 0);
-        }
-    } else if (keyDown[SDLK_RIGHT]) {
-        if (menuPConf.choice == 0) {
+            return 1;
+        } else if (keyDown[SDLK_RIGHT]) {
+            keyDown[SDLK_RIGHT] = 0;
+            playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 1);
+            return 1;
+        } else if (keyDown[SDLK_BACKSPACE]) {
+            keyDown[SDLK_BACKSPACE] = 0;
+            playSound(SOUND_BEEP, sound);
+            setColor(editPlayer, 0);
+            return 1;
         }
-        keyDown[SDLK_RIGHT] = 0;
     }
     return handleMenu(&menuPConf);
 }
