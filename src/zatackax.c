@@ -2389,7 +2389,11 @@ int main(int argc, char *argv[])
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
 
-                screenFreeze = 0;
+                if (screenFreeze) {
+                    screenFreeze = 0;
+                    curScene->displayFunc();
+                    break;
+                }
 
                 int k = event.key.keysym.sym;
                 if (k != SDLK_ESCAPE) {
