@@ -220,7 +220,8 @@ void killPlayer(unsigned char killed, unsigned char killer)
 void playerWon(unsigned char id)
 {
     winnerDeclared = 1;
-    printf(" -- Player %d won! --\n", id + 1);
+    if (olvl >= O_NORMAL)
+        printf(" -- Player %d won! --\n", id + 1);
 }
 
 /**
@@ -362,14 +363,11 @@ void setNextKey(unsigned char pedit, unsigned char key)
                 int k = event.key.keysym.sym;
                 char *keyname = keyName(k);
                 if (keyname[0] == '\0') {
-#ifdef DEBUG
-                    printf("Unknown key\n");
-#endif
-                    k = 0;
+                    if (olvl >= O_DEBUG)
+                        fprintf(stderr, "Unknown key\n");
                 } else {
-#ifdef DEBUG
-                    printf("Set new key: %s\n", keyname);
-#endif
+                    if (olvl >= O_DEBUG)
+                        fprintf(stderr, "Set new key: %s\n", keyname);
                 }
 
                 switch (key) {
@@ -425,9 +423,8 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
 {
     int i, j;
 
-#ifdef DEBUG
-    fprintf(stderr, "Added to hitmap: %d, %d...\n", x, y);
-#endif
+    if (olvl >= O_DEBUG)
+        fprintf(stderr, "Added to hitmap: %d, %d...\n", x, y);
 
     SDL_LockSurface(screen);
 
@@ -460,29 +457,30 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                 } else if (*hit != player + MAX_PLAYERS &&
                         *hit != player + MAX_PLAYERS * 2) {
                     if (player == *hit) {
-                        printf("Player %d committed suicide!\n", player);
+                        if (olvl >= O_VERBOSE)
+                            printf("Player %d committed suicide!\n", player);
                         killPlayer(player, *hit);
                     } else {
                         int killer = *hit;
                         while (killer > MAX_PLAYERS) {
                             killer -= MAX_PLAYERS;
                         }
-                        printf("Player %d crashed into Player %d!\n",
-                                player, killer);
+                        if (olvl >= O_VERBOSE)
+                            printf("Player %d crashed into Player %d!\n",
+                                    player, killer);
                         killPlayer(player, killer);
                     }
-#ifdef DEBUG
-                    fprintf(stderr, "Player %d crashed at: (%d, %d)\n",
-                            player, xpx, ypx);
-#endif
+                    if (olvl >= O_DEBUG)
+                        fprintf(stderr, "Player %d crashed at: (%d, %d)\n",
+                                player, xpx, ypx);
                     return;
                 }
             } else {
-                printf("Player %d hit the wall!\n", player);
-#ifdef DEBUG
-                fprintf(stderr, "Player %d walled at: (%d, %d)\n",
-                        player, xpx, ypx);
-#endif
+                if (olvl >= O_VERBOSE)
+                    printf("Player %d hit the wall!\n", player);
+                if (olvl >= O_DEBUG)
+                    fprintf(stderr, "Player %d walled at: (%d, %d)\n",
+                            player, xpx, ypx);
                 killPlayer(player, 0);
                 return;
             }
@@ -506,9 +504,8 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
  */
 void updateHitMap(Uint32 delta)
 {
-#ifdef DEBUG
-    fprintf(stderr, "Updating hitmap...\n");
-#endif
+    if (olvl >= O_DEBUG)
+        fprintf(stderr, "Updating hitmap...\n");
 
     struct recentMapPiece *cur;
     struct recentMapPiece *prev = recents;
@@ -549,9 +546,8 @@ void updateHitMap(Uint32 delta)
  */
 void cleanHitMap(void)
 {
-#ifdef DEBUG
-    fprintf(stderr, "Cleaning hitmap...\n");
-#endif
+    if (olvl >= O_DEBUG)
+        fprintf(stderr, "Cleaning hitmap...\n");
 
     struct recentMapPiece *cur = recents;
     struct recentMapPiece *tmp;
@@ -580,9 +576,8 @@ int logicGame(void)
     Uint32 delta = timenow - prevtime;
     prevtime = timenow;
 
-#ifdef DEBUG
-    fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
-#endif
+    if (olvl >= O_DEBUG)
+        fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
 
     if (delta > 35) {
         delta = 35;
@@ -693,10 +688,9 @@ int logicGame(void)
                 }
 
                 if (p->prevx != curx || p->prevy != cury) {
-#ifdef DEBUG
-                    fprintf(stderr, "Adding to hitmap: %d, %d...\n",
-                            p->prevx, p->prevy);
-#endif
+                    if (olvl >= O_DEBUG)
+                        fprintf(stderr, "Adding to hitmap: %d, %d...\n",
+                                p->prevx, p->prevy);
                     if (holes && p->holecount > HOLE_SIZE) {
                         addToHitMap(p->prevx, p->prevy, p->active,
                                 MAX_PLAYERS);
@@ -727,9 +721,8 @@ int logicGameStart(void)
     Uint32 delta = timenow - prevtime;
     prevtime = timenow;
 
-#ifdef DEBUG
-    fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
-#endif
+    if (olvl >= O_DEBUG)
+        fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
 
     if (delta > 13) {
         delta = 13;
@@ -965,7 +958,8 @@ void newRound(void)
 
     curScene = &gameStart;
 
-    printf(" -- New round! --  ( Score: ");
+    if (olvl >= O_VERBOSE)
+        printf(" -- New round! --  ( Score: ");
 
     if (weapons) resetWeapons();
     winnerDeclared = 0;
@@ -973,19 +967,22 @@ void newRound(void)
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
-            printf("%d ", p->score);
+            if (olvl >= O_VERBOSE)
+                printf("%d ", p->score);
             if (duelmode) {
                 drespawn(p);
             } else {
                 respawn(p);
             }
         } else {
-            printf(")\n");
+            if (olvl >= O_VERBOSE)
+                printf(")\n");
             return;
         }
     }
 
-    printf(")\n");
+    if (olvl >= O_VERBOSE)
+        printf(")\n");
 }
 
 /**
@@ -1908,15 +1905,18 @@ void colorBalls(void)
 int init(void)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-        fprintf(stderr, "ERROR: Could not initialize SDL.\n");
+        if (olvl >= O_NORMAL)
+            fprintf(stderr, "ERROR: Could not initialize SDL.\n");
         return 0;
     }
     if (initSound() == -1) {
-        fprintf(stderr, "ERROR: Could not initialize sound.\n");
+        if (olvl >= O_NORMAL)
+            fprintf(stderr, "ERROR: Could not initialize sound.\n");
         return 0;
     }
     if (TTF_Init() == -1) {
-        fprintf(stderr, "ERROR: Could not initialize fonts.\n");
+        if (olvl >= O_NORMAL)
+            fprintf(stderr, "ERROR: Could not initialize fonts.\n");
         return 0;
     }
 
@@ -2038,19 +2038,19 @@ int loadFiles(void)
     }
     font_score = font_menub;
 
-#ifdef DEBUG
-    confirmLoading("arrowsheet.png", arrows);
-    confirmLoading("ball.png", ball);
-    confirmLoading("wi_bg.png", wiBg);
-    confirmLoading("wi_lightningspeed.png", wiSpeed);
-    confirmLoading("wi_frostwave.png", wiFrost);
-    confirmLoading("wi_confusion.png", wiConf);
-    confirmLoading("wi_confusion.png", wiTurn);
-    confirmLoading("wi_timestep.png", wiStep);
-    confirmLoading("wi_mole.png", wiMole);
-    confirmLoading("wi_warp.png", wiWarp);
-    confirmLoading("wi_switch.png", wiSwitch);
-#endif
+    if (olvl >= O_DEBUG) {
+        confirmLoading("arrowsheet.png", arrows);
+        confirmLoading("ball.png", ball);
+        confirmLoading("wi_bg.png", wiBg);
+        confirmLoading("wi_lightningspeed.png", wiSpeed);
+        confirmLoading("wi_frostwave.png", wiFrost);
+        confirmLoading("wi_confusion.png", wiConf);
+        confirmLoading("wi_confusion.png", wiTurn);
+        confirmLoading("wi_timestep.png", wiStep);
+        confirmLoading("wi_mole.png", wiMole);
+        confirmLoading("wi_warp.png", wiWarp);
+        confirmLoading("wi_switch.png", wiSwitch);
+    }
 
     /* Clip arrow sprite sheet */
     for (y = i = 0; y < arrows->h; y += 16) {
@@ -2119,10 +2119,10 @@ void saveSettings(char *filename)
     FILE *savefile = NULL;
 
     if ((savefile = fopen(filename, "w")) == NULL) {
-#ifdef DEBUG
-        fprintf(stderr, "Couldn't open file '%s' for writing.\n",
-                filename);
-#endif
+        if (olvl >= O_NORMAL) {
+            fprintf(stderr, "Couldn't open file '%s' for writing.\n",
+                    filename);
+        }
         return;
     } else {
         for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
@@ -2138,11 +2138,12 @@ void saveSettings(char *filename)
         }
     }
 
-#ifdef DEBUG
-    if (ferror(savefile)) {
-        fprintf(stderr, "Error writing to file '%s'.\n", filename);
+    if (olvl >= O_NORMAL) {
+        if (ferror(savefile)) {
+            if (olvl >= O_NORMAL)
+                fprintf(stderr, "Error writing to file '%s'.\n", filename);
+        }
     }
-#endif
 
     fclose(savefile);
 }
@@ -2157,11 +2158,11 @@ void restoreSettings(char *filename)
     FILE *savefile = NULL;
 
     if ((savefile = fopen(filename, "r")) == NULL) {
-#ifdef DEBUG
-        fprintf(stderr, "Couldn't restore settings from file %s.\n",
-                filename);
-#endif
-        return;
+        if (olvl >= O_DEBUG) {
+            fprintf(stderr, "Couldn't restore settings from file %s.\n",
+                    filename);
+            return;
+        }
     } else {
 
         char settingHandle[STRBUF];
@@ -2219,8 +2220,9 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (valid == 0) {
-                    fprintf(stderr, "Unknown config format in '%s', line "
-                            "%d: %s\n", filename, line, settingHandle);
+                    if (olvl >= O_NORMAL)
+                        fprintf(stderr, "Unknown config format in '%s', line "
+                                "%d: %s\n", filename, line, settingHandle);
                 }
                 ++line;
             } else {
@@ -2375,7 +2377,8 @@ int main(int argc, char *argv[])
     }
 
     if (!loadFiles()) {
-        fprintf(stderr, "ERROR: Failed to load files.\n");
+        if (olvl >= O_NORMAL)
+            fprintf(stderr, "ERROR: Failed to load files.\n");
         return 1;
     }
 
@@ -2397,9 +2400,8 @@ int main(int argc, char *argv[])
 
                 int k = event.key.keysym.sym;
                 if (k != SDLK_ESCAPE) {
-#ifdef DEBUG
-                    printf("Pressed: %c (%d)\n", k, k);
-#endif
+                    if (olvl >= O_DEBUG)
+                        fprintf(stderr, "Pressed: %c (%d)\n", k, k);
                     keyDown[k] = 1;
                 } else {
                     if (curScene == &game || curScene == &gameStart) {
