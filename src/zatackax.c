@@ -2158,11 +2158,10 @@ void restoreSettings(char *filename)
     FILE *savefile = NULL;
 
     if ((savefile = fopen(filename, "r")) == NULL) {
-        if (olvl >= O_DEBUG) {
+        if (olvl >= O_DEBUG)
             fprintf(stderr, "Couldn't restore settings from file %s.\n",
                     filename);
-            return;
-        }
+        return;
     } else {
 
         char settingHandle[STRBUF];
