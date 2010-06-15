@@ -3,7 +3,7 @@ CFLAGS = -g3 -std=c99 -pedantic -Wall -Wextra
 LFLAGS = -lmingw32 -lsdlmain -lsdl -lsdl_image -lsdl_ttf -lsdl_mixer
 CDEBUG = -DDEBUG
 
-objects = src/zatackax.o src/sound.o src/error.o
+objects = src/zatackax.o src/sound.o src/error.o src/ai.o
 
 zatackax : $(objects)
 	$(CC) $(CFLAGS) $^ -o $@ $(LFLAGS)
@@ -11,9 +11,10 @@ zatackax : $(objects)
 debug : CFLAGS += $(CDEBUG)
 debug : zatackax
 
-src/zatackax.o : src/zatackax.h src/sound.o src/error.o
-src/error.o	: src/error.h
-src/sound.o : src/sound.h 
+src/zatackax.o : src/zatackax.h src/sound.h src/error.h src/ai.h src/common.h
+src/error.o	: src/error.h src/common.h
+src/sound.o : src/sound.h src/error.h src/common.h
+src/ai.o : src/ai.h src/common.h
 
 clean :
 	rm -f zatackax $(objects)

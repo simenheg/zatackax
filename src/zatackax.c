@@ -33,7 +33,7 @@ struct menu menuPlayer = {
 };
 
 struct menu menuPConf = {
-    6,
+    7,
     0,
 };
 
@@ -80,7 +80,48 @@ static struct scene pConfMenu = {
 };
 
 struct scene *curScene = NULL;
-
+/** 
+ * Reset a player struct.
+ * 
+ */
+void resetPlayer(struct player *p, int player)
+{
+    p->color = player;
+    p->speed = 1.0;
+    p->invertedKeys = 0;
+    p->weapon = 0;
+    p->ai = 0;
+	
+    switch (player) {
+        case 0:
+            p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
+            p->wkey = SDLK_UP;
+			break;
+        case 1:
+            p->lkey = 'z'; p->rkey = 'c'; p->wkey = 'x';
+            break;
+        case 2:
+            p->lkey = 'v'; p->rkey = 'n'; p->wkey = 'b';
+			break;
+		case 3:
+			p->lkey = ','; p->rkey = '-'; p->wkey = '.';
+			break;
+		case 4:
+			p->lkey = 'q'; p->rkey = 'e'; p->wkey = 'w';
+			break;
+		case 5:
+			p->lkey = 'r'; p->rkey = 'y'; p->wkey = 't';
+			break;
+		case 6:
+			p->lkey = 'i'; p->rkey = 'p'; p->wkey = 'o';
+			break;
+		case 7:
+			p->lkey = SDLK_F1; p->rkey = SDLK_F3; p->wkey = SDLK_F2;
+			break;
+		default:
+			break;
+    }
+}
 /**
  * Stage 1 of player initialization.
  * Assigns keys and colors.
@@ -90,42 +131,8 @@ void initPlayers1(void)
     int i;
     struct player *p = &players[0];
 
-    for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
-        p->color = i;
-        p->speed = 1.0;
-        p->invertedKeys = 0;
-        p->weapon = 0;
-        p->ai = 0;
-        switch (i) {
-            case 0:
-                p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
-                p->wkey = SDLK_UP;
-                break;
-            case 1:
-                p->lkey = 'z'; p->rkey = 'c'; p->wkey = 'x';
-                break;
-            case 2:
-                p->lkey = 'v'; p->rkey = 'n'; p->wkey = 'b';
-                break;
-            case 3:
-                p->lkey = ','; p->rkey = '-'; p->wkey = '.';
-                break;
-            case 4:
-                p->lkey = 'q'; p->rkey = 'e'; p->wkey = 'w';
-                break;
-            case 5:
-                p->lkey = 'r'; p->rkey = 'y'; p->wkey = 't';
-                break;
-            case 6:
-                p->lkey = 'i'; p->rkey = 'p'; p->wkey = 'o';
-                break;
-            case 7:
-                p->lkey = SDLK_F1; p->rkey = SDLK_F3; p->wkey = SDLK_F2;
-                break;
-            default:
-                break;
-        }
-    }
+    for (i = 0; i < MAX_PLAYERS; ++i, ++p) 
+		resetPlayer(p, i);
 }
 
 /**
@@ -662,9 +669,15 @@ int logicGame(void)
                     char c = pollAi(p->posx, p->posy, p->dir, p->active,
                             hitmap, WINDOW_W, WINDOW_H);
                     if (c == 'l') {
-                        p->dir -= 0.0022 * delta * p->speed;
+						if (p->invertedKeys)
+							p->dir += 0.0022 * delta * p->speed;
+						else
+							p->dir -= 0.0022 * delta * p->speed;
                     } else if (c == 'r') {
-                        p->dir += 0.0022 * delta * p->speed;
+						if (p->invertedKeys)
+							p->dir -= 0.0022 * delta * p->speed;
+						else
+							p->dir += 0.0022 * delta * p->speed;
                     }
                 } else {
                     if (keyDown[p->lkey]) {
@@ -1623,7 +1636,10 @@ int logicPConfMenu(void)
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'r');
                 break;
-            case 5:
+			case 5:
+				resetPlayer(&players[editPlayer], editPlayer);
+				break;
+            case 6:
                 playSound(SOUND_PEEB, sound);
                 curScene = curScene->parentScene;
                 break;
@@ -1694,7 +1710,8 @@ void displayPConfMenu(void)
     c[2] = s3;
     c[3] = s4;
     c[4] = s5;
-    c[5] = "BACK";
+	c[5] = "RESET";
+    c[6] = "BACK";
 
     displayMenu(c, &menuPConf);
 
