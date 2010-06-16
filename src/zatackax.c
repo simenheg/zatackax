@@ -80,48 +80,7 @@ static struct scene pConfMenu = {
 };
 
 struct scene *curScene = NULL;
-/** 
- * Reset a player struct.
- * 
- */
-void resetPlayer(struct player *p, int player)
-{
-    p->color = player;
-    p->speed = 1.0;
-    p->invertedKeys = 0;
-    p->weapon = 0;
-    p->ai = 0;
-	
-    switch (player) {
-        case 0:
-            p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
-            p->wkey = SDLK_UP;
-			break;
-        case 1:
-            p->lkey = 'z'; p->rkey = 'c'; p->wkey = 'x';
-            break;
-        case 2:
-            p->lkey = 'v'; p->rkey = 'n'; p->wkey = 'b';
-			break;
-		case 3:
-			p->lkey = ','; p->rkey = '-'; p->wkey = '.';
-			break;
-		case 4:
-			p->lkey = 'q'; p->rkey = 'e'; p->wkey = 'w';
-			break;
-		case 5:
-			p->lkey = 'r'; p->rkey = 'y'; p->wkey = 't';
-			break;
-		case 6:
-			p->lkey = 'i'; p->rkey = 'p'; p->wkey = 'o';
-			break;
-		case 7:
-			p->lkey = SDLK_F1; p->rkey = SDLK_F3; p->wkey = SDLK_F2;
-			break;
-		default:
-			break;
-    }
-}
+
 /**
  * Stage 1 of player initialization.
  * Assigns keys and colors.
@@ -129,10 +88,8 @@ void resetPlayer(struct player *p, int player)
 void initPlayers1(void)
 {
     int i;
-    struct player *p = &players[0];
-
-    for (i = 0; i < MAX_PLAYERS; ++i, ++p) 
-		resetPlayer(p, i);
+    for (i = 0; i < MAX_PLAYERS; ++i)
+        resetPlayer(i);
 }
 
 /**
@@ -151,9 +108,8 @@ void initPlayers2(void)
         p->active = i + 1;
         p->score = 0;
 
-        if (weapons) {
+        if (weapons)
             p->wepcount = -999;
-        }
 
         /* Assign arrows */
         SDL_BlitSurface(arrows, NULL, *s, NULL);
@@ -165,6 +121,51 @@ void initPlayers2(void)
 
     for (; i < MAX_PLAYERS; ++i, ++p) {
         p->active = 0;
+    }
+}
+
+/** 
+ * Reset a player struct.
+ *
+ * @param player ID of the player to be reset.
+ */
+void resetPlayer(int player)
+{
+    struct player *p = &(players[player]);
+    p->color = player;
+    p->speed = 1.0;
+    p->invertedKeys = 0;
+    p->weapon = 0;
+    p->ai = 0;
+
+    switch (player) {
+        case 0:
+            p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
+            p->wkey = SDLK_UP;
+            break;
+        case 1:
+            p->lkey = 'z'; p->rkey = 'c'; p->wkey = 'x';
+            break;
+        case 2:
+            p->lkey = 'v'; p->rkey = 'n'; p->wkey = 'b';
+            break;
+        case 3:
+            p->lkey = ','; p->rkey = '-'; p->wkey = '.';
+            break;
+        case 4:
+            p->lkey = 'q'; p->rkey = 'e'; p->wkey = 'w';
+            break;
+        case 5:
+            p->lkey = 'r'; p->rkey = 'y'; p->wkey = 't';
+            break;
+        case 6:
+            p->lkey = 'i'; p->rkey = 'p'; p->wkey = 'o';
+            break;
+        case 7:
+            p->lkey = SDLK_F1; p->rkey = SDLK_F3; p->wkey = SDLK_F2;
+            break;
+        default:
+            break;
     }
 }
 
@@ -242,9 +243,8 @@ struct vel spawn(void)
     struct vel initPos;
     Uint32 timeseed = SDL_GetTicks();
 
-    if (randomizer > RAND_MAX) {
+    if (randomizer > RAND_MAX)
         randomizer = 1;
-    }
 
     srand(timeseed * randomizer++);
     rnd = (double)rand() / RAND_MAX;
@@ -260,7 +260,8 @@ struct vel spawn(void)
     srand(timeseed * randomizer++);
     rnd = (double)rand() / RAND_MAX;
     initPos.dir = rnd * (2 * PI);
-    if (initPos.dir < 0) initPos.dir *= -1;
+    if (initPos.dir < 0)
+        initPos.dir *= -1;
 
     return initPos;
 }
@@ -341,17 +342,15 @@ void drespawn(struct player *p)
 void setColor(unsigned char pedit, bool up)
 {
     if (up) {
-        if ((&players[pedit])->color == N_COLORS - 1) {
+        if ((&players[pedit])->color == N_COLORS - 1)
             (&players[pedit])->color = 0;
-        } else {
+        else
             ++((&players[pedit])->color);
-        }
     } else {
-        if ((&players[pedit])->color == 0) {
+        if ((&players[pedit])->color == 0)
             (&players[pedit])->color = N_COLORS - 1;
-        } else {
+        else
             --((&players[pedit])->color);
-        }
     }
 }
 
@@ -438,7 +437,8 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
     for (i = -TOLERANCE; i <= TOLERANCE; ++i) {
         for (j = -TOLERANCE; j <= TOLERANCE; ++j) {
 
-            if (abs(i) + abs(j) > TOLERANCE + 1) continue;
+            if (abs(i) + abs(j) > TOLERANCE + 1)
+                continue;
 
             int xpx = x + i;
             int ypx = y + j;
@@ -496,9 +496,8 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
 
     SDL_UnlockSurface(screen);
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -517,9 +516,8 @@ void updateHitMap(Uint32 delta)
     struct recentMapPiece *cur;
     struct recentMapPiece *prev = recents;
 
-    if (prev == NULL || prev->next == NULL) {
+    if (prev == NULL || prev->next == NULL)
         return;
-    }
 
     cur = prev->next;
     prev->count -= delta;
@@ -559,7 +557,8 @@ void cleanHitMap(void)
     struct recentMapPiece *cur = recents;
     struct recentMapPiece *tmp;
 
-    if (cur == NULL) return;
+    if (cur == NULL)
+        return;
 
     while (cur->next != NULL) {
         tmp = cur->next;
@@ -586,9 +585,8 @@ int logicGame(void)
     if (olvl >= O_DEBUG)
         fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
 
-    if (delta > 35) {
+    if (delta > 35)
         delta = 35;
-    }
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
 
@@ -601,9 +599,8 @@ int logicGame(void)
 
             if (weapons && p->wepcount > 0) {
                 p->wepcount -= delta;
-                if (p->wepcount <= 0) {
+                if (p->wepcount <= 0)
                     wepFunc[p->weapon](p, 0);
-                }
             }
 
             if (alivecount <= 1) {
@@ -669,22 +666,21 @@ int logicGame(void)
                     char c = pollAi(p->posx, p->posy, p->dir, p->active,
                             hitmap, WINDOW_W, WINDOW_H);
                     if (c == 'l') {
-						if (p->invertedKeys)
-							p->dir += 0.0022 * delta * p->speed;
-						else
-							p->dir -= 0.0022 * delta * p->speed;
+                        if (p->invertedKeys)
+                            p->dir += 0.0022 * delta * p->speed;
+                        else
+                            p->dir -= 0.0022 * delta * p->speed;
                     } else if (c == 'r') {
-						if (p->invertedKeys)
-							p->dir -= 0.0022 * delta * p->speed;
-						else
-							p->dir += 0.0022 * delta * p->speed;
+                        if (p->invertedKeys)
+                            p->dir -= 0.0022 * delta * p->speed;
+                        else
+                            p->dir += 0.0022 * delta * p->speed;
                     }
                 } else {
-                    if (keyDown[p->lkey]) {
+                    if (keyDown[p->lkey])
                         p->dir -= 0.0022 * delta * p->speed;
-                    } else if (keyDown[p->rkey]) {
+                    else if (keyDown[p->rkey])
                         p->dir += 0.0022 * delta * p->speed;
-                    }
                 }
 
                 p->posx += ZATA_SPEED * cos(p->dir) * delta * p->speed;
@@ -695,21 +691,19 @@ int logicGame(void)
 
                 if (holes) {
                     p->holecount += delta;
-                    if (p->holecount > HOLE_FREQ) {
+                    if (p->holecount > HOLE_FREQ)
                         p->holecount = 0;
-                    }
                 }
 
                 if (p->prevx != curx || p->prevy != cury) {
                     if (olvl >= O_DEBUG)
                         fprintf(stderr, "Adding to hitmap: %d, %d...\n",
                                 p->prevx, p->prevy);
-                    if (holes && p->holecount > HOLE_SIZE) {
+                    if (holes && p->holecount > HOLE_SIZE)
                         addToHitMap(p->prevx, p->prevy, p->active,
                                 MAX_PLAYERS);
-                    } else {
+                    else
                         addToHitMap(p->prevx, p->prevy, p->active, 0);
-                    }
                     p->prevx = curx;
                     p->prevy = cury;
                 }
@@ -737,15 +731,14 @@ int logicGameStart(void)
     if (olvl >= O_DEBUG)
         fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
 
-    if (delta > 13) {
+    if (delta > 13)
         delta = 13;
-    }
 
-    if (countdown > 0) {
+    if (countdown > 0)
         countdown -= delta;
-    } else {
+    else
         curScene = &game;
-    }
+
     return 1;
 }
 
@@ -775,9 +768,8 @@ void displayGameStart(void)
         }
     }
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -825,9 +817,8 @@ void refreshGameScreen(void)
 
     SDL_UnlockSurface(screen);
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -974,7 +965,8 @@ void newRound(void)
     if (olvl >= O_VERBOSE)
         printf(" -- New round! --  ( Score: ");
 
-    if (weapons) resetWeapons();
+    if (weapons)
+        resetWeapons();
     winnerDeclared = 0;
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
@@ -982,11 +974,10 @@ void newRound(void)
         if (p->active) {
             if (olvl >= O_VERBOSE)
                 printf("%d ", p->score);
-            if (duelmode) {
+            if (duelmode)
                 drespawn(p);
-            } else {
+            else
                 respawn(p);
-            }
         } else {
             if (olvl >= O_VERBOSE)
                 printf(")\n");
@@ -1004,8 +995,10 @@ void newRound(void)
 void endRound(void)
 {
     cleanHitMap();
-    if (broadcasts) cleanBroadcast();
-    if (weapons) resetWeapons();
+    if (broadcasts)
+        cleanBroadcast();
+    if (weapons)
+        resetWeapons();
 }
 
 /**
@@ -1016,7 +1009,8 @@ void endRound(void)
  */
 int legalWeps(void)
 {
-    if (nPlayers == 2) return N_WEAPONS - N_ILLEGAL_2P_WEPS;
+    if (nPlayers == 2)
+        return N_WEAPONS - N_ILLEGAL_2P_WEPS;
     return N_WEAPONS;
 }
 
@@ -1065,8 +1059,10 @@ int wepFrostwave(struct player *p, bool on)
     for (i = 0; i < nPlayers; ++i) {
         struct player *target = &players[i];
         if (target != p) {
-            if (on) target->speed = 0.3;
-            else target->speed = 1.0;
+            if (on)
+                target->speed = 0.3;
+            else
+                target->speed = 1.0;
         }
     }
     return 1500;
@@ -1080,8 +1076,10 @@ int wepFrostwave(struct player *p, bool on)
  */
 int wepSharpturn(struct player *p, bool on)
 {
-    if (keyDown[p->rkey]) p->dir += PI / 2;
-    else p->dir -= PI / 2;
+    if (keyDown[p->rkey])
+        p->dir += PI / 2;
+    else
+        p->dir -= PI / 2;
     return 0;
 }
 
@@ -1343,9 +1341,8 @@ void displayMainMenu(void)
         SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset);
     }
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -1430,9 +1427,8 @@ void displayWepMenu(void)
         }
     }
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -1468,7 +1464,8 @@ int logicSettingsMenu(void)
             case 5: /* Toggle duel mode */
                 playSound(SOUND_BEEP, sound);
                 duelmode ^= 1;
-                if (duelmode) nPlayers = 2;
+                if (duelmode)
+                    nPlayers = 2;
                 break;
             case 6: /* Score cap */
                 if (scorecap < SCORE_CAP_MAX - 10)
@@ -1492,15 +1489,13 @@ int logicSettingsMenu(void)
         return 1;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
-        if (menuSettings.choice == 6 && scorecap > 0) {
+        if (menuSettings.choice == 6 && scorecap > 0)
             --scorecap;
-        }
         return 1;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
-        if (menuSettings.choice == 6 && scorecap < SCORE_CAP_MAX) {
+        if (menuSettings.choice == 6 && scorecap < SCORE_CAP_MAX)
             ++scorecap;
-        }
         return 1;
     } else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
@@ -1550,9 +1545,8 @@ void displaySettingsMenu(void)
 
     displayMenu(c, &menuSettings);
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -1596,9 +1590,8 @@ void displayPlayerMenu(void)
 
     displayMenu(c, &menuPlayer);
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -1636,9 +1629,9 @@ int logicPConfMenu(void)
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'r');
                 break;
-			case 5:
-				resetPlayer(&players[editPlayer], editPlayer);
-				break;
+            case 5:
+                resetPlayer(editPlayer);
+                break;
             case 6:
                 playSound(SOUND_PEEB, sound);
                 curScene = curScene->parentScene;
@@ -1710,14 +1703,13 @@ void displayPConfMenu(void)
     c[2] = s3;
     c[3] = s4;
     c[4] = s5;
-	c[5] = "RESET";
+    c[5] = "RESET";
     c[6] = "BACK";
 
     displayMenu(c, &menuPConf);
 
-    if (SDL_Flip(screen) == -1) {
+    if (SDL_Flip(screen) == -1)
         exit(1);
-    }
 }
 
 /**
@@ -1804,14 +1796,14 @@ int initScreen(void)
 {
     SDL_FreeSurface(screen);
 
-    if (fullscreen) {
+    if (fullscreen)
         screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
                 SDL_SWSURFACE | SDL_FULLSCREEN);
-    } else {
+    else
         screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
                 SDL_SWSURFACE | SDL_RESIZABLE);
-    }
-    if (screen == NULL) return 0;
+    if (screen == NULL)
+        return 0;
 
     initHitMap(WINDOW_W, WINDOW_H);
 
@@ -1867,9 +1859,8 @@ SDL_Surface *loadImage(const char filename[])
     SDL_Surface *loadedImage = IMG_Load(filename);
     SDL_Surface *optimizedImage = NULL;
 
-    if (loadedImage != NULL) {
+    if (loadedImage != NULL)
         optimizedImage = SDL_DisplayFormatAlpha(loadedImage);
-    }
 
     SDL_FreeSurface(loadedImage);
 
@@ -2384,13 +2375,11 @@ int main(int argc, char *argv[])
     initPlayers1();
     restoreSettings(".zatackax");
 
-    if (!init()) {
+    if (!init())
         return 1;
-    }
 
-    if (!initScreen()) {
+    if (!initScreen())
         return 1;
-    }
 
     if (!loadFiles()) {
         if (olvl >= O_NORMAL)
@@ -2420,13 +2409,12 @@ int main(int argc, char *argv[])
                         fprintf(stderr, "Pressed: %c (%d)\n", k, k);
                     keyDown[k] = 1;
                 } else {
-                    if (curScene == &game || curScene == &gameStart) {
+                    if (curScene == &game || curScene == &gameStart)
                         endRound();
-                    } else if (curScene == &settingsMenu) {
+                    else if (curScene == &settingsMenu)
                         initMainMenu();
-                    } else if (curScene->parentScene == NULL) {
+                    else if (curScene->parentScene == NULL)
                         exitGame(0);
-                    }
                     playSound(SOUND_PEEB, sound);
                     curScene = curScene->parentScene;
                     curScene->displayFunc();
@@ -2440,9 +2428,8 @@ int main(int argc, char *argv[])
                 WINDOW_W = event.resize.w;
                 WINDOW_H = event.resize.h;
 
-                if (!initScreen()) {
+                if (!initScreen())
                     return 1;
-                }
             }
         }
         if (!screenFreeze) {

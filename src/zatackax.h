@@ -217,6 +217,7 @@ static TTF_Font *font_broadcb = NULL;
 /* PLAYER */
 void initPlayers1(void);
 void initPlayers2(void);
+void resetPlayer(int player);
 void deselectWeapons(void);
 void killPlayer(unsigned char killed, unsigned char killer);
 void playerWon(unsigned char id);
