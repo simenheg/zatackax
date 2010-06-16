@@ -17,6 +17,7 @@
 
 #include "sound.h"
 
+static Mix_Music *bgm = NULL;
 static Mix_Chunk *beep = NULL;
 static Mix_Chunk *peeb = NULL;
 static Mix_Chunk *seSpeed = NULL;
@@ -30,12 +31,16 @@ static Mix_Chunk *sounds[N_SOUNDS];
  */
 int initSound(void)
 {
-    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT,
+    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY * 2, MIX_DEFAULT_FORMAT,
                 2, 512) == -1 )
     {
         return -1;
     }
 
+    if ((bgm = Mix_LoadMUS("data/sound/Padanaya_Blokov.ogg")) == NULL) {
+        fileNotFound("data/sound/Padanaya_Blokov.ogg");
+        return -1;
+    }
     if ((beep = Mix_LoadWAV("data/sound/beep.wav")) == NULL) {
         fileNotFound("data/sound/beep.wav");
         return -1;
@@ -71,5 +76,27 @@ int initSound(void)
  */
 void playSound(unsigned int sound, int play) 
 {
-    if (play) Mix_PlayChannel(-1, sounds[sound], 0);
+    if (play)
+        Mix_PlayChannel(-1, sounds[sound], 0);
+}
+
+/**
+ * Plays the background music.
+ */
+void playBGM(void)
+{
+    if (!Mix_PlayingMusic()) {
+        if ((Mix_PlayMusic(bgm, -1) == -1)) {
+            if (olvl >= O_NORMAL)
+                fprintf(stderr, "Couldn't play music: %s\n", Mix_GetError());
+        }
+    }
+}
+
+/**
+ * Stops the background music.
+ */
+void stopBGM(void)
+{
+    Mix_HaltMusic();
 }

@@ -74,6 +74,7 @@
 #define ON_OFF                  ? "[on]" : "[off]"
 #define DEFAULT_FULLSCREEN      0
 #define DEFAULT_SOUND           0
+#define DEFAULT_MUSIC           1
 #define DEFAULT_WEAPONS         1
 #define DEFAULT_HOLES           1
 #define DEFAULT_BROADCASTS      1
@@ -161,13 +162,14 @@ static bool screenFreeze = 0;
 static int scorecap = 0;
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool sound = DEFAULT_SOUND;
+static bool music = DEFAULT_MUSIC;
 static bool weapons = DEFAULT_WEAPONS;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
 static bool duelmode = DEFAULT_DUELMODE;
-static const char *settingNames[] = {"fullscreen", "sound", "weapons",
+static const char *settingNames[] = {"fullscreen", "sound", "music", "weapons",
     "holes", "broadcasts", "duelmode"};
-static bool *settings[6] = {&fullscreen, &sound, &weapons, &holes,
+static bool *settings[7] = {&fullscreen, &sound, &music, &weapons, &holes,
     &broadcasts, &duelmode};
 
 static unsigned int randomizer = 1; /* Help distribute better random

@@ -23,7 +23,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    9,
+    10,
     0,
 };
 
@@ -1449,34 +1449,41 @@ int logicSettingsMenu(void)
                 sound ^= 1;
                 playSound(SOUND_BEEP, sound);
                 break;
-            case 2: /* Toggle weapons */
+            case 2: /* Toggle music */
+                music ^= 1;
+                if (music)
+                    playBGM();
+                else
+                    stopBGM();
+                break;
+            case 3: /* Toggle weapons */
                 playSound(SOUND_BEEP, sound);
                 weapons ^= 1;
                 break;
-            case 3: /* Toggle holes */
+            case 4: /* Toggle holes */
                 playSound(SOUND_BEEP, sound);
                 holes ^= 1;
                 break;
-            case 4: /* Toggle broadcasts */
+            case 5: /* Toggle broadcasts */
                 playSound(SOUND_BEEP, sound);
                 broadcasts ^= 1;
                 break;
-            case 5: /* Toggle duel mode */
+            case 6: /* Toggle duel mode */
                 playSound(SOUND_BEEP, sound);
                 duelmode ^= 1;
                 if (duelmode)
                     nPlayers = 2;
                 break;
-            case 6: /* Score cap */
+            case 7: /* Score cap */
                 if (scorecap < SCORE_CAP_MAX - 10)
                     scorecap += 10;
                 break;
-            case 7:
+            case 8:
                 playSound(SOUND_BEEP, sound);
                 menuPlayer.choice = 0;
                 curScene = &playerMenu;
                 break;
-            case 8: /* Back */
+            case 9: /* Back */
                 playSound(SOUND_PEEB, sound);
                 keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
                 initMainMenu();
@@ -1516,22 +1523,24 @@ void displaySettingsMenu(void)
 
     char s1[MENU_BUF] = "FULLSCREEN ";
     char s2[MENU_BUF] = "SOUND ~EXPERIMENTAL!~ ";
-    char s3[MENU_BUF] = "WEAPONS ";
-    char s4[MENU_BUF] = "HOLES ";
-    char s5[MENU_BUF] = "BROADCASTS ";
-    char s6[MENU_BUF] = "DUEL MODE ";
-    char s7[MENU_BUF] = "SCORE CAP: ";
+    char s3[MENU_BUF] = "MUSIC ";
+    char s4[MENU_BUF] = "WEAPONS ";
+    char s5[MENU_BUF] = "HOLES ";
+    char s6[MENU_BUF] = "BROADCASTS ";
+    char s7[MENU_BUF] = "DUEL MODE ";
+    char s8[MENU_BUF] = "SCORE CAP: ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
-    strncat(s3, weapons ON_OFF, MENU_BUF - strlen(s3));
-    strncat(s4, holes ON_OFF, MENU_BUF - strlen(s4));
-    strncat(s5, broadcasts ON_OFF, MENU_BUF - strlen(s5));
-    strncat(s6, duelmode ON_OFF, MENU_BUF - strlen(s6));
+    strncat(s3, music ON_OFF, MENU_BUF - strlen(s3));
+    strncat(s4, weapons ON_OFF, MENU_BUF - strlen(s4));
+    strncat(s5, holes ON_OFF, MENU_BUF - strlen(s5));
+    strncat(s6, broadcasts ON_OFF, MENU_BUF - strlen(s6));
+    strncat(s7, duelmode ON_OFF, MENU_BUF - strlen(s7));
     if (scorecap == 0) {
-        strncat(s7, "∞", MENU_BUF);
+        strncat(s8, "∞", MENU_BUF);
     } else {
         snprintf(tmpCap, SCORE_BUF, "%d", scorecap);
-        strncat(s7, tmpCap, MENU_BUF - SCORE_BUF);
+        strncat(s8, tmpCap, MENU_BUF - SCORE_BUF);
     }
     c[0] = s1;
     c[1] = s2;
@@ -1540,8 +1549,9 @@ void displaySettingsMenu(void)
     c[4] = s5;
     c[5] = s6;
     c[6] = s7;
-    c[7] = "PLAYER CONFIG";
-    c[8] = "BACK";
+    c[7] = s8;
+    c[8] = "PLAYER CONFIG";
+    c[9] = "BACK";
 
     displayMenu(c, &menuSettings);
 
@@ -2392,6 +2402,9 @@ int main(int argc, char *argv[])
 
     curScene = &mainMenu;
     curScene->displayFunc();
+
+    if (music)
+        playBGM();
 
     for (;;) {
         while (SDL_PollEvent(&event)) {
