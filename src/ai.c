@@ -45,54 +45,49 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             /* left diagonal */
             checkx = posx + i * cos(dir - PI / 4);
             checky = posy + i * sin(dir - PI / 4);
-            if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
+            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
-            if (result != id + 8 && result != id + 16 && result != 0) {
+            if (result != id + 8 && result != id + 16 && result != 0)
                 return 'r';
-            }
             /* right diagonal */
             checkx = posx + i * cos(dir + PI / 4);
             checky = posy + i * sin(dir + PI / 4);
-            if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
+            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
-            if (result != id + 8 && result != id + 16 && result != 0) {
+            if (result != id + 8 && result != id + 16 && result != 0)
                 return 'l';
-            }
         }
         if (i < COWARDNESS_SIDES) {
             /* right side */
             checkx = posx + i * cos(dir + PI / 2);
             checky = posy + i * sin(dir + PI / 2);
-            if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
+            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
-            if (result != id + 8 && result != id + 16 && result != 0) {
+            if (result != id + 8 && result != id + 16 && result != 0)
                 return 'l';
-            }
             /* left side */
             checkx = posx + i * cos(dir - PI / 2);
             checky = posy + i * sin(dir - PI / 2);
-            if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
+            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
-            if (result != id + 8 && result != id + 16 && result != 0) {
+            if (result != id + 8 && result != id + 16 && result != 0)
                 return 'r';
-            }
         }
         /* front */
         checkx = posx + i * cos(dir);
         checky = posy + i * sin(dir);
-        if (checkx >= w || checky >= h || checkx < 0 || checky < 0)
+        if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
             return 'r';
         result = hitmap[w * checky + checkx];
         if (result != id + 8 && result != id + 16 && result != 0) {
-            if (result == id) {
+            if (result == id)
                 return 'l';
-            } else {
+            else
                 return 'r';
-            }
         }
     }
 

@@ -159,7 +159,7 @@ static int countdown;
 static bool winnerDeclared = 0;
 static bool screenFreeze = 0;
 
-static int scorecap = 0;
+static unsigned int scorecap = 0;
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool sound = DEFAULT_SOUND;
 static bool music = DEFAULT_MUSIC;
