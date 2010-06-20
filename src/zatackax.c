@@ -1475,6 +1475,7 @@ int logicSettingsMenu(void)
                     nPlayers = 2;
                 break;
             case 7: /* Score cap */
+                playSound(SOUND_BEEP, sound);
                 if (scorecap < SCORE_CAP_MAX - 10)
                     scorecap += 10;
                 break;
@@ -1496,18 +1497,24 @@ int logicSettingsMenu(void)
         return 1;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
-        if (menuSettings.choice == 7 && scorecap > 0)
+        if (menuSettings.choice == 7 && scorecap > 0) {
+            playSound(SOUND_PEEB, sound);
             --scorecap;
+        }
         return 1;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
-        if (menuSettings.choice == 7 && scorecap < SCORE_CAP_MAX)
+        if (menuSettings.choice == 7 && scorecap < SCORE_CAP_MAX) {
+            playSound(SOUND_BEEP, sound);
             ++scorecap;
+        }
         return 1;
     } else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
-        if (menuSettings.choice == 7)
+        if (menuSettings.choice == 7) {
+            playSound(SOUND_PEEB, sound);
             scorecap = 0;
+        }
         return 1;
     }
     return handleMenu(&menuSettings);
@@ -1639,7 +1646,8 @@ int logicPConfMenu(void)
                 displayPConfMenu(); /* Update menu before catching key */
                 setNextKey(editPlayer, 'r');
                 break;
-            case 5:
+            case 5: /* Reset player settings */
+                playSound(SOUND_PEEB, sound);
                 resetPlayer(editPlayer);
                 break;
             case 6:
