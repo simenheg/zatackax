@@ -1496,17 +1496,17 @@ int logicSettingsMenu(void)
         return 1;
     } else if (keyDown[SDLK_LEFT]) {
         keyDown[SDLK_LEFT] = 0;
-        if (menuSettings.choice == 6 && scorecap > 0)
+        if (menuSettings.choice == 7 && scorecap > 0)
             --scorecap;
         return 1;
     } else if (keyDown[SDLK_RIGHT]) {
         keyDown[SDLK_RIGHT] = 0;
-        if (menuSettings.choice == 6 && scorecap < SCORE_CAP_MAX)
+        if (menuSettings.choice == 7 && scorecap < SCORE_CAP_MAX)
             ++scorecap;
         return 1;
     } else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
-        if (menuSettings.choice == 6)
+        if (menuSettings.choice == 7)
             scorecap = 0;
         return 1;
     }
