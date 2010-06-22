@@ -20,7 +20,9 @@
 static Mix_Music *bgm = NULL;
 static Mix_Chunk *beep = NULL;
 static Mix_Chunk *peeb = NULL;
+static Mix_Chunk *crash = NULL;
 static Mix_Chunk *seSpeed = NULL;
+static Mix_Chunk *seFreeze = NULL;
 static Mix_Chunk *seConfusion = NULL;
 static Mix_Chunk *seSharpturn = NULL;
 static Mix_Chunk *seStep = NULL;
@@ -58,47 +60,59 @@ int initSound(void)
     }
     sounds[1] = peeb;
 
+    if ((crash = Mix_LoadWAV("data/sound/crash.wav")) == NULL) {
+        fileNotFound("data/sound/crash.wav");
+        return -1;
+    }
+    sounds[2] = crash;
+
     if ((seSpeed = Mix_LoadWAV("data/sound/lightningspeed.wav")) == NULL) {
         fileNotFound("data/sound/lightningspeed.wav");
         return -1;
     }
-    sounds[2] = seSpeed;
+    sounds[3] = seSpeed;
+
+    if ((seFreeze = Mix_LoadWAV("data/sound/freeze.wav")) == NULL) {
+        fileNotFound("data/sound/freeze.wav");
+        return -1;
+    }
+    sounds[4] = seFreeze;
 
     if ((seConfusion = Mix_LoadWAV("data/sound/confusion.wav")) == NULL) {
         fileNotFound("data/sound/confusion.wav");
         return -1;
     }
-    sounds[3] = seConfusion;
+    sounds[5] = seConfusion;
 
     if ((seSharpturn = Mix_LoadWAV("data/sound/sharpturn.wav")) == NULL) {
         fileNotFound("data/sound/sharpturn.wav");
         return -1;
     }
-    sounds[4] = seSharpturn;
+    sounds[6] = seSharpturn;
 
     if ((seStep = Mix_LoadWAV("data/sound/timestep.wav")) == NULL) {
         fileNotFound("data/sound/timestep.wav");
         return -1;
     }
-    sounds[5] = seStep;
+    sounds[7] = seStep;
 
     if ((seMole = Mix_LoadWAV("data/sound/mole.wav")) == NULL) {
         fileNotFound("data/sound/mole.wav");
         return -1;
     }
-    sounds[6] = seMole;
+    sounds[8] = seMole;
 
     if ((seWarp = Mix_LoadWAV("data/sound/warp.wav")) == NULL) {
         fileNotFound("data/sound/warp.wav");
         return -1;
     }
-    sounds[7] = seWarp;
+    sounds[9] = seWarp;
 
     if ((seSwitch = Mix_LoadWAV("data/sound/switch.wav")) == NULL) {
         fileNotFound("data/sound/switch.wav");
         return -1;
     }
-    sounds[8] = seSwitch;
+    sounds[10] = seSwitch;
 
     return 0;
 }

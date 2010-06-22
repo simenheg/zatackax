@@ -190,6 +190,8 @@ void killPlayer(unsigned char killed, unsigned char killer)
 {
     int i;
 
+    playSound(SOUND_CRASH, sound);
+
     struct player *p = &players[killed - 1];
     --alivecount;
     p->alive = 0;
@@ -1056,6 +1058,10 @@ int wepSpeedup(struct player *p, bool on)
 int wepFrostwave(struct player *p, bool on)
 {
     int i;
+
+    if (on)
+        playSound(SOUND_FREEZE, sound);
+
     for (i = 0; i < nPlayers; ++i) {
         struct player *target = &players[i];
         if (target != p) {
