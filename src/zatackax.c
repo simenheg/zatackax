@@ -1553,13 +1553,13 @@ void displaySettingsMenu(void)
     char tmpCap[SCORE_BUF];
 
     char s1[MENU_BUF] = "FULLSCREEN ";
-    char s2[MENU_BUF] = "SOUND ~EXPERIMENTAL!~ ";
+    char s2[MENU_BUF] = "SOUND EFFECTS ";
     char s3[MENU_BUF] = "MUSIC ";
     char s4[MENU_BUF] = "WEAPONS ";
     char s5[MENU_BUF] = "HOLES ";
     char s6[MENU_BUF] = "BROADCASTS ";
     char s7[MENU_BUF] = "DUEL MODE ";
-    char s8[MENU_BUF] = "SCORE CAP: ";
+    char s8[MENU_BUF] = "SCORE CAP (experimental): ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
     strncat(s3, music ON_OFF, MENU_BUF - strlen(s3));

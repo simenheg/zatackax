@@ -70,12 +70,13 @@
 #define TRIANGLE_PANNING_Y      6.5
 #define ON_OFF                  ? "[on]" : "[off]"
 #define DEFAULT_FULLSCREEN      0
-#define DEFAULT_SOUND           0
+#define DEFAULT_SOUND           1
 #define DEFAULT_MUSIC           1
 #define DEFAULT_WEAPONS         1
 #define DEFAULT_HOLES           1
 #define DEFAULT_BROADCASTS      1
 #define DEFAULT_DUELMODE        0
+#define DEFAULT_SCORECAP        0
 
 /* WEAPONS */
 #define N_WEAPONS               8
@@ -156,7 +157,7 @@ static int countdown;
 static bool winnerDeclared = 0;
 static bool screenFreeze = 0;
 
-static unsigned int scorecap = 0;
+static unsigned int scorecap = DEFAULT_SCORECAP;
 static bool fullscreen = DEFAULT_FULLSCREEN;
 static bool sound = DEFAULT_SOUND;
 static bool music = DEFAULT_MUSIC;
