@@ -21,7 +21,12 @@ static Mix_Music *bgm = NULL;
 static Mix_Chunk *beep = NULL;
 static Mix_Chunk *peeb = NULL;
 static Mix_Chunk *seSpeed = NULL;
+static Mix_Chunk *seConfusion = NULL;
+static Mix_Chunk *seSharpturn = NULL;
 static Mix_Chunk *seStep = NULL;
+static Mix_Chunk *seMole = NULL;
+static Mix_Chunk *seWarp = NULL;
+static Mix_Chunk *seSwitch = NULL;
 static Mix_Chunk *sounds[N_SOUNDS];
 
 /**
@@ -59,11 +64,41 @@ int initSound(void)
     }
     sounds[2] = seSpeed;
 
+    if ((seConfusion = Mix_LoadWAV("data/sound/confusion.wav")) == NULL) {
+        fileNotFound("data/sound/confusion.wav");
+        return -1;
+    }
+    sounds[3] = seConfusion;
+
+    if ((seSharpturn = Mix_LoadWAV("data/sound/sharpturn.wav")) == NULL) {
+        fileNotFound("data/sound/sharpturn.wav");
+        return -1;
+    }
+    sounds[4] = seSharpturn;
+
     if ((seStep = Mix_LoadWAV("data/sound/timestep.wav")) == NULL) {
         fileNotFound("data/sound/timestep.wav");
         return -1;
     }
-    sounds[3] = seStep;
+    sounds[5] = seStep;
+
+    if ((seMole = Mix_LoadWAV("data/sound/mole.wav")) == NULL) {
+        fileNotFound("data/sound/mole.wav");
+        return -1;
+    }
+    sounds[6] = seMole;
+
+    if ((seWarp = Mix_LoadWAV("data/sound/warp.wav")) == NULL) {
+        fileNotFound("data/sound/warp.wav");
+        return -1;
+    }
+    sounds[7] = seWarp;
+
+    if ((seSwitch = Mix_LoadWAV("data/sound/switch.wav")) == NULL) {
+        fileNotFound("data/sound/switch.wav");
+        return -1;
+    }
+    sounds[8] = seSwitch;
 
     return 0;
 }

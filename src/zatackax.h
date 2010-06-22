@@ -86,7 +86,7 @@
 #define WEP_SPACEMOD            50
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
-#define MIN_TELEPORT_SPACE      5.1 /* If 5.1 results in random suicides,
+#define MIN_TELEPORT_SPACE      5.2 /* If 5.2 results in random suicides,
                                        tune this up slightly */
 
 struct player {

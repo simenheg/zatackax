@@ -1076,10 +1076,14 @@ int wepFrostwave(struct player *p, bool on)
  */
 int wepSharpturn(struct player *p, bool on)
 {
-    if (keyDown[p->rkey])
-        p->dir += PI / 2;
-    else
-        p->dir -= PI / 2;
+    if (on) {
+        playSound(SOUND_SHARPTURN, sound);
+
+        if (keyDown[p->rkey])
+            p->dir += PI / 2;
+        else
+            p->dir -= PI / 2;
+    }
     return 0;
 }
 
@@ -1091,6 +1095,9 @@ int wepSharpturn(struct player *p, bool on)
  */
 int wepConfusion(struct player *p, bool on)
 {
+    if (on)
+        playSound(SOUND_CONFUSION, sound);
+
     int i;
     for (i = 0; i < nPlayers; ++i) {
         struct player *target = &players[i];
@@ -1134,12 +1141,16 @@ int wepTimestep(struct player *p, bool on)
  */
 int wepMole(struct player *p, bool on)
 {
-    p->posx = p->initposx;
-    p->posy = p->initposy;
-    p->dir = p->initdir + PI;
+    if (on) {
+        playSound(SOUND_MOLE, sound);
 
-    p->posx += MIN_TELEPORT_SPACE * cos(p->dir);
-    p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
+        p->posx = p->initposx;
+        p->posy = p->initposy;
+        p->dir = p->initdir + PI;
+
+        p->posx += MIN_TELEPORT_SPACE * cos(p->dir);
+        p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
+    }
 
     return 0;
 }
@@ -1152,17 +1163,21 @@ int wepMole(struct player *p, bool on)
  */
 int wepWarp(struct player *p, bool on)
 {
-    double rnd;
-    Uint32 timeseed = SDL_GetTicks();
+    if (on) {
+        playSound(SOUND_WARP, sound);
 
-    srand(timeseed * randomizer++);
-    rnd = (double)rand() / RAND_MAX;
-    p->posx = SPAWN_SPACE_MIN
-        + (rnd * (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
-    srand(timeseed * randomizer++);
-    rnd = (double)rand() / RAND_MAX;
-    p->posy = SPAWN_SPACE_MIN
-        + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
+        double rnd;
+        Uint32 timeseed = SDL_GetTicks();
+
+        srand(timeseed * randomizer++);
+        rnd = (double)rand() / RAND_MAX;
+        p->posx = SPAWN_SPACE_MIN
+            + (rnd * (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
+        srand(timeseed * randomizer++);
+        rnd = (double)rand() / RAND_MAX;
+        p->posy = SPAWN_SPACE_MIN
+            + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
+    }
 
     return 0;
 }
@@ -1175,6 +1190,9 @@ int wepWarp(struct player *p, bool on)
  */
 int wepSwitch(struct player *p, bool on)
 {
+    if (on)
+        playSound(SOUND_SWITCH, sound);
+
     int i, r;
     bool valid = 0;
     Uint32 timeseed = SDL_GetTicks();

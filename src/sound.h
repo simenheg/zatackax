@@ -5,13 +5,18 @@
 #include "common.h"
 #include "error.h"
 
-#define N_SOUNDS    4
+#define N_SOUNDS    9
 
 enum sounds {
     SOUND_BEEP,
     SOUND_PEEB,
     SOUND_SPEED,
-    SOUND_STEP
+    SOUND_CONFUSION,
+    SOUND_SHARPTURN,
+    SOUND_STEP,
+    SOUND_MOLE,
+    SOUND_WARP,
+    SOUND_SWITCH
 };
 
 int initSound(void);
