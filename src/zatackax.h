@@ -14,9 +14,6 @@
 #include "ai.h"
 #include "common.h"
 
-/* MISC */
-#define STRBUF              32
-
 /* DEFAULT WINDOW DIMENSIONS */
 #define DEFAULT_WINDOW_W    800
 #define DEFAULT_WINDOW_H    600

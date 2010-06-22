@@ -1132,7 +1132,7 @@ int wepConfusion(struct player *p, bool on)
 int wepTimestep(struct player *p, bool on)
 {
     if (on) {
-        playSound(SOUND_STEP, sound);
+        playSound(SOUND_TIMESTEP, sound);
         p->posx += 90 * cos(p->dir);
         p->posy += 90 * sin(p->dir);
     }

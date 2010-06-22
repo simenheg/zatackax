@@ -15,12 +15,13 @@ enum sounds {
     SOUND_FREEZE,
     SOUND_CONFUSION,
     SOUND_SHARPTURN,
-    SOUND_STEP,
+    SOUND_TIMESTEP,
     SOUND_MOLE,
     SOUND_WARP,
     SOUND_SWITCH
 };
 
+int loadSound(Mix_Chunk *sound, char *soundstr, int index);
 int initSound(void);
 void playSound(unsigned int sound, int play);
 void playBGM(void);

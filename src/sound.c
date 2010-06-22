@@ -18,18 +18,41 @@
 #include "sound.h"
 
 static Mix_Music *bgm = NULL;
-static Mix_Chunk *beep = NULL;
-static Mix_Chunk *peeb = NULL;
-static Mix_Chunk *crash = NULL;
+static Mix_Chunk *seBeep = NULL;
+static Mix_Chunk *sePeeb = NULL;
+static Mix_Chunk *seCrash = NULL;
 static Mix_Chunk *seSpeed = NULL;
 static Mix_Chunk *seFreeze = NULL;
 static Mix_Chunk *seConfusion = NULL;
 static Mix_Chunk *seSharpturn = NULL;
-static Mix_Chunk *seStep = NULL;
+static Mix_Chunk *seTimestep = NULL;
 static Mix_Chunk *seMole = NULL;
 static Mix_Chunk *seWarp = NULL;
 static Mix_Chunk *seSwitch = NULL;
 static Mix_Chunk *sounds[N_SOUNDS];
+
+/**
+ * Loads a sound effect into appropriate sound array index.
+ *
+ * @param sound Pointer to where to put the loaded sound.
+ * @param soundstr Name of the sound (.wav added).
+ * @param index Index in the sound array (0 --> N_SOUNDS).
+ * @return -1 on failiure, 0 else.
+ */
+int loadSound(Mix_Chunk *sound, char *soundstr, int index)
+{
+    char *soundpath = malloc(STRBUF);
+    snprintf(soundpath, STRBUF, "data/sound/%s.wav", soundstr);
+    if ((sound = Mix_LoadWAV(soundpath)) == NULL) {
+        fileNotFound(soundpath);
+        free(soundpath);
+        return -1;
+    } else {
+        sounds[index] = sound;
+        free(soundpath);
+        return 0;
+    }
+}
 
 /**
  * Initializes the mixer and loads sound files.
@@ -48,71 +71,29 @@ int initSound(void)
         fileNotFound("data/sound/Padanaya_Blokov.ogg");
         return -1;
     }
-    if ((beep = Mix_LoadWAV("data/sound/beep.wav")) == NULL) {
-        fileNotFound("data/sound/beep.wav");
-        return -1;
-    }
-    sounds[0] = beep;
 
-    if ((peeb = Mix_LoadWAV("data/sound/peeb.wav")) == NULL) {
-        fileNotFound("data/sound/peeb.wav");
+    if (loadSound(seBeep, "beep", SOUND_BEEP) == -1)
         return -1;
-    }
-    sounds[1] = peeb;
-
-    if ((crash = Mix_LoadWAV("data/sound/crash.wav")) == NULL) {
-        fileNotFound("data/sound/crash.wav");
+    if (loadSound(sePeeb, "peeb", SOUND_PEEB) == -1)
         return -1;
-    }
-    sounds[2] = crash;
-
-    if ((seSpeed = Mix_LoadWAV("data/sound/lightningspeed.wav")) == NULL) {
-        fileNotFound("data/sound/lightningspeed.wav");
+    if (loadSound(seCrash, "crash", SOUND_CRASH) == -1)
         return -1;
-    }
-    sounds[3] = seSpeed;
-
-    if ((seFreeze = Mix_LoadWAV("data/sound/freeze.wav")) == NULL) {
-        fileNotFound("data/sound/freeze.wav");
+    if (loadSound(seSpeed, "speed", SOUND_SPEED) == -1)
         return -1;
-    }
-    sounds[4] = seFreeze;
-
-    if ((seConfusion = Mix_LoadWAV("data/sound/confusion.wav")) == NULL) {
-        fileNotFound("data/sound/confusion.wav");
+    if (loadSound(seFreeze, "freeze", SOUND_FREEZE) == -1)
         return -1;
-    }
-    sounds[5] = seConfusion;
-
-    if ((seSharpturn = Mix_LoadWAV("data/sound/sharpturn.wav")) == NULL) {
-        fileNotFound("data/sound/sharpturn.wav");
+    if (loadSound(seConfusion, "confusion", SOUND_CONFUSION) == -1)
         return -1;
-    }
-    sounds[6] = seSharpturn;
-
-    if ((seStep = Mix_LoadWAV("data/sound/timestep.wav")) == NULL) {
-        fileNotFound("data/sound/timestep.wav");
+    if (loadSound(seSharpturn, "sharpturn", SOUND_SHARPTURN) == -1)
         return -1;
-    }
-    sounds[7] = seStep;
-
-    if ((seMole = Mix_LoadWAV("data/sound/mole.wav")) == NULL) {
-        fileNotFound("data/sound/mole.wav");
+    if (loadSound(seTimestep, "timestep", SOUND_TIMESTEP) == -1)
         return -1;
-    }
-    sounds[8] = seMole;
-
-    if ((seWarp = Mix_LoadWAV("data/sound/warp.wav")) == NULL) {
-        fileNotFound("data/sound/warp.wav");
+    if (loadSound(seMole, "mole", SOUND_MOLE) == -1)
         return -1;
-    }
-    sounds[9] = seWarp;
-
-    if ((seSwitch = Mix_LoadWAV("data/sound/switch.wav")) == NULL) {
-        fileNotFound("data/sound/switch.wav");
+    if (loadSound(seWarp, "warp", SOUND_WARP) == -1)
         return -1;
-    }
-    sounds[10] = seSwitch;
+    if (loadSound(seSwitch, "switch", SOUND_SWITCH) == -1)
+        return -1;
 
     return 0;
 }

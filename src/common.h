@@ -1,7 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define PI  3.14159265358
+#define PI      3.14159265358
+#define STRBUF  32
 
 /* output level */
 #define O_SILENT    0   /* be absolutely quiet */
