@@ -35,14 +35,14 @@ static Mix_Chunk *sounds[N_SOUNDS];
  * Loads a sound effect into appropriate sound array index.
  *
  * @param sound Pointer to where to put the loaded sound.
- * @param soundstr Name of the sound (.wav added).
+ * @param soundstr Name of the sound (.ogg added).
  * @param index Index in the sound array (0 --> N_SOUNDS).
  * @return -1 on failiure, 0 else.
  */
 int loadSound(Mix_Chunk *sound, char *soundstr, int index)
 {
     char *soundpath = malloc(STRBUF);
-    snprintf(soundpath, STRBUF, "data/sound/%s.wav", soundstr);
+    snprintf(soundpath, STRBUF, "data/sound/%s.ogg", soundstr);
     if ((sound = Mix_LoadWAV(soundpath)) == NULL) {
         fileNotFound(soundpath);
         free(soundpath);
