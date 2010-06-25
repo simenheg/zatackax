@@ -1,4 +1,4 @@
-CC = gcc
+CC = cc
 CFLAGS = -g3 -std=c99 -pedantic -Wall
 LFLAGS = -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer
 CDEBUG = -DDEBUG
