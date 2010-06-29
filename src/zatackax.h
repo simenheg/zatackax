@@ -48,7 +48,7 @@
 /* HOLES */
 /* Hole size.
  * Higher number -> smaller hole */
-#define HOLE_SIZE           2830 * (0.9 + ZATA_SPEED)
+#define HOLE_SIZE           2820 * (0.9 + ZATA_SPEED)
 #define HOLE_FIRST_DELAY    300     /* Minimum delay of first hole */
 #define HOLE_FREQ           3000    /* How often holes appears */
 #define HOLE_DELAY          108     /* Time before hole is created */
