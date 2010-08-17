@@ -366,11 +366,18 @@ void setNextKey(unsigned char pedit, unsigned char key)
 {
     for (;;) {
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_KEYDOWN) {
+            if (event.type == SDL_KEYDOWN
+		|| event.type == SDL_MOUSEBUTTONDOWN) {
 
-                int k = event.key.keysym.sym;
+		int k;
+		if (event.type == SDL_KEYDOWN)
+		    k = event.key.keysym.sym;
+		else
+		    k = event.button.button;
+		
                 char *keyname = keyName(k);
-                if (keyname[0] == '\0') {
+
+		if (keyname[0] == '\0') {
                     if (olvl >= O_DEBUG)
                         fprintf(stderr, "Unknown key\n");
                 } else {
@@ -2312,7 +2319,7 @@ char *keyName(unsigned int key)
 {
     char *keyname = malloc(MAX_KEYNAME * sizeof(char));
     memset(keyname, '\0', MAX_KEYNAME * sizeof(char));
-
+    
     if ((key >= SDLK_a && key <= SDLK_z)
             || (key >= SDLK_0 && key <= SDLK_9)) {
         snprintf(keyname, 2, "%c", key);
@@ -2320,66 +2327,72 @@ char *keyName(unsigned int key)
         snprintf(keyname, 4, "F%d", key - SDLK_F1 + 1);
     } else {
         switch (key) {
-            case SDLK_UNKNOWN:
-                snprintf(keyname, 5, "none"); break;
-            case SDLK_LEFT:
-                snprintf(keyname, 5, "left"); break;
-            case SDLK_RIGHT:
-                snprintf(keyname, 6, "right"); break;
-            case SDLK_UP:
-                snprintf(keyname, 3, "up"); break;
-            case SDLK_DOWN:
-                snprintf(keyname, 5, "down"); break;
-            case SDLK_DELETE:
-                snprintf(keyname, 4, "del"); break;
-            case SDLK_INSERT:
-                snprintf(keyname, 4, "ins"); break;
-            case SDLK_HOME:
-                snprintf(keyname, 5, "home"); break;
-            case SDLK_END:
-                snprintf(keyname, 4, "end"); break;
-            case SDLK_PAGEUP:
-                snprintf(keyname, 6, "pg up"); break;
-            case SDLK_PAGEDOWN:
-                snprintf(keyname, 6, "pg dn"); break;
-            case SDLK_RSHIFT:
-                snprintf(keyname, 8, "r-shift"); break;
-            case SDLK_LSHIFT:
-                snprintf(keyname, 8, "l-shift"); break;
-            case SDLK_RCTRL:
-                snprintf(keyname, 7, "r-ctrl"); break;
-            case SDLK_LCTRL:
-                snprintf(keyname, 7, "l-ctrl"); break;
-            case SDLK_RALT:
-                snprintf(keyname, 6, "r-alt"); break;
-            case SDLK_LALT:
-                snprintf(keyname, 6, "l-alt"); break;
-            case SDLK_RSUPER:
-                snprintf(keyname, 8, "r-super"); break;
-            case SDLK_LSUPER:
-                snprintf(keyname, 8, "l-super"); break;
-            case SDLK_TAB:
-                snprintf(keyname, 4, "tab"); break;
-            case SDLK_PERIOD:
-                snprintf(keyname, 2, "."); break;
-            case SDLK_COMMA:
-                snprintf(keyname, 2, ","); break;
-            case SDLK_MINUS:
-                snprintf(keyname, 2, "-"); break;
-            case SDLK_PLUS:
-                snprintf(keyname, 2, "+"); break;
-            case SDLK_BACKSLASH:
-                snprintf(keyname, 2, "\\"); break;
-            case SDLK_LESS:
-                snprintf(keyname, 2, "<"); break;
-            case SDLK_BACKSPACE:
-                snprintf(keyname, 8, "b-space"); break;
-            case SDLK_RETURN:
-                snprintf(keyname, 6, "enter"); break;
-            case SDLK_SPACE:
-                snprintf(keyname, 6, "space"); break;
-            default:
-                break;
+	case SDLK_UNKNOWN:
+	    snprintf(keyname, 5, "none"); break;
+	case SDLK_LEFT:
+	    snprintf(keyname, 5, "left"); break;
+	case SDLK_RIGHT:
+	    snprintf(keyname, 6, "right"); break;
+	case SDLK_UP:
+	    snprintf(keyname, 3, "up"); break;
+	case SDLK_DOWN:
+	    snprintf(keyname, 5, "down"); break;
+	case SDLK_DELETE:
+	    snprintf(keyname, 4, "del"); break;
+	case SDLK_INSERT:
+	    snprintf(keyname, 4, "ins"); break;
+	case SDLK_HOME:
+	    snprintf(keyname, 5, "home"); break;
+	case SDLK_END:
+	    snprintf(keyname, 4, "end"); break;
+	case SDLK_PAGEUP:
+	    snprintf(keyname, 6, "pg up"); break;
+	case SDLK_PAGEDOWN:
+	    snprintf(keyname, 6, "pg dn"); break;
+	case SDLK_RSHIFT:
+	    snprintf(keyname, 8, "r-shift"); break;
+	case SDLK_LSHIFT:
+	    snprintf(keyname, 8, "l-shift"); break;
+	case SDLK_RCTRL:
+	    snprintf(keyname, 7, "r-ctrl"); break;
+	case SDLK_LCTRL:
+	    snprintf(keyname, 7, "l-ctrl"); break;
+	case SDLK_RALT:
+	    snprintf(keyname, 6, "r-alt"); break;
+	case SDLK_LALT:
+	    snprintf(keyname, 6, "l-alt"); break;
+	case SDLK_RSUPER:
+	    snprintf(keyname, 8, "r-super"); break;
+	case SDLK_LSUPER:
+	    snprintf(keyname, 8, "l-super"); break;
+	case SDLK_TAB:
+	    snprintf(keyname, 4, "tab"); break;
+	case SDLK_PERIOD:
+	    snprintf(keyname, 2, "."); break;
+	case SDLK_COMMA:
+	    snprintf(keyname, 2, ","); break;
+	case SDLK_MINUS:
+	    snprintf(keyname, 2, "-"); break;
+	case SDLK_PLUS:
+	    snprintf(keyname, 2, "+"); break;
+	case SDLK_BACKSLASH:
+	    snprintf(keyname, 2, "\\"); break;
+	case SDLK_LESS:
+	    snprintf(keyname, 2, "<"); break;
+	case SDLK_BACKSPACE:
+	    snprintf(keyname, 8, "b-space"); break;
+	case SDLK_RETURN:
+	    snprintf(keyname, 6, "enter"); break;
+	case SDLK_SPACE:
+	    snprintf(keyname, 6, "space"); break;
+	case SDL_BUTTON_LEFT:
+	    snprintf(keyname, 8, "l-mouse"); break;
+	case SDL_BUTTON_MIDDLE:
+	    snprintf(keyname, 8, "m-mouse"); break;
+	case SDL_BUTTON_RIGHT:
+	    snprintf(keyname, 8, "r-mouse"); break;
+	default:
+	    break;
         }
     }
     return keyname;
@@ -2440,7 +2453,8 @@ int main(int argc, char *argv[])
 
     for (;;) {
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_KEYDOWN) {
+            if (event.type == SDL_KEYDOWN
+		|| event.type == SDL_MOUSEBUTTONDOWN) {
 
                 if (screenFreeze) {
                     screenFreeze = 0;
@@ -2448,7 +2462,12 @@ int main(int argc, char *argv[])
                     break;
                 }
 
-                int k = event.key.keysym.sym;
+                int k;
+		if (event.type == SDL_KEYDOWN)
+		    k = event.key.keysym.sym;
+		else
+		    k = event.button.button;
+		
                 if (k != SDLK_ESCAPE) {
                     if (olvl >= O_DEBUG)
                         fprintf(stderr, "Pressed: %c (%d)\n", k, k);
@@ -2464,11 +2483,13 @@ int main(int argc, char *argv[])
                     curScene = curScene->parentScene;
                     curScene->displayFunc();
                 }
-            } else if (event.type == SDL_KEYUP) {
+            } else if (event.type == SDL_KEYUP)
                 keyDown[event.key.keysym.sym] = 0;
-            } else if (event.type == SDL_QUIT) {
+            else if (event.type == SDL_MOUSEBUTTONUP)
+		keyDown[event.button.button] = 0;
+	    else if (event.type == SDL_QUIT)
                 exitGame(0);
-            } else if (event.type == SDL_VIDEORESIZE) {
+            else if (event.type == SDL_VIDEORESIZE) {
 
                 WINDOW_W = event.resize.w;
                 WINDOW_H = event.resize.h;
