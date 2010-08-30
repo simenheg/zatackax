@@ -1978,9 +1978,11 @@ int init(void)
     }
 
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
-
+    
     SDL_ShowCursor(SDL_DISABLE);
-    SDL_WM_SetCaption("Zatacka X", NULL);
+    SDL_WM_SetCaption("Zatacka X", "Zatacka X");
+
+    SDL_WM_SetIcon(SDL_LoadBMP("data/gfx/icon.bmp"), NULL);
 
     return 1;
 }
