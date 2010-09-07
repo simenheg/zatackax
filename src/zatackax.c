@@ -175,9 +175,8 @@ void resetPlayer(int player)
 void deselectWeapons(void)
 {
     int i;
-    for (i = 0; i < nPlayers; ++i) {
+    for (i = 0; i < nPlayers; ++i)
         (&players[i])->weapon = 0;
-    }
 }
 
 /**
