@@ -1965,16 +1965,20 @@ int init(void)
             fprintf(stderr, "ERROR: Could not initialize SDL.\n");
         return 0;
     }
+    atexit(SDL_Quit);
+    
     if (initSound() == -1) {
         if (olvl >= O_NORMAL)
             fprintf(stderr, "ERROR: Could not initialize sound.\n");
         return 0;
     }
+    
     if (TTF_Init() == -1) {
         if (olvl >= O_NORMAL)
             fprintf(stderr, "ERROR: Could not initialize fonts.\n");
         return 0;
     }
+    atexit(TTF_Quit);
 
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
     
