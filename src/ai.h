@@ -7,6 +7,6 @@
 #define AI_WEP_PROB 0.0002
 
 char pollAi(double posx, double posy, double dir, unsigned char id,
-        unsigned char *hitmap, unsigned int w, unsigned int h);
+            unsigned char *hitmap, unsigned int w, unsigned int h);
 
 #endif

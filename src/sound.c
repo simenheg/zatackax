@@ -62,7 +62,7 @@ int loadSound(Mix_Chunk *sound, char *soundstr, int index)
 int initSound(void)
 {
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY * 2, MIX_DEFAULT_FORMAT,
-                2, 512) == -1 )
+                      2, 512) == -1 )
     {
         return -1;
     }
@@ -104,7 +104,7 @@ int initSound(void)
  * @param sound One of the sounds stated in enum sounds (see sound.h).
  * @param play 1 if the sound is to be played, 0 else.
  */
-void playSound(unsigned int sound, int play) 
+void playSound(unsigned int sound, int play)
 {
     if (play)
         Mix_PlayChannel(-1, sounds[sound], 0);

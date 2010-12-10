@@ -5,7 +5,7 @@
 #include "common.h"
 #include "error.h"
 
-#define N_SOUNDS    10
+#define N_SOUNDS 10
 
 enum sounds {
     SOUND_BEEP,

@@ -36,7 +36,7 @@
  * @return 'l' to turn left, 'r' to turn right, '0' else.
  */
 char pollAi(double posx, double posy, double dir, unsigned char id,
-        unsigned char *hitmap, unsigned int w, unsigned int h)
+            unsigned char *hitmap, unsigned int w, unsigned int h)
 {
     int i;
     for (i = 0; i < COWARDNESS_FRONT; ++i) {

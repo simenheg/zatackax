@@ -166,9 +166,9 @@ static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
 static bool duelmode = DEFAULT_DUELMODE;
 static const char *settingNames[] = {"fullscreen", "sound", "music", "weapons",
-    "holes", "broadcasts", "duelmode"};
+                                     "holes", "broadcasts", "duelmode"};
 static bool *settings[7] = {&fullscreen, &sound, &music, &weapons, &holes,
-    &broadcasts, &duelmode};
+                            &broadcasts, &duelmode};
 
 static unsigned int randomizer = 1; /* Help distribute better random
                                        values */
@@ -230,7 +230,7 @@ void setNextKey(unsigned char pedit, unsigned char key);
 /* HITMAP */
 void initHitMap(unsigned int w, unsigned int h);
 void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
-        unsigned char modifier);
+                 unsigned char modifier);
 void updateHitMap(Uint32 delta);
 void cleanHitMap(void);
 
@@ -257,8 +257,8 @@ int wepMole(struct player *p, bool on);
 int wepWarp(struct player *p, bool on);
 int wepSwitch(struct player *p, bool on);
 void resetWeapons(void);
-int (*wepFunc[N_WEAPONS])(struct player*, bool) = {wepSpeedup,
-    wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole,
+int (*wepFunc[N_WEAPONS])(struct player*, bool) = {
+    wepSpeedup, wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole,
     wepWarp, wepSwitch};
 
 /* MENUS */
