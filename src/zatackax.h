@@ -163,6 +163,12 @@ static unsigned int keyDown[322];   /* 322 is the number of
                                        possible SDL keys
                                        (see SDL_keysym.h) */
 
+/* Used for multiple menu navigation input sets */
+enum keySymbols {KEY_LEFT,
+                 KEY_RIGHT,
+                 KEY_UP,
+                 KEY_DOWN};
+
 /* SURFACES */
 static SDL_Surface *screen = NULL;
 static SDL_Surface *msg = NULL;
@@ -247,6 +253,7 @@ int (*wepFunc[N_WEAPONS])(struct player*, bool) = {
     wepMole, wepWarp, wepSwitch};
 
 /* MENUS */
+bool qkey(int keysym);
 void initMainMenu(void);
 int logicMainMenu(void);
 void displayMainMenu(void);

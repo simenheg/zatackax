@@ -1253,6 +1253,70 @@ void resetWeapons(void)
 }
 
 /**
+ * Query key status (for menu navigation).
+ *
+ * @param keysym One of enum keySymbols.
+ * @return True if any of the bound keys are pressed.
+ */
+bool qkey(int keysym)
+{
+    switch (keysym) {
+    case KEY_LEFT:
+        if (keyDown[SDLK_LEFT]) {
+            keyDown[SDLK_LEFT] = 0;
+            return 1;
+        } else if (keyDown[SDLK_h]) {
+            keyDown[SDLK_h] = 0;
+            return 1;
+        } else if (keyDown[SDLK_b]) {
+            keyDown[SDLK_b] = 0;
+            return 1;
+        }
+        break;
+    case KEY_RIGHT:
+        if (keyDown[SDLK_RIGHT]) {
+            keyDown[SDLK_RIGHT] = 0;
+            return 1;
+        } else if (keyDown[SDLK_l]) {
+            keyDown[SDLK_l] = 0;
+            return 1;
+        } else if (keyDown[SDLK_f]) {
+            keyDown[SDLK_f] = 0;
+            return 1;
+        }
+        break;
+    case KEY_UP:
+        if (keyDown[SDLK_UP]) {
+            keyDown[SDLK_UP] = 0;
+            return 1;
+        } else if (keyDown[SDLK_k]) {
+            keyDown[SDLK_k] = 0;
+            return 1;
+        } else if (keyDown[SDLK_p]) {
+            keyDown[SDLK_p] = 0;
+            return 1;
+        }
+        break;
+    case KEY_DOWN:
+        if (keyDown[SDLK_DOWN]) {
+            keyDown[SDLK_DOWN] = 0;
+            return 1;
+        } else if (keyDown[SDLK_j]) {
+            keyDown[SDLK_j] = 0;
+            return 1;
+        } else if (keyDown[SDLK_n]) {
+            keyDown[SDLK_n] = 0;
+            return 1;
+        }
+        break;
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+/**
  * Initializes the main menu.
  */
 void initMainMenu(void)
@@ -1293,15 +1357,13 @@ int logicMainMenu(void)
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
         return 1;
-    } else if (keyDown[SDLK_LEFT]) {
-        keyDown[SDLK_LEFT] = 0;
+    } else if (qkey(KEY_LEFT)) {
         if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) {
             --nPlayers;
             deselectWeapons();
         }
         return 1;
-    } else if (keyDown[SDLK_RIGHT]) {
-        keyDown[SDLK_RIGHT] = 0;
+    } else if (qkey(KEY_RIGHT)) {
         if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS)
             ++nPlayers;
         return 1;
@@ -1503,15 +1565,13 @@ int logicSettingsMenu(void)
         }
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
         return 1;
-    } else if (keyDown[SDLK_LEFT]) {
-        keyDown[SDLK_LEFT] = 0;
+    } else if (qkey(KEY_LEFT)) {
         if (menuSettings.choice == 7 && scorecap > 0) {
             playSound(SOUND_PEEB, sound);
             --scorecap;
         }
         return 1;
-    } else if (keyDown[SDLK_RIGHT]) {
-        keyDown[SDLK_RIGHT] = 0;
+    } else if (qkey(KEY_RIGHT)) {
         if (menuSettings.choice == 7 && scorecap < SCORE_CAP_MAX) {
             playSound(SOUND_BEEP, sound);
             ++scorecap;
@@ -1668,13 +1728,11 @@ int logicPConfMenu(void)
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
         return 1;
     } else if (menuPConf.choice == 0) {
-        if (keyDown[SDLK_LEFT]) {
-            keyDown[SDLK_LEFT] = 0;
+        if (qkey(KEY_LEFT)) {
             playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 0);
             return 1;
-        } else if (keyDown[SDLK_RIGHT]) {
-            keyDown[SDLK_RIGHT] = 0;
+        } else if (qkey(KEY_RIGHT)) {
             playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 1);
             return 1;
@@ -1745,14 +1803,12 @@ void displayPConfMenu(void)
  */
 int handleMenu(struct menu *m)
 {
-    if (keyDown[SDLK_DOWN]) {
+    if (qkey(KEY_DOWN)) {
         playSound(SOUND_BEEP, sound);
-        keyDown[SDLK_DOWN] = 0;
         ++(m->choice);
         return 1;
-    } else if (keyDown[SDLK_UP]) {
+    } else if (qkey(KEY_UP)) {
         playSound(SOUND_BEEP, sound);
-        keyDown[SDLK_UP] = 0;
         --(m->choice);
         return 1;
     }
