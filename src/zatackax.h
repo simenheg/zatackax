@@ -12,17 +12,8 @@
 #include "sound.h"
 #include "error.h"
 #include "ai.h"
+#include "broadcast.h"
 #include "common.h"
-
-/* DEFAULT WINDOW DIMENSIONS */
-#define DEFAULT_WINDOW_W    800
-#define DEFAULT_WINDOW_H    600
-#define SCREEN_BPP          32
-
-/* BROADCAST MESSAGES */
-#define BROADC_BUF          32  /* Maximum broadcast name length */
-#define BROADC_FONT_SIZE    13
-#define BROADC_LIMIT        6   /* Maximum number of broadcast messages */
 
 /* SCORES */
 #define SCORE_BUF           8
@@ -31,11 +22,6 @@
 
 /* SPECIAL KEYS */
 #define MAX_KEYNAME         8   /* Maximum length of key name */
-
-/* PLAYERS */
-#define MIN_PLAYERS         2   /* Minimum number of players */
-#define MAX_PLAYERS         8   /* Maximal number of players */
-#define DEFAULT_N_PLAYERS   2   /* Default number of players */
 
 /* SPAWNING */
 #define START_ROUND_WAIT    1500    /* Miliseconds until the game starts */
@@ -145,8 +131,6 @@ static unsigned char editPlayer = 0;
 static unsigned char nPlayers = DEFAULT_N_PLAYERS;
 const SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 const SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
-const SDL_Color cMenuBG = {0x00, 0x00, 0x00, 0};
-const SDL_Color cBroadcast = {0xFF, 0xFF, 0xFF, 0};
 static SDL_Color colors[N_COLORS];
 static SDL_Rect arrowClip[32];
 static SDL_Event event;
@@ -211,14 +195,15 @@ static struct SDL_Surface *smallWepIcons[N_WEAPONS];
 static TTF_Font *font_menu = NULL;
 static TTF_Font *font_menub = NULL;
 static TTF_Font *font_score = NULL;
-static TTF_Font *font_broadc = NULL;
-static TTF_Font *font_broadcb = NULL;
+TTF_Font *font_broadc = NULL;
+TTF_Font *font_broadcb = NULL;
 
 /* PLAYER */
 void initPlayers1(void);
 void initPlayers2(void);
 void resetPlayer(int player);
 void deselectWeapons(void);
+SDL_Color *extractPColors(void);
 void killPlayer(unsigned char killed, unsigned char killer);
 void playerWon(unsigned char id);
 struct vel spawn(void);
@@ -239,7 +224,7 @@ int logicGame(void);
 int logicGameStart(void);
 void displayGameStart(void);
 void refreshGameScreen(void);
-void makeBroadcast(struct player *p, unsigned char killer);
+void pushBroadcasts(void);
 void cleanBroadcast(void);
 void drawScores(void);
 void newRound(void);
@@ -258,8 +243,8 @@ int wepWarp(struct player *p, bool on);
 int wepSwitch(struct player *p, bool on);
 void resetWeapons(void);
 int (*wepFunc[N_WEAPONS])(struct player*, bool) = {
-    wepSpeedup, wepFrostwave, wepConfusion, wepSharpturn, wepTimestep, wepMole,
-    wepWarp, wepSwitch};
+    wepSpeedup, wepFrostwave, wepConfusion, wepSharpturn, wepTimestep,
+    wepMole, wepWarp, wepSwitch};
 
 /* MENUS */
 void initMainMenu(void);

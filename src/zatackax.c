@@ -1,5 +1,5 @@
 /* zatackax -- main game module.
- * Copyright (C) 2010 The Zatacka X development team
+ * Copyright (C) 2010-2011 The Zatacka X development team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,6 +180,20 @@ void deselectWeapons(void)
 }
 
 /**
+ * Extract and return an array containing the current player colors.
+ *
+ * @return Current player colors.
+ */
+SDL_Color *extractPColors(void)
+{
+    int i;
+    SDL_Color *pcolors = malloc(sizeof(SDL_Color) * N_COLORS);
+    for (i = 0; i < N_COLORS; ++i)
+        pcolors[i] = colors[players[i].color];
+    return pcolors;
+}
+
+/**
  * Kills target player.
  *
  * @param killed ID of the player that was killed.
@@ -190,6 +204,23 @@ void killPlayer(unsigned char killed, unsigned char killer)
     int i;
 
     playSound(SOUND_CRASH, sound);
+
+    if (broadcasts) {
+        char msg[BROADC_BUF];
+        pushBroadcasts();
+
+        if (killer == 0)
+            snprintf(msg, BROADC_BUF, "%d; hit the wall", killed);
+        else if (killer == killed)
+            snprintf(msg, BROADC_BUF, "%d; commited suicide", killed);
+        else
+            snprintf(msg, BROADC_BUF, "%d; crashed into ;%d", killed, killer);
+
+        /* Send forward those colors */
+        SDL_Color *pcolors = extractPColors();
+        broadcast[0] = makeBroadcast(msg, pcolors);
+        free(pcolors);
+    }
 
     struct player *p = &players[killed - 1];
     --alivecount;
@@ -203,8 +234,6 @@ void killPlayer(unsigned char killed, unsigned char killer)
                 if (pt->score == scorecap) {
                     playerWon(i);
                     screenFreeze = 1;
-                    endRound();
-                    curScene = &mainMenu;
                 }
             }
         } else {
@@ -212,24 +241,29 @@ void killPlayer(unsigned char killed, unsigned char killer)
         }
     }
 
-    if (broadcasts && !winnerDeclared)
-        makeBroadcast(p, killer);
-
     refreshGameScreen(); /* Update scores */
 }
 
 /**
  * Shows which player won the game.
- * TODO: Make this more splashy! Maybe some winning screen, or even a plain
- * "Player X won!" text in the middle of the screen.
- * Also missing tie handling.
+ * TODO: Handle ties.
  *
  * @param id ID of the player that won.
  */
 void playerWon(unsigned char id)
 {
+    char msg[BROADC_BUF];
+    SDL_Color *pcolors = extractPColors();
+
+    pushBroadcasts();
+    snprintf(msg, BROADC_BUF, "%d; won the game! (press any key to play "
+             "again, or ESC to exit)", id + 1);
+    broadcast[0] = makeBroadcast(msg, pcolors);
+    free(pcolors);
+
     winnerDeclared = 1;
-    if (olvl >= O_NORMAL)
+
+    if (olvl >= O_VERBOSE)
         printf(" -- Player %d won! --\n", id + 1);
 }
 
@@ -830,21 +864,11 @@ void refreshGameScreen(void)
 }
 
 /**
- * Creates a broadcast message.
- * TODO: This should be made more flexible, so that we can do general
- * broadcast strings.
- *
- * @param p ID of the player which is to be made a broadcast for.
- * @param killer Cause of death.
+ * Pushes the broadcasts one step upwards the list, making room for a new one.
  */
-void makeBroadcast(struct player *p, unsigned char killer)
+void pushBroadcasts(void)
 {
     int i;
-    char anomsg[2][BROADC_BUF];
-    SDL_Surface *tmp[3];
-    int broadw = 0;
-    int nbroad = 0;
-    int killed = p->active;
 
     SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
     for (i = BROADC_LIMIT - 1; i > 0; --i) {
@@ -854,53 +878,6 @@ void makeBroadcast(struct player *p, unsigned char killer)
             SDL_SetAlpha(broadcast[i], SDL_SRCALPHA, alpha);
         }
     }
-
-    /* Make broadcast message */
-    snprintf(anomsg[0], BROADC_BUF, "Player%d", killed);
-
-    if (killer == 0) { /* Walled */
-
-        nbroad = 2;
-        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
-                                       colors[p->color], cMenuBG);
-        tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
-                                       " hit the wall", cBroadcast, cMenuBG);
-
-    } else if (killer == killed) { /* Suicide */
-
-        nbroad = 2;
-        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
-                                       colors[p->color], cMenuBG);
-        tmp[1] = TTF_RenderUTF8_Shaded(font_broadc, " committed suicide",
-                                       cBroadcast, cMenuBG);
-
-    } else { /* Killed */
-
-        struct player *pk = &players[killer - 1];
-        nbroad = 3;
-
-        snprintf(anomsg[1], BROADC_BUF, "Player%d", killer);
-
-        tmp[0] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[0],
-                                       colors[p->color], cMenuBG);
-        tmp[1] = TTF_RenderUTF8_Shaded(font_broadc,
-                                       " crashed into ", cBroadcast, cMenuBG);
-        tmp[2] = TTF_RenderUTF8_Shaded(font_broadcb, anomsg[1],
-                                       colors[pk->color], cMenuBG);
-    }
-
-    for (i = 0; i < nbroad; ++i) broadw += tmp[i]->w;
-    broadcast[0] = SDL_CreateRGBSurface(SDL_HWSURFACE, broadw, tmp[0]->h,
-                                        SCREEN_BPP, 0, 0, 0, 0);
-
-    for (i = 0; i < nbroad; ++i) {
-        int j;
-        SDL_Rect offset = {0, 0, 0, 0};
-        for (j = i; j > 0; --j) offset.x += tmp[j-1]->w;
-        SDL_BlitSurface(tmp[i], NULL, broadcast[0], &offset);
-    }
-
-    for (i = 0; i < nbroad; ++i) SDL_FreeSurface(tmp[i]);
 }
 
 /**
@@ -2464,6 +2441,8 @@ int main(int argc, char *argv[])
 
                 if (screenFreeze) {
                     screenFreeze = 0;
+                    endRound();
+                    curScene = &mainMenu;
                     curScene->displayFunc();
                     break;
                 }
