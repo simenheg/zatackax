@@ -252,14 +252,16 @@ void killPlayer(unsigned char killed, unsigned char killer)
  */
 void playerWon(unsigned char id)
 {
-    char msg[BROADC_BUF];
-    SDL_Color *pcolors = extractPColors();
+    if (broadcasts) {
+        char msg[BROADC_BUF];
+        SDL_Color *pcolors = extractPColors();
 
-    pushBroadcasts();
-    snprintf(msg, BROADC_BUF, "%d; won the game! (press any key to play "
-             "again, or ESC to exit)", id + 1);
-    broadcast[0] = makeBroadcast(msg, pcolors);
-    free(pcolors);
+        pushBroadcasts();
+        snprintf(msg, BROADC_BUF, "%d; won the game! (press RETURN to play "
+                 "again, or ESC to exit)", id + 1);
+        broadcast[0] = makeBroadcast(msg, pcolors);
+        free(pcolors);
+    }
 
     winnerDeclared = 1;
 
@@ -1603,7 +1605,7 @@ void displaySettingsMenu(void)
     char s5[MENU_BUF] = "HOLES ";
     char s6[MENU_BUF] = "BROADCASTS ";
     char s7[MENU_BUF] = "DUEL MODE ";
-    char s8[MENU_BUF] = "SCORE CAP (experimental): ";
+    char s8[MENU_BUF] = "SCORE CAP: ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
     strncat(s3, music ON_OFF, MENU_BUF - strlen(s3));
@@ -2495,34 +2497,40 @@ int main(int argc, char *argv[])
             if (event.type == SDL_KEYDOWN
                 || event.type == SDL_MOUSEBUTTONDOWN) {
 
-                if (screenFreeze) {
-                    screenFreeze = 0;
-                    endRound();
-                    curScene = &mainMenu;
-                    curScene->displayFunc();
-                    break;
-                }
-
                 int k;
                 if (event.type == SDL_KEYDOWN)
                     k = event.key.keysym.sym;
                 else
                     k = event.button.button;
 
+                if (screenFreeze && k == SDLK_RETURN) {
+                    screenFreeze = 0;
+                    endRound();
+                    curScene = &mainMenu;
+                    curScene->displayFunc();
+                }
+
                 if (k != SDLK_ESCAPE) {
                     if (olvl >= O_DEBUG)
                         fprintf(stderr, "Pressed: %c (%d)\n", k, k);
                     keyDown[k] = 1;
                 } else {
-                    if (curScene == &game || curScene == &gameStart)
+                    if (screenFreeze) {
+                        screenFreeze = 0;
                         endRound();
-                    else if (curScene == &settingsMenu)
-                        initMainMenu();
-                    else if (curScene->parentScene == NULL)
-                        exitGame(0);
-                    playSound(SOUND_PEEB, sound);
-                    curScene = curScene->parentScene;
-                    curScene->displayFunc();
+                        curScene = &mainMenu;
+                        curScene->displayFunc();
+                    } else {
+                        if (curScene == &game || curScene == &gameStart)
+                            endRound();
+                        else if (curScene == &settingsMenu)
+                            initMainMenu();
+                        else if (curScene->parentScene == NULL)
+                            exitGame(0);
+                        playSound(SOUND_PEEB, sound);
+                        curScene = curScene->parentScene;
+                        curScene->displayFunc();
+                    }
                 }
             } else if (event.type == SDL_KEYUP)
                 keyDown[event.key.keysym.sym] = 0;
