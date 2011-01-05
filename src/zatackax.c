@@ -2510,27 +2510,21 @@ int main(int argc, char *argv[])
                     curScene->displayFunc();
                 }
 
-                if (k != SDLK_ESCAPE) {
+                if (k == SDLK_ESCAPE) {
+                    screenFreeze = 0;
+                    if (curScene == &game || curScene == &gameStart)
+                        endRound();
+                    else if (curScene == &settingsMenu)
+                        initMainMenu();
+                    else if (curScene->parentScene == NULL)
+                        exitGame(0);
+                    playSound(SOUND_PEEB, sound);
+                    curScene = curScene->parentScene;
+                    curScene->displayFunc();
+                } else {
                     if (olvl >= O_DEBUG)
                         fprintf(stderr, "Pressed: %c (%d)\n", k, k);
                     keyDown[k] = 1;
-                } else {
-                    if (screenFreeze) {
-                        screenFreeze = 0;
-                        endRound();
-                        curScene = &mainMenu;
-                        curScene->displayFunc();
-                    } else {
-                        if (curScene == &game || curScene == &gameStart)
-                            endRound();
-                        else if (curScene == &settingsMenu)
-                            initMainMenu();
-                        else if (curScene->parentScene == NULL)
-                            exitGame(0);
-                        playSound(SOUND_PEEB, sound);
-                        curScene = curScene->parentScene;
-                        curScene->displayFunc();
-                    }
                 }
             } else if (event.type == SDL_KEYUP)
                 keyDown[event.key.keysym.sym] = 0;
