@@ -1,0 +1,8 @@
+0.1.1 - 12.01.11
+    * Window icon.
+    * Mouse button support.
+    * Players will win when they reach the score cap.
+    * Emacs/vi input sets for menus.
+
+0.1.0 - 25.06.10
+    * Initial release.
