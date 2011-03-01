@@ -13,6 +13,7 @@
 #include "error.h"
 #include "ai.h"
 #include "broadcast.h"
+#include "weapon.h"
 #include "common.h"
 
 /* SCORES */
@@ -63,37 +64,6 @@
 #define DEFAULT_BROADCASTS      1
 #define DEFAULT_DUELMODE        0
 #define DEFAULT_SCORECAP        0
-
-/* WEAPONS */
-#define N_WEAPONS               8
-#define N_ILLEGAL_2P_WEPS       1
-#define WEP_SPACEMOD            50
-#define PARROWSELECT_MOD_Y      20
-#define PARROWSELECT_MOD_X      14
-#define MIN_TELEPORT_SPACE      5.4 /* If 5.4 results in random suicides,
-                                       tune this up slightly */
-
-struct player {
-    unsigned char active;   /* 0 if activated, ID else */
-    int weapon;             /* Weapon ID */
-    int wepcount;           /* Remaining weapon time, -999 if unused */
-    bool alive;
-    bool invertedKeys;
-    bool ai;                /* Player is AI-controlled */
-    SDL_Surface *arrow;
-    double posx, initposx;
-    double posy, initposy;
-    double dir, initdir;
-    double speed;
-    unsigned int color;
-    unsigned int prevx;
-    unsigned int prevy;
-    unsigned int score;
-    unsigned int lkey;
-    unsigned int rkey;
-    unsigned int wkey;
-    int holecount;
-};
 
 struct recentMapPiece {
     int x, y, count;
@@ -239,18 +209,7 @@ void endRound(void);
 /* WEAPONS */
 int legalWeps(void);
 void assignAiWeapons(void);
-int wepSpeedup(struct player *p, bool on);
-int wepFrostwave(struct player *p, bool on);
-int wepSharpturn(struct player *p, bool on);
-int wepConfusion(struct player *p, bool on);
-int wepTimestep(struct player *p, bool on);
-int wepMole(struct player *p, bool on);
-int wepWarp(struct player *p, bool on);
-int wepSwitch(struct player *p, bool on);
 void resetWeapons(void);
-int (*wepFunc[N_WEAPONS])(struct player*, bool) = {
-    wepSpeedup, wepFrostwave, wepConfusion, wepSharpturn, wepTimestep,
-    wepMole, wepWarp, wepSwitch};
 
 /* MENUS */
 bool qkey(int keysym);
