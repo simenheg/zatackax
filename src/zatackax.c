@@ -108,9 +108,6 @@ void initPlayers2(void)
         p->active = i + 1;
         p->score = 0;
 
-        if (weapons)
-            p->wepcount = -999;
-
         /* Assign arrows */
         SDL_BlitSurface(arrows, NULL, *s, NULL);
         SDL_LockSurface(*s);
@@ -641,10 +638,12 @@ int logicGame(void)
 
             struct player *p = &players[i];
 
-            if (weapons && p->wepcount > 0) {
-                p->wepcount -= delta;
-                if (p->wepcount <= 0)
-                    wepFunc[p->weapon](p, 0);
+            if (weapons && p->wep_time >= 0) {
+                p->wep_time -= delta;
+                if (p->wep_time <= 0) {
+                    wep_list[p->weapon].func(p, 0);
+                    p->wep_time = WEP_NONACTIVE;
+                }
             }
 
             if (alivecount <= 1) {
@@ -655,16 +654,19 @@ int logicGame(void)
 
                 unsigned int curx, cury;
 
-                if (weapons && p->wepcount == -999) {
+                if (weapons && p->wep_time == WEP_NONACTIVE
+                    && p->wep_count > 0) {
                     if (p->ai) {
                         Uint32 timeseed = SDL_GetTicks();
                         srand(timeseed);
                         if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
-                            p->wepcount = wepFunc[p->weapon](p, 1);
+                            p->wep_time = wep_list[p->weapon].func(p, 1);
                             refreshGameScreen();
                         }
                     } else if (keyDown[p->wkey]) {
-                        p->wepcount = wepFunc[p->weapon](p, 1);
+                        p->wep_time = wep_list[p->weapon].func(p, 1);
+                        p->wep_count -= 1;
+                        keyDown[p->wkey] = 0;
                         refreshGameScreen();
                     }
                 }
@@ -905,23 +907,29 @@ void drawScores(void)
     SDL_Surface *scoreText;
 
     for (i = 0; i < nPlayers; ++i) {
-        SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
         p = &players[i];
-        if (weapons) {
-            offset.y += 4;
-            if (p->wepcount == -999) {
-                SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
-                                &offset);
-            }
-            offset.y -= 4;
-            offset.x += 20;
-        }
+
+        SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
+
         snprintf(score_str, SCORE_BUF, "%d", p->score);
         scoreText = TTF_RenderUTF8_Shaded(font_score, score_str,
                                           colors[p->color], cMenuBG);
         SDL_BlitSurface(scoreText, NULL, screen, &offset);
         SDL_FreeSurface(scoreText);
+
+        if (weapons && p->wep_count > 0) {
+
+            int i;
+            offset.y += 4;
+
+            for (i = 0; i < p->wep_count; ++i) {
+                offset.x += 20;
+                SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
+                                &offset);
+            }
+        }
     }
+
 
     if (broadcasts) {
         for (i = 0; i < BROADC_LIMIT; ++i) {
@@ -1246,9 +1254,12 @@ void resetWeapons(void)
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
-            if (p->wepcount != -999) {
-                wepFunc[p->weapon](p, 0);
-                p->wepcount = -999;
+
+            p->wep_count = wep_list[p->weapon].charges;
+
+            if (p->wep_time != WEP_NONACTIVE) {
+                wep_list[p->weapon].func(p, 0);
+                p->wep_time = WEP_NONACTIVE;
             }
         }
     }
@@ -1429,6 +1440,7 @@ int logicWepMenu(void)
     struct player *p;
 
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+        resetWeapons();
         playSound(SOUND_BEEP, sound);
         curScene = &gameStart;
     }
@@ -2282,10 +2294,10 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                {
-                    scorecap = settingParam;
-                    valid = 1;
-                } else if (!valid && isdigit(settingHandle[0])) {
+                    {
+                        scorecap = settingParam;
+                        valid = 1;
+                    } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
                     case 'c': /* Color */
                         (&players[settingHandle[0] - '0' - 1])->
