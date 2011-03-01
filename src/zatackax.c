@@ -638,7 +638,7 @@ int logicGame(void)
 
             struct player *p = &players[i];
 
-            if (weapons && p->wep_time >= 0) {
+            if (weapons && p->wep_time > 0) {
                 p->wep_time -= delta;
                 if (p->wep_time <= 0) {
                     wep_list[p->weapon].func(p, 0);
@@ -1032,7 +1032,7 @@ void assignAiWeapons(void)
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
  */
-int wepSpeedup(struct player *p, bool on)
+int wepLightningspeed(struct player *p, bool on)
 {
     if (on) {
         playSound(SOUND_SPEED, sound);
@@ -1040,7 +1040,7 @@ int wepSpeedup(struct player *p, bool on)
     } else {
         p->speed = 1.0;
     }
-    return 1200;
+    return DURATION_LIGHTNINGSPEED;
 }
 
 /**
@@ -1065,7 +1065,7 @@ int wepFrostwave(struct player *p, bool on)
                 target->speed = 1.0;
         }
     }
-    return 1500;
+    return DURATION_FROSTWAVE;
 }
 
 /**
@@ -1084,7 +1084,7 @@ int wepSharpturn(struct player *p, bool on)
         else
             p->dir -= PI / 2;
     }
-    return 0;
+    return WEP_NONACTIVE;
 }
 
 /**
@@ -1114,7 +1114,7 @@ int wepConfusion(struct player *p, bool on)
             }
         }
     }
-    return 1800;
+    return DURATION_CONFUSION;
 }
 
 /**
@@ -1130,7 +1130,7 @@ int wepTimestep(struct player *p, bool on)
         p->posx += 90 * cos(p->dir);
         p->posy += 90 * sin(p->dir);
     }
-    return 0;
+    return WEP_NONACTIVE;
 }
 
 /**
@@ -1152,7 +1152,7 @@ int wepMole(struct player *p, bool on)
         p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
     }
 
-    return 0;
+    return WEP_NONACTIVE;
 }
 
 /**
@@ -1179,7 +1179,7 @@ int wepWarp(struct player *p, bool on)
             + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
     }
 
-    return 0;
+    return WEP_NONACTIVE;
 }
 
 /**
@@ -1190,6 +1190,8 @@ int wepWarp(struct player *p, bool on)
  */
 int wepSwitch(struct player *p, bool on)
 {
+    fprintf(stderr, "AROOOOOOOO (%d)\n", on);
+    
     if (on)
         playSound(SOUND_SWITCH, sound);
 
@@ -1199,7 +1201,7 @@ int wepSwitch(struct player *p, bool on)
     srand(timeseed);
 
     if (alivecount == 2)
-        return 0;
+        return WEP_NONACTIVE;
 
     i = ++randomizer * rand();
     i %= alivecount;
@@ -1242,7 +1244,7 @@ int wepSwitch(struct player *p, bool on)
     target1->posy = posy;
     target1->dir = dir;
 
-    return 0;
+    return WEP_NONACTIVE;
 }
 
 /**
@@ -1473,15 +1475,58 @@ void displayWepMenu(void)
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                                                         0x00, 0x00, 0x00));
 
+    char wep_str[MENU_BUF];
+    SDL_Surface *wep_text;
+
+    /* Draw weapon description strings */
+    for (i = 0; i < nPlayers; ++i) {
+        p = &players[i];
+        struct weapon w = wep_list[p->weapon];
+
+        SDL_Rect offset = {(i % 4) * (screen->w / 4) + 10,
+                           i > 3 ? screen->h - 90 : 10, 0, 0};
+
+        snprintf(wep_str, MENU_BUF, "%s", w.name);
+        wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
+                                         colors[p->color], cMenuBG);
+        SDL_BlitSurface(wep_text, NULL, screen, &offset);
+
+        offset.y += 30;
+        snprintf(wep_str, MENU_BUF, "%s", w.desc1);
+        wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
+                                         colors[p->color], cMenuBG);
+        SDL_BlitSurface(wep_text, NULL, screen, &offset);
+
+        if (w.desc2[0] != '\0') {
+            offset.y += BROADC_FONT_SIZE + 2;
+            snprintf(wep_str, MENU_BUF, "%s", w.desc2);
+            wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
+                                             colors[p->color], cMenuBG);
+            SDL_BlitSurface(wep_text, NULL, screen, &offset);
+        }
+
+        if (i > 3)
+            offset.y = screen->h - 10 - BROADC_FONT_SIZE;
+        else
+            offset.y = 75;
+        snprintf(wep_str, MENU_BUF, "Charges: %d", w.charges);
+        wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
+                                         colors[p->color], cMenuBG);
+        SDL_BlitSurface(wep_text, NULL, screen, &offset);
+
+        SDL_FreeSurface(wep_text);
+    }
+
+    /* Draw weapon icons */
     for (i = 0; i < nweps; ++i, ++mid) {
         SDL_Rect offset = {
-            (WINDOW_W / 2)              /* offset */
+            (WINDOW_W / 2)          /* offset */
             - (wepIcons[0]->w / 2)  /* centralize */
             + (mid * ((wepIcons[0]->w / 2) + WEP_SPACEMOD))
             - ((nweps % 2) - 1)
             * (WEP_SPACEMOD / 1.2)
             ,
-            (WINDOW_H / 2)              /* offset */
+            (WINDOW_H / 2)          /* offset */
             - (wepIcons[0]->h / 2)  /* centralize */
             , 0, 0
         };

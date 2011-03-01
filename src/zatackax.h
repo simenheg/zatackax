@@ -14,6 +14,7 @@
 #include "ai.h"
 #include "broadcast.h"
 #include "weapon.h"
+#include "player.h"
 #include "common.h"
 
 /* SCORES */
