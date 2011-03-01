@@ -661,6 +661,7 @@ int logicGame(void)
                         srand(timeseed);
                         if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
                             p->wep_time = wep_list[p->weapon].func(p, 1);
+                            p->wep_count -= 1;
                             refreshGameScreen();
                         }
                     } else if (keyDown[p->wkey]) {
@@ -915,19 +916,20 @@ void drawScores(void)
         scoreText = TTF_RenderUTF8_Shaded(font_score, score_str,
                                           colors[p->color], cMenuBG);
         SDL_BlitSurface(scoreText, NULL, screen, &offset);
-        SDL_FreeSurface(scoreText);
 
         if (weapons && p->wep_count > 0) {
 
             int i;
-            offset.y += 4;
+            offset.y += 2;
 
             for (i = 0; i < p->wep_count; ++i) {
-                offset.x += 20;
+                offset.x += 25;
                 SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
                                 &offset);
             }
         }
+
+        SDL_FreeSurface(scoreText);
     }
 
 
@@ -1190,8 +1192,6 @@ int wepWarp(struct player *p, bool on)
  */
 int wepSwitch(struct player *p, bool on)
 {
-    fprintf(stderr, "AROOOOOOOO (%d)\n", on);
-    
     if (on)
         playSound(SOUND_SWITCH, sound);
 
