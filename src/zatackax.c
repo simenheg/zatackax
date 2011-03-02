@@ -916,6 +916,7 @@ void drawScores(void)
         scoreText = TTF_RenderUTF8_Shaded(font_score, score_str,
                                           colors[p->color], cMenuBG);
         SDL_BlitSurface(scoreText, NULL, screen, &offset);
+        SDL_FreeSurface(scoreText);
 
         if (weapons && p->wep_count > 0) {
 
@@ -928,8 +929,6 @@ void drawScores(void)
                                 &offset);
             }
         }
-
-        SDL_FreeSurface(scoreText);
     }
 
 
@@ -1204,24 +1203,24 @@ int wepSwitch(struct player *p, bool on)
         return WEP_NONACTIVE;
 
     i = ++randomizer * rand();
-    i %= alivecount;
+    i %= nPlayers;
     while (!valid) {
-        if (i != p->active - 1)
+        if (i != p->active - 1 && (&players[i])->alive)
             valid = 1;
         else
             ++i;
-        i %= alivecount;
+        i %= nPlayers;
     }
 
     valid = 0;
     r = ++randomizer * rand();
-    r %= alivecount;
+    r %= nPlayers;
     while (!valid) {
-        if ((r != p->active - 1) && (r != i))
+        if ((r != p->active - 1) && (r != i) && (&players[r])->alive)
             valid = 1;
         else
             ++r;
-        r %= alivecount;
+        r %= nPlayers;
     }
 
     struct player *target1 = &players[i];
