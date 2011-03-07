@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = $(shell sdl-config --cflags) -O2 -std=c99 -pedantic -Wall
+CFLAGS = $(shell sdl-config --cflags) -g3 -std=c99 -pedantic -Wall
 LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE

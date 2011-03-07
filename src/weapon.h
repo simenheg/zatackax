@@ -22,7 +22,6 @@ struct weapon {
     char *name;
     char *desc1;
     char *desc2;
-    int duration;
 };
 
 int wepLightningspeed(struct player *p, bool on);
