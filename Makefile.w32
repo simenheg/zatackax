@@ -1,6 +1,6 @@
-CC = cc
+CC = gcc
 CFLAGS = -O2 -std=c99 -pedantic -Wall -Wextra
-LFLAGS = -lmingw32 -lsdlmain -lsdl -lsdl_image -lsdl_ttf -lsdl_mixer
+LFLAGS = -lmingw32 -lsdlmain -lsdl -lsdl_image -lsdl_ttf -lsdl_mixer -mwindows
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE
 CSILENT = -DSILENT
@@ -8,7 +8,7 @@ CSILENT = -DSILENT
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
 
 zatackax : $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LFLAGS)
 
 debug : CFLAGS += $(CDEBUG)
 debug : zatackax
