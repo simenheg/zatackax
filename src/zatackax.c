@@ -1194,7 +1194,7 @@ int wepSwitch(struct player *p, bool on)
     if (on)
         playSound(SOUND_SWITCH, sound);
 
-    int i, r;
+    unsigned int i, r;
     bool valid = 0;
     Uint32 timeseed = SDL_GetTicks();
     srand(timeseed);
@@ -1222,6 +1222,8 @@ int wepSwitch(struct player *p, bool on)
             ++r;
         r %= nPlayers;
     }
+
+    fprintf(stderr, "switch player %d and %d\n", i, r);
 
     struct player *target1 = &players[i];
     struct player *target2 = &players[r];
@@ -2338,10 +2340,10 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                    {
-                        scorecap = settingParam;
-                        valid = 1;
-                    } else if (!valid && isdigit(settingHandle[0])) {
+                {
+                    scorecap = settingParam;
+                    valid = 1;
+                } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
                     case 'c': /* Color */
                         (&players[settingHandle[0] - '0' - 1])->
