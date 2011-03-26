@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-#define N_WEAPONS               8
+#define N_WEAPONS               9
 #define N_ILLEGAL_2P_WEPS       1
 #define WEP_SPACEMOD            50
 #define PARROWSELECT_MOD_Y      20
@@ -14,7 +14,8 @@
 
 #define DURATION_LIGHTNINGSPEED 1200
 #define DURATION_FROSTWAVE      1500
-#define DURATION_CONFUSION      1100
+#define DURATION_CONFUSION      1000
+#define DURATION_GHOSTWALK      1200
 
 struct weapon {
     int (*func)(struct player*, bool);
@@ -31,6 +32,7 @@ int wepConfusion(struct player *p, bool on);
 int wepTimestep(struct player *p, bool on);
 int wepMole(struct player *p, bool on);
 int wepWarp(struct player *p, bool on);
+int wepGhost(struct player *p, bool on);
 int wepSwitch(struct player *p, bool on);
 
 static struct weapon wep_list[N_WEAPONS] = {
@@ -41,6 +43,7 @@ static struct weapon wep_list[N_WEAPONS] = {
     {wepTimestep, 1, "Time step", "Jump through time and", "space."},
     {wepMole, 1, "Mole", "Dig your way out.", ""},
     {wepWarp, 3, "Warp", "Warp to a random spot", "on the map."},
+    {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
     {wepSwitch, 1, "Switch-aroo", "SWITCH-AROOOO!", ""}
 };
 

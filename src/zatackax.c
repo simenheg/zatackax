@@ -1106,7 +1106,7 @@ int wepSharpturn(struct player *p, bool on)
     }
 
     p->inv_self = INV_TIME * 3;
-    
+
     return WEP_NONACTIVE;
 }
 
@@ -1205,6 +1205,23 @@ int wepWarp(struct player *p, bool on)
 }
 
 /**
+ * Weapon: ghost walk
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepGhost(struct player *p, bool on)
+{
+    if (on) {
+        playSound(SOUND_WARP, sound);
+        p->inv_self = DURATION_GHOSTWALK;
+        p->inv_others = DURATION_GHOSTWALK;
+    }
+
+    return 0;
+}
+
+/**
  * Weapon: switch-aroo
  *
  * @param p Weapon user.
@@ -1252,7 +1269,7 @@ int wepSwitch(struct player *p, bool on)
 
     target1->inv_others = INV_TIME;
     target2->inv_others = INV_TIME;
-    
+
     target2->posx = target1->posx;
     target2->posy = target1->posy;
     target2->dir = target1->dir;
@@ -2180,6 +2197,14 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_warp.png");
         return 0;
     }
+    if ((wiGhost = loadImage("data/gfx/wi_ghost.png")) == NULL) {
+        fileNotFound("data/gfx/wi_ghost.png");
+        return 0;
+    }
+    if ((wisGhost = loadImage("data/gfx/wis_ghost.png")) == NULL) {
+        fileNotFound("data/gfx/wis_ghost.png");
+        return 0;
+    }
     if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
         fileNotFound("data/gfx/wi_switch.png");
         return 0;
@@ -2221,6 +2246,7 @@ int loadFiles(void)
         confirmLoading("wi_timestep.png", wiStep);
         confirmLoading("wi_mole.png", wiMole);
         confirmLoading("wi_warp.png", wiWarp);
+        confirmLoading("wi_ghost.png", wiGhost);
         confirmLoading("wi_switch.png", wiSwitch);
     }
 
@@ -2240,7 +2266,8 @@ int loadFiles(void)
     for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
         *p = SDL_CreateRGBSurface(arrows->flags, arrows->w,
                                   arrows->h, arrows->format->BitsPerPixel,
-                                  arrows->format->Rmask, arrows->format->Gmask,
+                                  arrows->format->Rmask,
+                                  arrows->format->Gmask,
                                   arrows->format->Bmask, 0);
     }
 
@@ -2256,14 +2283,15 @@ int loadFiles(void)
 
     /* Initialize weapon pointer array */
     wepIcons[0] = wiBg;
-    wepIcons[1] = wiSpeed; smallWepIcons[0] = wisSpeed;
-    wepIcons[2] = wiFrost; smallWepIcons[1] = wisFrost;
-    wepIcons[3] = wiConf; smallWepIcons[2] = wisConf;
-    wepIcons[4] = wiTurn; smallWepIcons[3] = wisTurn;
-    wepIcons[5] = wiStep; smallWepIcons[4] = wisStep;
-    wepIcons[6] = wiMole; smallWepIcons[5] = wisMole;
-    wepIcons[7] = wiWarp; smallWepIcons[6] = wisWarp;
-    wepIcons[8] = wiSwitch; smallWepIcons[7] = wisSwitch;
+    wepIcons[1] = wiSpeed;  smallWepIcons[0] = wisSpeed;
+    wepIcons[2] = wiFrost;  smallWepIcons[1] = wisFrost;
+    wepIcons[3] = wiConf;   smallWepIcons[2] = wisConf;
+    wepIcons[4] = wiTurn;   smallWepIcons[3] = wisTurn;
+    wepIcons[5] = wiStep;   smallWepIcons[4] = wisStep;
+    wepIcons[6] = wiMole;   smallWepIcons[5] = wisMole;
+    wepIcons[7] = wiWarp;   smallWepIcons[6] = wisWarp;
+    wepIcons[8] = wiGhost;  smallWepIcons[7] = wisGhost;
+    wepIcons[9] = wiSwitch; smallWepIcons[8] = wisSwitch;
 
     return 1;
 }
@@ -2356,10 +2384,10 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                    {
-                        scorecap = settingParam;
-                        valid = 1;
-                    } else if (!valid && isdigit(settingHandle[0])) {
+                {
+                    scorecap = settingParam;
+                    valid = 1;
+                } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
                     case 'c': /* Color */
                         (&players[settingHandle[0] - '0' - 1])->

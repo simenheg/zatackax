@@ -120,8 +120,9 @@ static bool weapons = DEFAULT_WEAPONS;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
 static bool duelmode = DEFAULT_DUELMODE;
-static const char *settingNames[] = {"fullscreen", "sound", "music", "weapons",
-                                     "holes", "broadcasts", "duelmode"};
+static const char *settingNames[] = {"fullscreen", "sound", "music",
+                                     "weapons", "holes", "broadcasts",
+                                     "duelmode"};
 static bool *settings[7] = {&fullscreen, &sound, &music, &weapons, &holes,
                             &broadcasts, &duelmode};
 
@@ -160,6 +161,8 @@ static SDL_Surface *wiMole = NULL;
 static SDL_Surface *wisMole = NULL;
 static SDL_Surface *wiWarp = NULL;
 static SDL_Surface *wisWarp = NULL;
+static SDL_Surface *wiGhost = NULL;
+static SDL_Surface *wisGhost = NULL;
 static SDL_Surface *wiSwitch = NULL;
 static SDL_Surface *wisSwitch = NULL;
 static SDL_Surface *broadcast[BROADC_LIMIT];
