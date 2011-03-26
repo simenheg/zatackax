@@ -9,8 +9,8 @@
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
 #define WEP_NONACTIVE           -999
-#define MIN_TELEPORT_SPACE      5.5 /* If 5.5 results in random suicides,
-                                       tune this up slightly */
+#define INV_TIME                75   /* Time one needs to be invincible after
+                                        using a potential suicide weapon */
 
 #define DURATION_LIGHTNINGSPEED 1200
 #define DURATION_FROSTWAVE      1500

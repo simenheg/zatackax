@@ -489,9 +489,9 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
 
                 unsigned char *hit =
                     &hitmap[sizeof(bool) * ((WINDOW_W * ypx) + xpx)];
+                struct player *p = &players[player - 1];
 
-                putPixel(xpx, ypx, colors[(&players[player-1])->color],
-                         screen->pixels);
+                putPixel(xpx, ypx, colors[p->color], screen->pixels);
 
                 if (*hit == 0) {
                     struct recentMapPiece *new
@@ -504,11 +504,13 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                     recents = new;
                 } else if (*hit != player + MAX_PLAYERS &&
                            *hit != player + MAX_PLAYERS * 2) {
+                    if (p->inv_self && player == *hit)
+                        break;
                     if (player == *hit) {
                         if (olvl >= O_VERBOSE)
                             printf("Player %d committed suicide!\n", player);
                         killPlayer(player, *hit);
-                    } else {
+                    } else if (!p->inv_others) {
                         int killer = *hit;
                         while (killer > MAX_PLAYERS) {
                             killer -= MAX_PLAYERS;
@@ -638,11 +640,25 @@ int logicGame(void)
 
             struct player *p = &players[i];
 
-            if (weapons && p->wep_time > 0) {
-                p->wep_time -= delta;
-                if (p->wep_time <= 0) {
-                    wep_list[p->weapon].func(p, 0);
-                    p->wep_time = WEP_NONACTIVE;
+            if (weapons) {
+                if (p->wep_time > 0) {
+                    p->wep_time -= delta;
+                    if (p->wep_time <= 0) {
+                        wep_list[p->weapon].func(p, 0);
+                        p->wep_time = WEP_NONACTIVE;
+                    }
+                }
+
+                if (p->inv_self > 0) {
+                    p->inv_self -= delta;
+                    if (p->inv_self < 0)
+                        p->inv_self = 0;
+                }
+
+                if (p->inv_others > 0) {
+                    p->inv_others -= delta;
+                    if (p->inv_others < 0)
+                        p->inv_others = 0;
                 }
             }
 
@@ -980,6 +996,9 @@ void newRound(void)
                 printf(")\n");
             return;
         }
+
+        p->inv_self = 0;
+        p->inv_others = 0;
     }
 
     if (olvl >= O_VERBOSE)
@@ -1085,6 +1104,9 @@ int wepSharpturn(struct player *p, bool on)
         else
             p->dir -= PI / 2;
     }
+
+    p->inv_self = INV_TIME * 3;
+    
     return WEP_NONACTIVE;
 }
 
@@ -1149,8 +1171,7 @@ int wepMole(struct player *p, bool on)
         p->posy = p->initposy;
         p->dir = p->initdir + PI;
 
-        p->posx += MIN_TELEPORT_SPACE * cos(p->dir);
-        p->posy += MIN_TELEPORT_SPACE * sin(p->dir);
+        p->inv_self= INV_TIME;
     }
 
     return WEP_NONACTIVE;
@@ -1223,20 +1244,15 @@ int wepSwitch(struct player *p, bool on)
         r %= nPlayers;
     }
 
-    fprintf(stderr, "switch player %d and %d\n", i, r);
-
     struct player *target1 = &players[i];
     struct player *target2 = &players[r];
     double posx = target2->posx;
     double posy = target2->posy;
     double dir = target2->dir;
 
-    posx += MIN_TELEPORT_SPACE * cos(target2->dir);
-    posy += MIN_TELEPORT_SPACE * sin(target2->dir);
-
-    target1->posx += MIN_TELEPORT_SPACE * cos(target1->dir);
-    target1->posy += MIN_TELEPORT_SPACE * sin(target1->dir);
-
+    target1->inv_others = INV_TIME;
+    target2->inv_others = INV_TIME;
+    
     target2->posx = target1->posx;
     target2->posy = target1->posy;
     target2->dir = target1->dir;
@@ -2340,10 +2356,10 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                {
-                    scorecap = settingParam;
-                    valid = 1;
-                } else if (!valid && isdigit(settingHandle[0])) {
+                    {
+                        scorecap = settingParam;
+                        valid = 1;
+                    } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
                     case 'c': /* Color */
                         (&players[settingHandle[0] - '0' - 1])->
