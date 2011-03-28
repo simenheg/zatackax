@@ -15,7 +15,7 @@
 #define DURATION_LIGHTNINGSPEED 1200
 #define DURATION_FROSTWAVE      1500
 #define DURATION_CONFUSION      1000
-#define DURATION_GHOSTWALK      1200
+#define DURATION_GHOSTWALK      1800
 
 struct weapon {
     int (*func)(struct player*, bool);

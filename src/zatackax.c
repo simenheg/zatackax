@@ -1213,7 +1213,7 @@ int wepWarp(struct player *p, bool on)
 int wepGhost(struct player *p, bool on)
 {
     if (on) {
-        playSound(SOUND_WARP, sound);
+        playSound(SOUND_GHOST, sound);
         p->inv_self = DURATION_GHOSTWALK;
         p->inv_others = DURATION_GHOSTWALK;
     }

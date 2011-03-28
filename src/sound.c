@@ -28,6 +28,7 @@ static Mix_Chunk *seSharpturn = NULL;
 static Mix_Chunk *seTimestep = NULL;
 static Mix_Chunk *seMole = NULL;
 static Mix_Chunk *seWarp = NULL;
+static Mix_Chunk *seGhost = NULL;
 static Mix_Chunk *seSwitch = NULL;
 static Mix_Chunk *sounds[N_SOUNDS];
 
@@ -91,6 +92,8 @@ int initSound(void)
     if (loadSound(seMole, "mole", SOUND_MOLE) == -1)
         return -1;
     if (loadSound(seWarp, "warp", SOUND_WARP) == -1)
+        return -1;
+    if (loadSound(seGhost, "ghost", SOUND_GHOST) == -1)
         return -1;
     if (loadSound(seSwitch, "switch", SOUND_SWITCH) == -1)
         return -1;
