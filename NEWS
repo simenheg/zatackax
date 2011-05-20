@@ -1,3 +1,8 @@
+0.1.3 - 20.05.11
+    * A new weapon has been added: Ghost Walk.
+    * Fixed several crucial bugs. Random suicides should no longer occur.
+    * The duration of Confusion has been further reduced from 1.1 s to 1.0 s.
+
 0.1.2 - 07.03.11
     * Some weapons can now be used multiple times.
     * Decreased duration of Confusion from 1.8 s. to 1.1 s.

@@ -1,12 +1,15 @@
 CC = cc
-CFLAGS = $(shell sdl-config --cflags) -g3 -std=c99 -pedantic -Wall
-LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer
+CFLAGS = $(shell sdl-config --cflags) -std=c99 -pedantic -Wall
+LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer -fno-common
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE
 CSILENT = -DSILENT
+CDEVEL = -g3 -pg
+CRELEASE = -O2
 
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
 
+zatackax : CFLAGS += $(CDEVEL)
 zatackax : $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
