@@ -1,4 +1,4 @@
-===== LINUX/BSD/UNIX-LIKE =====
+===== GNU/LINUX/BSD/UNIX-LIKE =====
 To compile, type
 
     make
@@ -10,15 +10,15 @@ Compiling depends on the following libraries:
     SDL_ttf
     SDL_mixer
 
-, which can be found on SDL's website: http://www.libsdl.org/. These
-libraries are also provided in many of the most common Linux-distributions'
+, which can be found on SDL's website: http://www.libsdl.org/. These libraries
+are also provided in many of the most common GNU/Linux-distributions'
 repositories.
 
-Note that the build system is far from mature. So far, we've only tested the
-game on a couple of Linux-machines, an OpenBSD-machine and a MW-machine. I
-think it should be pretty smoothly portable though, so we'll be glad to hear
-from you whether you are able to successfully build/run the game on your system
-or not. See README for contact information.
+Note that the build system is far from mature. So far, it has only been tested
+under GNU/Linux, MS Windows and an OpenBSD-machine. I think it should be
+pretty smoothly portable though, so I'd be glad to hear from you whether you
+are able to successfully build/run the game on your system or not. See README
+for contact information.
 
 
 ===== MICROSOFT WINDOWS =====
@@ -64,13 +64,16 @@ SDL_Mixer:
     
 DLLs needed to compile (either in folder or linked to):
 
- - SDL_ttf.dll
+ - jpeg.dll
+ - libfreetype-6.dll
+ - libogg-0.dll
+ - libpng12-0.dll
+ - libvorbis-0.dll
+ - libvorbisfile-3.dll 
+ - SDL.dll
  - SDL_image.dll
  - SDL_mixer.dll
- - jpeg.dll
- - libtiff-3.dll
- - libpng12-0.dll
- - libfreetype-6.dll
+ - SDL_ttf.dll
  - zlib1.dll
  
 To compile using make:
