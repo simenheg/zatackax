@@ -1,11 +1,10 @@
 ===== ZATACKA X =====
-Currently a very young project, which goal is to write a remake of Achtung,
-die Kurve! In addition to all the features from the original game, Zatacka X
-is aiming to include better graphics, special weapons, sound effects, AI
-controlled opponents, a tournament mode, and possibly online play. The game is 
-being written in C with SDL. 
+Zatacka X is a modern, Free remake of the classic Achtung, die Kurve!. In
+addition to all the features from the original game, Zatacka X is aiming to
+include better graphics, special weapons, sound effects, AI controlled
+opponents, a tournament mode, and possibly online play.
 
-More info to be found at: http://code.google.com/p/zatackax/
+More info to be found at http://code.google.com/p/zatackax/.
 
 ===== INSTALLATION =====
 For build instructions, see INSTALL.

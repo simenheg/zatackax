@@ -2384,10 +2384,10 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                {
-                    scorecap = settingParam;
-                    valid = 1;
-                } else if (!valid && isdigit(settingHandle[0])) {
+                    {
+                        scorecap = settingParam;
+                        valid = 1;
+                    } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
                     case 'c': /* Color */
                         (&players[settingHandle[0] - '0' - 1])->
@@ -2460,80 +2460,94 @@ void keyRelease(unsigned int key)
  */
 char *keyName(unsigned int key)
 {
-    char *keyname = malloc(MAX_KEYNAME * sizeof(char));
-    memset(keyname, '\0', MAX_KEYNAME * sizeof(char));
+    char *keyname = calloc(MAX_KEYNAME, sizeof(char));
 
-    if ((key >= SDLK_a && key <= SDLK_z)
-        || (key >= SDLK_0 && key <= SDLK_9)) {
-        snprintf(keyname, 2, "%c", key);
-    } else if (key >= SDLK_F1 && key <= SDLK_F15) {
-        snprintf(keyname, 4, "F%d", key - SDLK_F1 + 1);
-    } else {
+    if ((key >= SDLK_a && key <= SDLK_z) || (key >= SDLK_0 && key <= SDLK_9))
+        snprintf(keyname, MAX_KEYNAME, "%c", key);
+    else if (key >= SDLK_F1 && key <= SDLK_F15)
+        snprintf(keyname, MAX_KEYNAME, "F%d", key - SDLK_F1 + 1);
+    else {
         switch (key) {
         case SDLK_UNKNOWN:
-            snprintf(keyname, 5, "none"); break;
+            snprintf(keyname, MAX_KEYNAME, "none"); break;
         case SDLK_LEFT:
-            snprintf(keyname, 5, "left"); break;
+            snprintf(keyname, MAX_KEYNAME, "left"); break;
         case SDLK_RIGHT:
-            snprintf(keyname, 6, "right"); break;
+            snprintf(keyname, MAX_KEYNAME, "right"); break;
         case SDLK_UP:
-            snprintf(keyname, 3, "up"); break;
+            snprintf(keyname, MAX_KEYNAME, "up"); break;
         case SDLK_DOWN:
-            snprintf(keyname, 5, "down"); break;
+            snprintf(keyname, MAX_KEYNAME, "down"); break;
+        case SDLK_PAUSE:
+            snprintf(keyname, MAX_KEYNAME, "pause"); break;
         case SDLK_DELETE:
-            snprintf(keyname, 4, "del"); break;
+            snprintf(keyname, MAX_KEYNAME, "del"); break;
         case SDLK_INSERT:
-            snprintf(keyname, 4, "ins"); break;
+            snprintf(keyname, MAX_KEYNAME, "ins"); break;
         case SDLK_HOME:
-            snprintf(keyname, 5, "home"); break;
+            snprintf(keyname, MAX_KEYNAME, "home"); break;
         case SDLK_END:
-            snprintf(keyname, 4, "end"); break;
+            snprintf(keyname, MAX_KEYNAME, "end"); break;
+        case SDLK_MENU:
+            snprintf(keyname, MAX_KEYNAME, "menu"); break;
         case SDLK_PAGEUP:
-            snprintf(keyname, 6, "pg up"); break;
+            snprintf(keyname, MAX_KEYNAME, "pg up"); break;
         case SDLK_PAGEDOWN:
-            snprintf(keyname, 6, "pg dn"); break;
+            snprintf(keyname, MAX_KEYNAME, "pg dn"); break;
         case SDLK_RSHIFT:
-            snprintf(keyname, 8, "r-shift"); break;
+            snprintf(keyname, MAX_KEYNAME, "r-shift"); break;
         case SDLK_LSHIFT:
-            snprintf(keyname, 8, "l-shift"); break;
+            snprintf(keyname, MAX_KEYNAME, "l-shift"); break;
         case SDLK_RCTRL:
-            snprintf(keyname, 7, "r-ctrl"); break;
+            snprintf(keyname, MAX_KEYNAME, "r-ctrl"); break;
         case SDLK_LCTRL:
-            snprintf(keyname, 7, "l-ctrl"); break;
+            snprintf(keyname, MAX_KEYNAME, "l-ctrl"); break;
         case SDLK_RALT:
-            snprintf(keyname, 6, "r-alt"); break;
+            snprintf(keyname, MAX_KEYNAME, "r-alt"); break;
         case SDLK_LALT:
-            snprintf(keyname, 6, "l-alt"); break;
+            snprintf(keyname, MAX_KEYNAME, "l-alt"); break;
+        case SDLK_MODE:
+            snprintf(keyname, MAX_KEYNAME, "alt gr"); break;
         case SDLK_RSUPER:
-            snprintf(keyname, 8, "r-super"); break;
+            snprintf(keyname, MAX_KEYNAME, "r-super"); break;
         case SDLK_LSUPER:
-            snprintf(keyname, 8, "l-super"); break;
+            snprintf(keyname, MAX_KEYNAME, "l-super"); break;
         case SDLK_TAB:
-            snprintf(keyname, 4, "tab"); break;
+            snprintf(keyname, MAX_KEYNAME, "tab"); break;
         case SDLK_PERIOD:
-            snprintf(keyname, 2, "."); break;
+            snprintf(keyname, MAX_KEYNAME, "."); break;
         case SDLK_COMMA:
-            snprintf(keyname, 2, ","); break;
+            snprintf(keyname, MAX_KEYNAME, ","); break;
         case SDLK_MINUS:
-            snprintf(keyname, 2, "-"); break;
+            snprintf(keyname, MAX_KEYNAME, "-"); break;
+        case SDLK_QUOTE:
+            snprintf(keyname, MAX_KEYNAME, "'"); break;
         case SDLK_PLUS:
-            snprintf(keyname, 2, "+"); break;
+            snprintf(keyname, MAX_KEYNAME, "+"); break;
+        case SDLK_COMPOSE:
+            snprintf(keyname, MAX_KEYNAME, "^"); break;
         case SDLK_BACKSLASH:
-            snprintf(keyname, 2, "\\"); break;
+            snprintf(keyname, MAX_KEYNAME, "\\"); break;
         case SDLK_LESS:
-            snprintf(keyname, 2, "<"); break;
+            snprintf(keyname, MAX_KEYNAME, "<"); break;
         case SDLK_BACKSPACE:
-            snprintf(keyname, 8, "b-space"); break;
+            snprintf(keyname, MAX_KEYNAME, "b-space"); break;
         case SDLK_RETURN:
-            snprintf(keyname, 6, "enter"); break;
+            snprintf(keyname, MAX_KEYNAME, "enter"); break;
         case SDLK_SPACE:
-            snprintf(keyname, 6, "space"); break;
+            snprintf(keyname, MAX_KEYNAME, "space"); break;
         case SDL_BUTTON_LEFT:
-            snprintf(keyname, 8, "l-mouse"); break;
+            snprintf(keyname, MAX_KEYNAME, "l-mouse"); break;
         case SDL_BUTTON_MIDDLE:
-            snprintf(keyname, 8, "m-mouse"); break;
+            snprintf(keyname, MAX_KEYNAME, "m-mouse"); break;
         case SDL_BUTTON_RIGHT:
-            snprintf(keyname, 8, "r-mouse"); break;
+            snprintf(keyname, MAX_KEYNAME, "r-mouse"); break;
+        case SDLK_WORLD_70:
+            snprintf(keyname, MAX_KEYNAME, "æ"); break;
+        case SDLK_WORLD_88:
+            snprintf(keyname, MAX_KEYNAME, "ø"); break;
+        case SDLK_WORLD_69:
+            snprintf(keyname, MAX_KEYNAME, "å"); break;
         default:
             break;
         }

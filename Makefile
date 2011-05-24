@@ -9,18 +9,23 @@ CRELEASE = -O2
 
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
 
-zatackax : CFLAGS += $(CDEVEL)
+devel : CFLAGS += $(CDEVEL)
+devel : zatackax
+
 zatackax : $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
+release : CFLAGS += $(RELEASE)
+release : zatackax
+
 debug : CFLAGS += $(CDEBUG)
-debug : zatackax
+debug : devel
 
 verbose : CFLAGS += $(CVERBOSE)
-verbose : zatackax
+verbose : devel
 
 silent : CFLAGS += $(CSILENT)
-silent : zatackax
+silent : devel
 
 src/zatackax.o : src/zatackax.h src/sound.h src/error.h src/ai.h src/broadcast.h src/common.h src/player.h src/weapon.h
 src/error.o : src/error.h src/common.h
