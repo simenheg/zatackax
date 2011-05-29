@@ -4,7 +4,7 @@ LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer -fno-comm
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE
 CSILENT = -DSILENT
-CDEVEL = -g3 -pg -pedantic -Wall
+CDEVEL = -g3 -pedantic -Wall
 CRELEASE = -O2
 
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o

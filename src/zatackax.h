@@ -126,9 +126,6 @@ static const char *settingNames[] = {"fullscreen", "sound", "music",
 static bool *settings[7] = {&fullscreen, &sound, &music, &weapons, &holes,
                             &broadcasts, &duelmode};
 
-static unsigned int randomizer = 1; /* Help distribute better random
-                                       values */
-
 static unsigned int WINDOW_W;       /* Window width */
 static unsigned int WINDOW_H;       /* Window height */
 static unsigned int keyDown[322];   /* 322 is the number of

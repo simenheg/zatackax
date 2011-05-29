@@ -275,23 +275,15 @@ struct vel spawn(void)
 {
     double rnd;
     struct vel initPos;
-    Uint32 timeseed = SDL_GetTicks();
 
-    if (randomizer > RAND_MAX)
-        randomizer = 1;
-
-    srand(timeseed * randomizer++);
     rnd = (double)rand() / RAND_MAX;
     initPos.x = SPAWN_SPACE_MIN
         + (rnd * (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
-    srand(timeseed * randomizer++);
     rnd = (double)rand() / RAND_MAX;
     initPos.y = SPAWN_SPACE_MIN
         + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
-    srand(timeseed * randomizer++);
     rnd = (double)rand() / RAND_MAX;
     initPos.holecount = (rnd * (HOLE_FREQ - HOLE_FIRST_DELAY));
-    srand(timeseed * randomizer++);
     rnd = (double)rand() / RAND_MAX;
     initPos.dir = rnd * (2 * PI);
     if (initPos.dir < 0)
@@ -350,8 +342,6 @@ void respawn(struct player *p)
  */
 void drespawn(struct player *p)
 {
-    Uint32 timeseed = SDL_GetTicks();
-    srand(timeseed);
     p->alive = 1;
     p->posx = (WINDOW_W / 2) + (p->active == 1 ? -120 : 120);
     p->posy = WINDOW_H / 2;
@@ -363,8 +353,7 @@ void drespawn(struct player *p)
 
     p->prevx = p->posx;
     p->prevy = p->posy;
-    p->holecount = ((++randomizer * rand())
-                    % (HOLE_FREQ - HOLE_FIRST_DELAY));
+    p->holecount = (rand() % (HOLE_FREQ - HOLE_FIRST_DELAY));
 }
 
 /**
@@ -673,8 +662,6 @@ int logicGame(void)
                 if (weapons && p->wep_time == WEP_NONACTIVE
                     && p->wep_count > 0) {
                     if (p->ai) {
-                        Uint32 timeseed = SDL_GetTicks();
-                        srand(timeseed);
                         if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
                             p->wep_time = wep_list[p->weapon].func(p, 1);
                             p->wep_count -= 1;
@@ -1039,7 +1026,6 @@ void assignAiWeapons(void)
     for (i = 0; i < nPlayers; ++i) {
         struct player *p = &players[i];
         if (p->ai) {
-            srand(SDL_GetTicks() * ++randomizer);
             double rnd = (double)rand() / RAND_MAX;
             p->weapon = (int)(rnd * legalWeps());
         }
@@ -1189,13 +1175,10 @@ int wepWarp(struct player *p, bool on)
         playSound(SOUND_WARP, sound);
 
         double rnd;
-        Uint32 timeseed = SDL_GetTicks();
 
-        srand(timeseed * randomizer++);
         rnd = (double)rand() / RAND_MAX;
         p->posx = SPAWN_SPACE_MIN
             + (rnd * (WINDOW_W - (2 * SPAWN_SPACE_MIN)));
-        srand(timeseed * randomizer++);
         rnd = (double)rand() / RAND_MAX;
         p->posy = SPAWN_SPACE_MIN
             + (rnd * (WINDOW_H - (2 * SPAWN_SPACE_MIN)));
@@ -1234,13 +1217,11 @@ int wepSwitch(struct player *p, bool on)
 
     unsigned int i, r;
     bool valid = 0;
-    Uint32 timeseed = SDL_GetTicks();
-    srand(timeseed);
 
     if (alivecount == 2)
         return WEP_NONACTIVE;
 
-    i = ++randomizer * rand();
+    i = rand();
     i %= nPlayers;
     while (!valid) {
         if (i != p->active - 1 && (&players[i])->alive)
@@ -1251,7 +1232,7 @@ int wepSwitch(struct player *p, bool on)
     }
 
     valid = 0;
-    r = ++randomizer * rand();
+    r = rand();
     r %= nPlayers;
     while (!valid) {
         if ((r != p->active - 1) && (r != i) && (&players[r])->alive)
@@ -2108,6 +2089,7 @@ int init(void)
     atexit(TTF_Quit);
 
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
+    srand(SDL_GetTicks());
 
     SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_SetCaption("Zatacka X", "Zatacka X");
