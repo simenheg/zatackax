@@ -134,6 +134,7 @@ void resetPlayer(int player)
     p->invertedKeys = 0;
     p->weapon = 0;
     p->ai = 0;
+    snprintf(p->name, PLAYER_NAME_LEN, "Player%d", player + 1);
 
     switch (player) {
     case 0:
@@ -433,18 +434,49 @@ void setNextKey(unsigned char pedit, unsigned char key)
  */
 void setNextName(unsigned char pedit)
 {
+
+    struct player *p = &players[pedit];
+    bool keyDown[322];
+    
+    memset(keyDown, '\0', 322);
+    memset(p->name, '\0', PLAYER_NAME_LEN);
+    displayPConfMenu();
+    int chars = 0;
+
     for (;;) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_KEYDOWN) {
 
-                int k = event.key.keysym.sym;
+        SDL_PollEvent(&event);
+            
+        if (chars >= PLAYER_NAME_LEN - 1)
+            return;
+        
+        if (event.type == SDL_KEYDOWN) {
 
-                if (k == SDLK_ESCAPE)
-                    return;
-                fprintf(stderr, "%d\n", k);
+            int k = event.key.keysym.sym;
 
+            if (!keyDown[k]) {
+                keyDown[k] = 1;
+
+                if (k >= SDLK_EXCLAIM && k <= SDLK_z) {
+                    if (event.key.keysym.mod & KMOD_LSHIFT ||
+                        event.key.keysym.mod & KMOD_RSHIFT)
+                        snprintf(p->name + chars, PLAYER_NAME_LEN, "%c", k - 32);
+                    else
+                        snprintf(p->name + chars, PLAYER_NAME_LEN, "%c", k);
+                    ++chars;
+                } else if (k == SDLK_BACKSPACE && chars > 0) {
+                    --chars;
+                    snprintf(p->name + chars, PLAYER_NAME_LEN, "%c", '\0');
+                }
+
+                displayPConfMenu();
             }
-        }
+                
+            if (chars > 0 &&
+                (k == SDLK_ESCAPE || k == SDLK_RETURN))
+                return;
+        } else if (event.type == SDL_KEYUP)
+            keyDown[event.key.keysym.sym] = 0;
     }
 }
 
@@ -1787,7 +1819,7 @@ int logicPConfMenu(void)
         switch (menuPConf.choice) {
         case 0:
             playSound(SOUND_BEEP, sound);
-            //setNextName(editPlayer);
+            setNextName(editPlayer);
             break;
         case 1: /* Toggle AI */
             playSound(SOUND_BEEP, sound);
@@ -1850,7 +1882,7 @@ void displayPConfMenu(void)
 {
     char *c[menuPConf.choices];
 
-    char s1[MENU_BUF] = "~ PLAYER ";
+    char s1[MENU_BUF] = "";
     char s2[MENU_BUF] = "AI ";
     char s3[MENU_BUF] = "LEFT KEY: ";
     char s4[MENU_BUF] = "WEAPON KEY: ";
@@ -1861,9 +1893,8 @@ void displayPConfMenu(void)
     char *lkey = keyName(p->lkey);
     char *rkey = keyName(p->rkey);
     char *wkey = keyName(p->wkey);
-
-    snprintf(tmpKey, 4 * sizeof(char), "%d ~", editPlayer + 1);
-    strncat(s1, tmpKey, 3);
+    snprintf(s1, MENU_BUF, "%s",
+             p->name[0] == '\0' ? "< enter name >" : p->name);
 
     strncat(s2, p->ai ON_OFF, MENU_BUF - strlen(s2));
 
@@ -2336,6 +2367,7 @@ void saveSettings(char *filename)
         }
         fprintf(savefile, "scorecap = %d\n", scorecap);
         for (i = 0; i < MAX_PLAYERS; ++i) {
+            fprintf(savefile, "%dn = %s\n", i + 1, (&players[i])->name);
             fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
             fprintf(savefile, "%da = %d\n", i + 1, (&players[i])->ai);
             fprintf(savefile, "%dl = %d\n", i + 1, (&players[i])->lkey);
@@ -2371,53 +2403,58 @@ void restoreSettings(char *filename)
     } else {
 
         char settingHandle[STRBUF];
-        unsigned int settingParam;
+        char settingParam[STRBUF];
         unsigned int i;
         int line = 0;
         bool valid;
 
         for (;;) {
-            if ((fscanf(savefile, "%s = %u\n", settingHandle,
-                        &settingParam)) != EOF) {
+            if ((fscanf(savefile, "%s = %s\n", settingHandle,
+                        settingParam)) != EOF) {
                 valid = 0;
                 for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
                     if (strncmp(settingNames[i], settingHandle, STRBUF)
                         == 0) {
                         /* We have a matched setting */
-                        *settings[i] = settingParam;
+                        *settings[i] = atoi(settingParam);
                         valid = 1;
                         break;
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
                     {
-                        scorecap = settingParam;
+                        scorecap = atoi(settingParam);
                         valid = 1;
                     } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
+                    case 'n': /* Name */
+                        strncpy((&players[settingHandle[0] - '0' - 1])->name,
+                                settingParam, PLAYER_NAME_LEN);
+                        valid = 1;
+                        break;
                     case 'c': /* Color */
                         (&players[settingHandle[0] - '0' - 1])->
-                            color = settingParam;
+                            color = atoi(settingParam);
                         valid = 1;
                         break;
                     case 'a': /* AI */
                         (&players[settingHandle[0] - '0' - 1])->
-                            ai = settingParam;
+                            ai = atoi(settingParam);
                         valid = 1;
                         break;
                     case 'l': /* Left key */
                         (&players[settingHandle[0] - '0' - 1])->
-                            lkey = settingParam;
+                            lkey = atoi(settingParam);
                         valid = 1;
                         break;
                     case 'w': /* Weapon key */
                         (&players[settingHandle[0] - '0' - 1])->
-                            wkey = settingParam;
+                            wkey = atoi(settingParam);
                         valid = 1;
                         break;
                     case 'r': /* Right key */
                         (&players[settingHandle[0] - '0' - 1])->
-                            rkey = settingParam;
+                            rkey = atoi(settingParam);
                         valid = 1;
                         break;
                     default:

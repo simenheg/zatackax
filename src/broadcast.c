@@ -28,6 +28,7 @@
  */
 SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
 {
+    extern struct player players[MAX_PLAYERS];
     SDL_Surface *broadcast;
     unsigned int i;
     char *strings[BROADC_PARTS];
@@ -41,10 +42,9 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     for (i = 0; strings[i] != NULL && i < BROADC_PARTS; ++i) {
         
         char pstring[PLAYER_NAME_LEN];
-        
         if (strlen(strings[i]) == 1) {
             int pnum = atoi(strings[i]);
-            snprintf(pstring, PLAYER_NAME_LEN, "Player%d", pnum);
+            snprintf(pstring, PLAYER_NAME_LEN, "%s", (&players[pnum - 1])->name);
             parts[i] = TTF_RenderUTF8_Shaded(font_broadc, pstring,
                                              pcolors[pnum - 1], cMenuBG);
         } else

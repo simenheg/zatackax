@@ -1,7 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "common.h"
+
+#define PLAYER_NAME_LEN 12 + 1
+
 struct player {
+    char name[PLAYER_NAME_LEN];
     unsigned char active;  /* 0 if activated, ID else */
     int weapon;            /* Weapon ID */
     int wep_time;          /* Remaining weapon time, -999 if unused */
@@ -25,5 +30,7 @@ struct player {
     unsigned int wkey;
     int holecount;
 };
+
+struct player players[MAX_PLAYERS];
 
 #endif

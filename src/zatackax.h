@@ -105,7 +105,6 @@ const SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 static SDL_Color colors[N_COLORS];
 static SDL_Rect arrowClip[32];
 static SDL_Event event;
-static struct player players[MAX_PLAYERS];
 static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;

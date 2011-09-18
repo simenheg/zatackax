@@ -31,7 +31,7 @@ src/zatackax.o : src/zatackax.h src/sound.h src/error.h src/ai.h src/broadcast.h
 src/error.o : src/error.h src/common.h
 src/sound.o : src/sound.h src/error.h src/common.h
 src/ai.o : src/ai.h src/common.h
-src/broadcast.o : src/broadcast.h src/common.h
+src/broadcast.o : src/broadcast.h src/player.h src/common.h
 
 clean :
 	rm -f zatackax $(OBJECTS)
