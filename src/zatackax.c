@@ -427,6 +427,28 @@ void setNextKey(unsigned char pedit, unsigned char key)
 }
 
 /**
+ * Catches and sets the next string entered as the given players name.
+ *
+ * @param pedit ID of the player to rename.
+ */
+void setNextName(unsigned char pedit)
+{
+    for (;;) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_KEYDOWN) {
+
+                int k = event.key.keysym.sym;
+
+                if (k == SDLK_ESCAPE)
+                    return;
+                fprintf(stderr, "%d\n", k);
+
+            }
+        }
+    }
+}
+
+/**
  * Initializes the hitmap.
  *
  * @param w Width of the map.
@@ -1157,7 +1179,8 @@ int wepMole(struct player *p, bool on)
         p->posy = p->initposy;
         p->dir = p->initdir + PI;
 
-        p->inv_self= INV_TIME;
+        p->inv_self= DURATION_MOLE;
+        p->inv_others = DURATION_MOLE;
     }
 
     return WEP_NONACTIVE;
@@ -1764,7 +1787,7 @@ int logicPConfMenu(void)
         switch (menuPConf.choice) {
         case 0:
             playSound(SOUND_BEEP, sound);
-            setColor(editPlayer, 1);
+            //setNextName(editPlayer);
             break;
         case 1: /* Toggle AI */
             playSound(SOUND_BEEP, sound);
@@ -1931,7 +1954,7 @@ void displayMenu(char *c[], struct menu *m)
             - (msg->w / 2)                      /* centralize */
             ,
             (WINDOW_H / 2)                          /* offset */
-            + (mid * ((msg->h / 2) + SPACEMOD)) /* spacing */
+            + (mid * ((msg->h / 2) + SPACEMOD))    /* spacing */
             - ((m->choices % 2) - 1)             /* halfspace */
             * (SPACEMOD / 2)
             - (msg->h / 2)                      /* centralize */
@@ -2073,7 +2096,9 @@ int init(void)
             fprintf(stderr, "ERROR: Could not initialize SDL.\n");
         return 0;
     }
-    atexit(SDL_Quit);
+
+    if (atexit(SDL_Quit) != 0)
+        return 0;
 
     if (initSound() == -1) {
         if (olvl >= O_NORMAL)
@@ -2093,7 +2118,6 @@ int init(void)
 
     SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_SetCaption("Zatacka X", "Zatacka X");
-
     SDL_WM_SetIcon(SDL_LoadBMP("data/gfx/icon.bmp"), NULL);
 
     return 1;
