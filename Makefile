@@ -4,19 +4,25 @@ LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer -fno-comm
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE
 CSILENT = -DSILENT
-CDEVEL = -g3 -pedantic -Wall
+CDEVEL = -g3 -pg -pedantic -Wall
 CRELEASE = -O2
 
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
 
-devel : CFLAGS += $(CDEVEL)
-devel : zatackax
+release : CFLAGS += $(CRELEASE)
+release : zatackax
+
+windows : $(OBJECTS)
+windows : CC = i486-mingw32-gcc
+windows : CFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --cflags) -std=c99 -O2
+windows : LDFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer
+windows : zatackax
 
 zatackax : $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-release : CFLAGS += $(RELEASE)
-release : zatackax
+devel : CFLAGS += $(CDEVEL)
+devel : zatackax
 
 debug : CFLAGS += $(CDEBUG)
 debug : devel
