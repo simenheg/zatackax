@@ -15,7 +15,7 @@
 #define DURATION_LIGHTNINGSPEED 1200
 #define DURATION_FROSTWAVE      1500
 #define DURATION_CONFUSION      900
-#define DURATION_MOLE           300
+#define DURATION_MOLE           350
 #define DURATION_GHOSTWALK      1720
 
 struct weapon {

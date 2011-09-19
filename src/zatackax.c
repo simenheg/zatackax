@@ -473,8 +473,17 @@ void setNextName(unsigned char pedit)
             }
                 
             if (chars > 0 &&
-                (k == SDLK_ESCAPE || k == SDLK_RETURN))
+                (k == SDLK_ESCAPE || k == SDLK_RETURN ||
+                 k == SDLK_DOWN   || k == SDLK_UP)) {
+
+                playSound(SOUND_BEEP, sound);
+
+                if (k == SDLK_DOWN)
+                    menuPConf.choice++;
+                else if (k == SDLK_UP)
+                    menuPConf.choice = menuPConf.choices - 1;
                 return;
+            }
         } else if (event.type == SDL_KEYUP)
             keyDown[event.key.keysym.sym] = 0;
     }
@@ -1868,7 +1877,7 @@ int logicPConfMenu(void)
         } else if (keyDown[SDLK_BACKSPACE]) {
             keyDown[SDLK_BACKSPACE] = 0;
             playSound(SOUND_BEEP, sound);
-            setColor(editPlayer, 0);
+            setNextName(editPlayer);
             return 1;
         }
     }

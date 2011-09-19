@@ -23,7 +23,7 @@
 #define SCORE_CAP_MAX       65536
 
 /* SPECIAL KEYS */
-#define MAX_KEYNAME         8   /* Maximum length of key name */
+#define MAX_KEYNAME         8       /* Maximum length of key name */
 
 /* SPAWNING */
 #define START_ROUND_WAIT    1500    /* Miliseconds until the game starts */
