@@ -447,8 +447,10 @@ void setNextName(unsigned char pedit)
 
         SDL_PollEvent(&event);
             
-        if (chars >= PLAYER_NAME_LEN - 1)
+        if (chars >= PLAYER_NAME_LEN - 1) {
+            playSound(SOUND_BEEP, sound);
             return;
+        }
         
         if (event.type == SDL_KEYDOWN) {
 
@@ -1563,8 +1565,14 @@ void displayWepMenu(void)
         struct weapon w = wep_list[p->weapon];
 
         SDL_Rect offset = {(i % 4) * (screen->w / 4) + 10,
-                           i > 3 ? screen->h - 90 : 10, 0, 0};
+                           i > 3 ? screen->h - 118 : 10, 0, 0};
 
+        snprintf(wep_str, PLAYER_NAME_LEN, "%s", p->name);
+        wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
+                                         colors[p->color], cMenuBG);
+        SDL_BlitSurface(wep_text, NULL, screen, &offset);
+
+        offset.y += 30;
         snprintf(wep_str, MENU_BUF, "%s", w.name);
         wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
                                          colors[p->color], cMenuBG);
@@ -1587,7 +1595,7 @@ void displayWepMenu(void)
         if (i > 3)
             offset.y = screen->h - 10 - BROADC_FONT_SIZE;
         else
-            offset.y = 75;
+            offset.y = 105;
         snprintf(wep_str, MENU_BUF, "Charges: %d", w.charges);
         wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
                                          colors[p->color], cMenuBG);
