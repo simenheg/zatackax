@@ -1156,7 +1156,7 @@ int wepSharpturn(struct player *p, bool on)
             p->dir -= PI / 2;
     }
 
-    p->inv_self = INV_TIME * 3;
+    p->inv_self = INV_TIME;
 
     return WEP_NONACTIVE;
 }

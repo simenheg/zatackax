@@ -9,12 +9,12 @@
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
 #define WEP_NONACTIVE           -999
-#define INV_TIME                75   /* Time one needs to be invincible after
+#define INV_TIME                250  /* Time one needs to be invincible after
                                         using a potential suicide weapon */
 
 #define DURATION_LIGHTNINGSPEED 1200
 #define DURATION_FROSTWAVE      1500
-#define DURATION_CONFUSION      900
+#define DURATION_CONFUSION      800
 #define DURATION_MOLE           350
 #define DURATION_GHOSTWALK      1720
 

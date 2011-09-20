@@ -1,11 +1,13 @@
 0.1.4 - xx.xx.xx
 General:
-  * Added support for more keyboard keys.
   * Custom player names.
+  * Added support for more keyboard keys.
   * Improved random number generation on Windows.
 Balancing:
   * Mole is now better at escaping with an added invincibility bonus.
-  * The duration of Confusion has been further reduced from 1.0 s to 0.9 s.
+  * The duration of Confusion has been further reduced from 1.0 s to 0.8 s.
+Bugs:
+  * Fixed a bug where Switch-aroo would kill slowed players.
 
 0.1.3 - 20.05.11
   * A new weapon has been added: Ghost Walk.
