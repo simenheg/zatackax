@@ -437,7 +437,7 @@ void setNextName(unsigned char pedit)
 
     struct player *p = &players[pedit];
     bool keyDown[322];
-    
+
     memset(keyDown, '\0', 322);
     memset(p->name, '\0', PLAYER_NAME_LEN);
     displayPConfMenu();
@@ -446,12 +446,12 @@ void setNextName(unsigned char pedit)
     for (;;) {
 
         SDL_PollEvent(&event);
-            
+
         if (chars >= PLAYER_NAME_LEN - 1) {
             playSound(SOUND_BEEP, sound);
             return;
         }
-        
+
         if (event.type == SDL_KEYDOWN) {
 
             int k = event.key.keysym.sym;
@@ -473,7 +473,7 @@ void setNextName(unsigned char pedit)
 
                 displayPConfMenu();
             }
-                
+
             if (chars > 0 &&
                 (k == SDLK_ESCAPE || k == SDLK_RETURN ||
                  k == SDLK_DOWN   || k == SDLK_UP)) {
@@ -1731,6 +1731,36 @@ int logicSettingsMenu(void)
         }
         return 1;
     }
+
+    /* Special case for the score setting */
+    if (menuSettings.choice == 7) {
+        int num = -1;
+        if (keyDown[SDLK_0])      num = 0;
+        else if (keyDown[SDLK_1]) num = 1;
+        else if (keyDown[SDLK_2]) num = 2;
+        else if (keyDown[SDLK_3]) num = 3;
+        else if (keyDown[SDLK_4]) num = 4;
+        else if (keyDown[SDLK_5]) num = 5;
+        else if (keyDown[SDLK_6]) num = 6;
+        else if (keyDown[SDLK_7]) num = 7;
+        else if (keyDown[SDLK_8]) num = 8;
+        else if (keyDown[SDLK_9]) num = 9;
+
+        if (num != -1) {
+            if (scorecap < 0)
+                scorecap = 0;
+            /* Multiply the scorecap by 10 and add the number */
+            scorecap = scorecap * 10 + num;
+            playSound(SOUND_BEEP, sound);
+
+            keyDown[SDLK_0] = keyDown[SDLK_1] = keyDown[SDLK_2] = keyDown[SDLK_3] =
+                keyDown[SDLK_4] = keyDown[SDLK_5] = keyDown[SDLK_6] =
+                keyDown[SDLK_7] = keyDown[SDLK_8] = keyDown[SDLK_9] = 0;
+            
+            return 1;
+        }
+    }
+
     return handleMenu(&menuSettings);
 }
 
@@ -2439,10 +2469,10 @@ void restoreSettings(char *filename)
                     }
                 }
                 if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                    {
-                        scorecap = atoi(settingParam);
-                        valid = 1;
-                    } else if (!valid && isdigit(settingHandle[0])) {
+                {
+                    scorecap = atoi(settingParam);
+                    valid = 1;
+                } else if (!valid && isdigit(settingHandle[0])) {
                     switch (settingHandle[1]) {
                     case 'n': /* Name */
                         strncpy((&players[settingHandle[0] - '0' - 1])->name,
