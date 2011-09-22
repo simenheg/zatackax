@@ -1478,32 +1478,31 @@ void displayMainMenu(void)
     c[1] = "SETTINGS";
     c[2] = "EXIT";
 
-    displayMenu(c, &menuMain);
+    int ymod = logo->h / 2;
+    displayMenu(c, &menuMain, ymod);
+    SDL_Rect offset = {WINDOW_W / 2 - logo->w / 2, WINDOW_H / 2 - logo->h};
+    SDL_BlitSurface(logo, NULL, screen, &offset);
 
     /* This could/should be made smoother... */
     for (i = 0; i < nPlayers; ++i) {
-        SDL_Rect offset = {
-            (WINDOW_W / 2)              /* window offset */
-            - 55                    /* temp. offset */
-            + (i - nPlayers) * 30   /* player modifier */
-            ,
-            (WINDOW_H / 2)              /* window offset */
-            - 37                    /* temp. offset */
-            , 0, 0
-        };
+        offset.x = (WINDOW_W / 2)            /* window offset */
+            - 60                             /* temp. offset */
+            + (i - nPlayers) * BALL_SPACING; /* player modifier */
+
+        offset.y = (WINDOW_H / 2)            /* window offset */
+            - BALL_Y_MOD + ymod;             /* temp. offset */
+
         SDL_BlitSurface(pballs[i], NULL, screen, &offset);
     }
 
     for (i = nPlayers; i < MAX_PLAYERS; ++i) {
-        SDL_Rect offset = {
-            (WINDOW_W / 2)              /* window offset */
-            + 64                    /* temp. offset */
-            + (i - nPlayers) * 30   /* player modifier */
-            ,
-            (WINDOW_H / 2)              /* window offset */
-            - 37                    /* temp. offset */
-            , 0, 0
-        };
+        offset.x = (WINDOW_W / 2)            /* window offset */
+            + 68                             /* temp. offset */
+            + (i - nPlayers) * BALL_SPACING; /* player modifier */
+
+        offset.y = (WINDOW_H / 2)            /* window offset */
+            - BALL_Y_MOD + ymod;             /* temp. offset */
+
         SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset);
     }
 
@@ -1735,7 +1734,7 @@ int logicSettingsMenu(void)
     /* Special case for the score setting */
     if (menuSettings.choice == 7) {
         int num = -1;
-        if (keyDown[SDLK_0])      num = 0;
+        if      (keyDown[SDLK_0]) num = 0;
         else if (keyDown[SDLK_1]) num = 1;
         else if (keyDown[SDLK_2]) num = 2;
         else if (keyDown[SDLK_3]) num = 3;
@@ -1756,7 +1755,7 @@ int logicSettingsMenu(void)
             keyDown[SDLK_0] = keyDown[SDLK_1] = keyDown[SDLK_2] = keyDown[SDLK_3] =
                 keyDown[SDLK_4] = keyDown[SDLK_5] = keyDown[SDLK_6] =
                 keyDown[SDLK_7] = keyDown[SDLK_8] = keyDown[SDLK_9] = 0;
-            
+
             return 1;
         }
     }
@@ -1804,7 +1803,7 @@ void displaySettingsMenu(void)
     c[8] = "PLAYER CONFIG";
     c[9] = "BACK";
 
-    displayMenu(c, &menuSettings);
+    displayMenu(c, &menuSettings, 0);
 
     if (SDL_Flip(screen) == -1)
         exit(1);
@@ -1849,7 +1848,7 @@ void displayPlayerMenu(void)
     c[7] = "PLAYER 8 CONFIG";
     c[8] = "BACK";
 
-    displayMenu(c, &menuPlayer);
+    displayMenu(c, &menuPlayer, 0);
 
     if (SDL_Flip(screen) == -1)
         exit(1);
@@ -1965,7 +1964,7 @@ void displayPConfMenu(void)
     c[5] = "RESET";
     c[6] = "BACK";
 
-    displayMenu(c, &menuPConf);
+    displayMenu(c, &menuPConf, 0);
 
     if (SDL_Flip(screen) == -1)
         exit(1);
@@ -2004,8 +2003,9 @@ int handleMenu(struct menu *m)
  *
  * @param c All the strings to be shown in the menu.
  * @param m The menu to be shown.
+ * @param ymod Amount of y-coordinate shifting.
  */
-void displayMenu(char *c[], struct menu *m)
+void displayMenu(char *c[], struct menu *m, int ymod)
 {
     int i;
     int mid = -(m->choices / 2);
@@ -2028,14 +2028,15 @@ void displayMenu(char *c[], struct menu *m)
         }
 
         SDL_Rect offset = {
-            (WINDOW_W / 2)                          /* offset */
+            (WINDOW_W / 2)                      /* offset */
             - (msg->w / 2)                      /* centralize */
             ,
-            (WINDOW_H / 2)                          /* offset */
-            + (mid * ((msg->h / 2) + SPACEMOD))    /* spacing */
-            - ((m->choices % 2) - 1)             /* halfspace */
+            (WINDOW_H / 2)                      /* offset */
+            + (mid * ((msg->h / 2) + SPACEMOD)) /* spacing */
+            - ((m->choices % 2) - 1)            /* halfspace */
             * (SPACEMOD / 2)
             - (msg->h / 2)                      /* centralize */
+            + ymod                              /* eventual offset */
             , 0, 0
         };
 
@@ -2221,6 +2222,10 @@ int loadFiles(void)
         fileNotFound("data/gfx/ball.png");
         return 0;
     }
+    if ((logo = loadImage("data/gfx/logo.png")) == NULL) {
+        fileNotFound("data/gfx/logo.png");
+        return 0;
+    }
     if ((wiBg = loadImage("data/gfx/wi_bg.png")) == NULL) {
         fileNotFound("data/gfx/wi_bg.png");
         return 0;
@@ -2322,6 +2327,7 @@ int loadFiles(void)
     if (olvl >= O_DEBUG) {
         confirmLoading("arrowsheet.png", arrows);
         confirmLoading("ball.png", ball);
+        confirmLoading("logo.png", logo);
         confirmLoading("wi_bg.png", wiBg);
         confirmLoading("wi_lightningspeed.png", wiSpeed);
         confirmLoading("wi_frostwave.png", wiFrost);

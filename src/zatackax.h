@@ -50,8 +50,10 @@
 
 /* MENUS */
 #define MENU_BUF                32  /* Maxiumum menu string length */
-#define MENU_FONT_SIZE          20
-#define SPACEMOD                15
+#define MENU_FONT_SIZE          22
+#define SPACEMOD                18
+#define BALL_SPACING            30
+#define BALL_Y_MOD              39
 
 /* SETTINGS MENU */
 #define TRIANGLE_PANNING_X      1.8
@@ -140,6 +142,7 @@ enum keySymbols {KEY_LEFT,
 /* SURFACES */
 static SDL_Surface *screen = NULL;
 static SDL_Surface *msg = NULL;
+static SDL_Surface *logo = NULL;
 static SDL_Surface *arrows = NULL;
 static SDL_Surface *ball = NULL;
 static SDL_Surface *wiBg = NULL;
@@ -225,7 +228,7 @@ void displayPlayerMenu(void);
 int logicPConfMenu(void);
 void displayPConfMenu(void);
 int handleMenu(struct menu *m);
-void displayMenu(char *c[], struct menu *m);
+void displayMenu(char *c[], struct menu *m, int ymod);
 
 /* GRAPHICS */
 int initScreen(void);
