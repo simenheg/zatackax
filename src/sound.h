@@ -6,8 +6,14 @@
 #include "error.h"
 
 enum sounds {
-    SOUND_BEEP = 0,
-    SOUND_PEEB,
+    SOUND_BEP = 0,
+    SOUND_BEEP,
+    SOUND_BEEEP,
+    SOUND_BEEEEP,
+    SOUND_BEEEEEP,
+    SOUND_BEEEEEEP,
+    SOUND_BEEEEEEEP,
+    SOUND_BEEEEEEEEP,
     SOUND_ROUND_BEGIN,
     SOUND_CRASH,
     SOUND_SPEED,

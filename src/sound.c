@@ -18,8 +18,14 @@
 #include "sound.h"
 
 static Mix_Music *bgm = NULL;
+static Mix_Chunk *seBep = NULL;
 static Mix_Chunk *seBeep = NULL;
-static Mix_Chunk *sePeeb = NULL;
+static Mix_Chunk *seBeeep = NULL;
+static Mix_Chunk *seBeeeep = NULL;
+static Mix_Chunk *seBeeeeep = NULL;
+static Mix_Chunk *seBeeeeeep = NULL;
+static Mix_Chunk *seBeeeeeeep = NULL;
+static Mix_Chunk *seBeeeeeeeep = NULL;
 static Mix_Chunk *seRoundBegin = NULL;
 static Mix_Chunk *seCrash = NULL;
 static Mix_Chunk *seSpeed = NULL;
@@ -74,9 +80,21 @@ int initSound(void)
         return -1;
     }
 
+    if (loadSound(seBep, "bep", SOUND_BEP) == -1)
+        return -1;
     if (loadSound(seBeep, "beep", SOUND_BEEP) == -1)
         return -1;
-    if (loadSound(sePeeb, "peeb", SOUND_PEEB) == -1)
+    if (loadSound(seBeeep, "beeep", SOUND_BEEEP) == -1)
+        return -1;
+    if (loadSound(seBeeeep, "beeeep", SOUND_BEEEEP) == -1)
+        return -1;
+    if (loadSound(seBeeeeep, "beeeeep", SOUND_BEEEEEP) == -1)
+        return -1;
+    if (loadSound(seBeeeeeep, "beeeeeep", SOUND_BEEEEEEP) == -1)
+        return -1;
+    if (loadSound(seBeeeeeeep, "beeeeeeep", SOUND_BEEEEEEEP) == -1)
+        return -1;
+    if (loadSound(seBeeeeeeeep, "beeeeeeeep", SOUND_BEEEEEEEEP) == -1)
         return -1;
     if (loadSound(seRoundBegin, "round_begin", SOUND_ROUND_BEGIN) == -1)
         return -1;

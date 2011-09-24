@@ -1456,12 +1456,15 @@ int logicMainMenu(void)
     } else if (qkey(KEY_LEFT)) {
         if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) {
             --nPlayers;
+            playSound(nPlayers - 1, sound);
             deselectWeapons();
         }
         return 1;
     } else if (qkey(KEY_RIGHT)) {
-        if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS)
+        if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS) {
             ++nPlayers;
+            playSound(nPlayers - 1, sound);
+        }
         return 1;
     }
     return handleMenu(&menuMain);
@@ -1700,7 +1703,7 @@ int logicSettingsMenu(void)
             curScene = &playerMenu;
             break;
         case 9: /* Back */
-            playSound(SOUND_PEEB, sound);
+            playSound(SOUND_BEP, sound);
             keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
             initMainMenu();
             curScene = curScene->parentScene;
@@ -1712,7 +1715,7 @@ int logicSettingsMenu(void)
         return 1;
     } else if (qkey(KEY_LEFT)) {
         if (menuSettings.choice == 7 && scorecap > 0) {
-            playSound(SOUND_PEEB, sound);
+            playSound(SOUND_BEP, sound);
             --scorecap;
         }
         return 1;
@@ -1725,7 +1728,7 @@ int logicSettingsMenu(void)
     } else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
         if (menuSettings.choice == 7) {
-            playSound(SOUND_PEEB, sound);
+            playSound(SOUND_BEP, sound);
             scorecap = 0;
         }
         return 1;
@@ -1818,7 +1821,7 @@ int logicPlayerMenu(void)
 {
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         if (menuPlayer.choice == 8) {
-            playSound(SOUND_PEEB, sound);
+            playSound(SOUND_BEP, sound);
             curScene = curScene->parentScene;
         } else {
             playSound(SOUND_BEEP, sound);
@@ -1890,11 +1893,11 @@ int logicPConfMenu(void)
             setNextKey(editPlayer, 'r');
             break;
         case 5: /* Reset player settings */
-            playSound(SOUND_PEEB, sound);
+            playSound(SOUND_BEP, sound);
             resetPlayer(editPlayer);
             break;
         case 6:
-            playSound(SOUND_PEEB, sound);
+            playSound(SOUND_BEP, sound);
             curScene = curScene->parentScene;
             break;
         default:
@@ -2730,7 +2733,7 @@ int main(int argc, char *argv[])
                         initMainMenu();
                     else if (curScene->parentScene == NULL)
                         exitGame(0);
-                    playSound(SOUND_PEEB, sound);
+                    playSound(SOUND_BEP, sound);
                     curScene = curScene->parentScene;
                     curScene->displayFunc();
                 } else {
