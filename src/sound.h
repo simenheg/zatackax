@@ -5,11 +5,10 @@
 #include "common.h"
 #include "error.h"
 
-#define N_SOUNDS 12
-
 enum sounds {
-    SOUND_BEEP,
+    SOUND_BEEP = 0,
     SOUND_PEEB,
+    SOUND_ROUND_BEGIN,
     SOUND_CRASH,
     SOUND_SPEED,
     SOUND_FREEZE,
@@ -19,7 +18,8 @@ enum sounds {
     SOUND_MOLE,
     SOUND_WARP,
     SOUND_GHOST,
-    SOUND_SWITCH
+    SOUND_SWITCH,
+    N_SOUNDS
 };
 
 int loadSound(Mix_Chunk *sound, char *soundstr, int index);

@@ -17,9 +17,9 @@
 
 #include "ai.h"
 
-#define COWARDNESS_FRONT    85
-#define COWARDNESS_SIDES    40
-#define COWARDNESS_DIAGS    60
+#define COWARDNESS_FRONT 85
+#define COWARDNESS_SIDES 40
+#define COWARDNESS_DIAGS 60
 
 /**
  * NOTE: This is only a quick doodle, and is not to be considered final!

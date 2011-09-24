@@ -20,6 +20,7 @@
 static Mix_Music *bgm = NULL;
 static Mix_Chunk *seBeep = NULL;
 static Mix_Chunk *sePeeb = NULL;
+static Mix_Chunk *seRoundBegin = NULL;
 static Mix_Chunk *seCrash = NULL;
 static Mix_Chunk *seSpeed = NULL;
 static Mix_Chunk *seFreeze = NULL;
@@ -76,6 +77,8 @@ int initSound(void)
     if (loadSound(seBeep, "beep", SOUND_BEEP) == -1)
         return -1;
     if (loadSound(sePeeb, "peeb", SOUND_PEEB) == -1)
+        return -1;
+    if (loadSound(seRoundBegin, "round_begin", SOUND_ROUND_BEGIN) == -1)
         return -1;
     if (loadSound(seCrash, "crash", SOUND_CRASH) == -1)
         return -1;

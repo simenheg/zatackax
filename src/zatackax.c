@@ -1158,7 +1158,7 @@ int wepSharpturn(struct player *p, bool on)
 
     p->inv_self = INV_TIME;
 
-    return WEP_NONACTIVE;
+    return DURATION_SHARPTURN;
 }
 
 /**
@@ -1523,7 +1523,7 @@ int logicWepMenu(void)
 
     if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
         resetWeapons();
-        playSound(SOUND_BEEP, sound);
+        playSound(SOUND_ROUND_BEGIN, sound);
         curScene = &gameStart;
     }
 

@@ -1,3 +1,9 @@
+0.1.5 - xx.xx.xx
+  * General:
+    * Added logo to the main menu screen.
+    * Added a round start sound.
+    * Score cap can now be entered using the number keys.
+
 0.1.4 - 20.09.11
   * General:
     * Custom player names.
