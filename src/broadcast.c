@@ -18,6 +18,35 @@
 #include "broadcast.h"
 
 /**
+ * Pushes the broadcasts one step upwards the list, making room for a new one.
+ */
+void pushBroadcasts(void)
+{
+    int i;
+
+    SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
+    for (i = BROADC_LIMIT - 1; i > 0; --i) {
+        broadcast[i] = broadcast[i - 1];
+        if (broadcast[i] != NULL) {
+            int alpha = 255 - i * (255.0 / BROADC_LIMIT);
+            SDL_SetAlpha(broadcast[i], SDL_SRCALPHA, alpha);
+        }
+    }
+}
+
+/**
+ * Empties the broadcast message queue.
+ */
+void cleanBroadcasts(void)
+{
+    int i;
+    for (i = 0; i < BROADC_LIMIT; ++i) {
+        SDL_FreeSurface(broadcast[i]);
+    }
+    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
+}
+
+/**
  * Constructs a broadcast message. It may consist of up to three "parts".
  * When numbers 1 to MAX_PLAYERS are used, the number is exchanged for a
  * "PlayerN" string, and colored according the current player color.
@@ -67,4 +96,16 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     }
 
     return broadcast;
+}
+
+/**
+ * Adds color to - and broadcasts a message.
+ *
+ * @param msg Message to broadcast.
+ * @param pcolors Colors of the players.
+ */
+void colorAddBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
+{
+    pushBroadcasts();
+    broadcast[0] = makeBroadcast(msg, pcolors);
 }

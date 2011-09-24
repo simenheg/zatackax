@@ -9,10 +9,17 @@ More info to be found at http://code.google.com/p/zatackax/.
 ===== INSTALLATION =====
 For build instructions, see INSTALL.
 
+===== LICENSE =====
+Zatacka X is free software, licensed under the GNU General Public License
+version 3, or (at your option) any later version. See COPYING for details.
+
+All other content (graphics, audio) are licensed under Creative Commons
+Attribution-ShareAlike (CC BY-SA), unless otherwise noted in the AUTHORS file.
+
 ===== CREDITS =====
 See AUTHORS.
 
 ===== CONTACT =====
-Messages can be sent to: simenheg@gmail.com.
+Messages can be sent to: simenheg@ifi.uio.no.
 We appreciate all feedback, and would especially like to hear from you if
 you're having trouble building or running this alpha release. :)

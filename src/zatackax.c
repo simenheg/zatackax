@@ -205,7 +205,6 @@ void killPlayer(unsigned char killed, unsigned char killer)
 
     if (broadcasts) {
         char msg[BROADC_BUF];
-        pushBroadcasts();
 
         if (killer == 0)
             snprintf(msg, BROADC_BUF, "%d; hit the wall", killed);
@@ -215,9 +214,7 @@ void killPlayer(unsigned char killed, unsigned char killer)
             snprintf(msg, BROADC_BUF, "%d; crashed into ;%d", killed, killer);
 
         /* Send forward those colors */
-        SDL_Color *pcolors = extractPColors();
-        broadcast[0] = makeBroadcast(msg, pcolors);
-        free(pcolors);
+        newBroadcast(msg);
     }
 
     struct player *p = &players[killed - 1];
@@ -243,6 +240,18 @@ void killPlayer(unsigned char killed, unsigned char killer)
 }
 
 /**
+ * Add a new broadcast message to the queue.
+ *
+ * @param msg Message to broadcast
+ */
+void newBroadcast(char *msg)
+{
+    SDL_Color *pcolors = extractPColors();
+    colorAddBroadcast(msg, pcolors);
+    free(pcolors);
+}
+
+/**
  * Shows which player won the game.
  * TODO: Handle ties.
  *
@@ -252,13 +261,9 @@ void playerWon(unsigned char id)
 {
     if (broadcasts) {
         char msg[BROADC_BUF];
-        SDL_Color *pcolors = extractPColors();
-
-        pushBroadcasts();
         snprintf(msg, BROADC_BUF, "%d; won the game! (press RETURN to play "
                  "again, or ESC to exit)", id + 1);
-        broadcast[0] = makeBroadcast(msg, pcolors);
-        free(pcolors);
+        newBroadcast(msg);
     }
 
     winnerDeclared = 1;
@@ -937,35 +942,6 @@ void refreshGameScreen(void)
 }
 
 /**
- * Pushes the broadcasts one step upwards the list, making room for a new one.
- */
-void pushBroadcasts(void)
-{
-    int i;
-
-    SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
-    for (i = BROADC_LIMIT - 1; i > 0; --i) {
-        broadcast[i] = broadcast[i - 1];
-        if (broadcast[i] != NULL) {
-            int alpha = 255 - i * (255.0 / BROADC_LIMIT);
-            SDL_SetAlpha(broadcast[i], SDL_SRCALPHA, alpha);
-        }
-    }
-}
-
-/**
- * Empties the broadcast message queue.
- */
-void cleanBroadcast(void)
-{
-    int i;
-    for (i = 0; i < BROADC_LIMIT; ++i) {
-        SDL_FreeSurface(broadcast[i]);
-    }
-    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
-}
-
-/**
  * Draws the game scores onto the screen.
  */
 void drawScores(void)
@@ -1064,7 +1040,7 @@ void endRound(void)
 {
     cleanHitMap();
     if (broadcasts)
-        cleanBroadcast();
+        cleanBroadcasts();
     if (weapons)
         resetWeapons();
 }
@@ -2195,7 +2171,7 @@ int init(void)
     }
     atexit(TTF_Quit);
 
-    memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
+    cleanBroadcasts();
     srand(SDL_GetTicks());
 
     SDL_ShowCursor(SDL_DISABLE);
