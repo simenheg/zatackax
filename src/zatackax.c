@@ -987,12 +987,12 @@ void drawScores(void)
         SDL_FreeSurface(scoreText);
 
         if (weapons && p->wep_count > 0) {
-
             int i;
             offset.y += 2;
+            offset.x += WEP_SMALL_INIT_OFFSET;
 
             for (i = 0; i < p->wep_count; ++i) {
-                offset.x += 25;
+                offset.x += WEP_SMALL_PADDING;
                 SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
                                 &offset);
             }

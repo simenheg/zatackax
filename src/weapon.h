@@ -6,6 +6,8 @@
 #define N_WEAPONS               9
 #define N_ILLEGAL_2P_WEPS       1
 #define WEP_SPACEMOD            50
+#define WEP_SMALL_INIT_OFFSET   4    /* Offset between score and icon */
+#define WEP_SMALL_PADDING       25   /* Padding between small weapon icons */
 #define PARROWSELECT_MOD_Y      20
 #define PARROWSELECT_MOD_X      14
 #define WEP_NONACTIVE           -999
