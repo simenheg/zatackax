@@ -75,8 +75,8 @@ int initSound(void)
         return -1;
     }
 
-    if ((bgm = Mix_LoadMUS("data/sound/Padanaya_Blokov.ogg")) == NULL) {
-        fileNotFound("data/sound/Padanaya_Blokov.ogg");
+    if ((bgm = Mix_LoadMUS("data/sound/theme1.ogg")) == NULL) {
+        fileNotFound("data/sound/theme1.ogg");
         return -1;
     }
 

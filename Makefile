@@ -56,4 +56,4 @@ src/ai.o : src/ai.h src/common.h
 src/broadcast.o : src/broadcast.h src/player.h src/common.h
 
 clean :
-	rm -f zatackax $(OBJECTS)
+	rm -f zatackax .zatackax $(OBJECTS)

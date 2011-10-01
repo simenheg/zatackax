@@ -1,9 +1,11 @@
-0.1.5 - xx.xx.xx
+0.1.5 - 01.10.11
   * General:
     * Added logo to the main menu screen.
-    * Added a round start sound.
+    * New background music by Charles Vaughan.
     * New menu beeping sounds.
-    * Score cap can now be entered using the number keys.
+    * Added a round begin sound.
+  * Bugs:
+    * Score cap can be entered using the number keys (thanks to Gwilym Kuiper).
 
 0.1.4 - 20.09.11
   * General:
