@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CC = cc
 CFLAGS = $(shell sdl-config --cflags) -std=c99
 LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer -fno-common
 CDEBUG = -DDEBUG
@@ -23,7 +22,7 @@ CSILENT = -DSILENT
 CDEVEL = -g3 -pg -pedantic -Wall
 CRELEASE = -O2
 
-OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
+OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o  src/stats.o
 
 release : CFLAGS += $(CRELEASE)
 release : zatackax
@@ -54,6 +53,8 @@ src/error.o : src/error.h src/common.h
 src/sound.o : src/sound.h src/error.h src/common.h
 src/ai.o : src/ai.h src/common.h
 src/broadcast.o : src/broadcast.h src/player.h src/common.h
+src/stats.o : src/common.h
 
+.PHONY: clean
 clean :
 	rm -f zatackax .zatackax $(OBJECTS)

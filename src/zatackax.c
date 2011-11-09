@@ -194,30 +194,31 @@ SDL_Color *extractPColors(void)
 /**
  * Kills target player.
  *
- * @param killed ID of the player that was killed.
+ * @param victim ID of the player that was victim.
  * @param killer ID of the player that was crashed into.
  */
-void killPlayer(unsigned char killed, unsigned char killer)
+void killPlayer(unsigned char victim, unsigned char killer)
 {
     int i;
 
     playSound(SOUND_CRASH, sound);
+    registerKill(killer, victim);
 
     if (broadcasts) {
         char msg[BROADC_BUF];
 
         if (killer == 0)
-            snprintf(msg, BROADC_BUF, "%d; hit the wall", killed);
-        else if (killer == killed)
-            snprintf(msg, BROADC_BUF, "%d; commited suicide", killed);
+            snprintf(msg, BROADC_BUF, "%d; hit the wall", victim);
+        else if (killer == victim)
+            snprintf(msg, BROADC_BUF, "%d; commited suicide", victim);
         else
-            snprintf(msg, BROADC_BUF, "%d; crashed into ;%d", killed, killer);
+            snprintf(msg, BROADC_BUF, "%d; crashed into ;%d", victim, killer);
 
         /* Send forward those colors */
         newBroadcast(msg);
     }
 
-    struct player *p = &players[killed - 1];
+    struct player *p = &players[victim - 1];
     --alivecount;
     p->alive = 0;
 
@@ -267,6 +268,8 @@ void playerWon(unsigned char id)
     }
 
     winnerDeclared = 1;
+    printStats(nPlayers);
+    clearStats();
 
     if (olvl >= O_VERBOSE)
         printf(" -- Player %d won! --\n", id + 1);
