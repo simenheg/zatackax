@@ -23,7 +23,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    10,
+    11,
     0,
 };
 
@@ -202,7 +202,7 @@ void killPlayer(unsigned char victim, unsigned char killer)
     int i;
 
     playSound(SOUND_CRASH, sound);
-    registerKill(killer, victim);
+    // registerKill(killer, victim);
 
     if (broadcasts) {
         char msg[BROADC_BUF];
@@ -268,8 +268,8 @@ void playerWon(unsigned char id)
     }
 
     winnerDeclared = 1;
-    printStats(nPlayers);
-    clearStats();
+    // printStats(nPlayers);
+    // clearStats();
 
     if (olvl >= O_VERBOSE)
         printf(" -- Player %d won! --\n", id + 1);
@@ -873,7 +873,7 @@ void displayGameStart(void)
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                                                         0x00, 0x00, 0x00));
 
-    drawScores();
+    drawExtras();
 
     if ((countdown % (START_ROUND_WAIT / 4)) > (START_ROUND_WAIT / 8)) {
         int i;
@@ -910,7 +910,7 @@ void refreshGameScreen(void)
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                                                         0x00, 0x00, 0x00));
 
-    drawScores();
+    drawExtras();
 
     SDL_LockSurface(screen);
 
@@ -947,7 +947,7 @@ void refreshGameScreen(void)
 /**
  * Draws the game scores onto the screen.
  */
-void drawScores(void)
+void drawExtras(void)
 {
     int i;
     struct player *p;
@@ -988,6 +988,18 @@ void drawScores(void)
                 SDL_BlitSurface(broadcast[i], NULL, screen, &offset);
             }
         }
+    }
+
+    if (border) {
+        Uint32 white = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
+        SDL_Rect leftBorder = {0, 0, 1, WINDOW_H};
+        SDL_Rect rightBorder = {WINDOW_W - 1, 0, WINDOW_W, WINDOW_H};
+        SDL_Rect topBorder = {0, 0, WINDOW_W, 1};
+        SDL_Rect bottomBorder = {0, WINDOW_H - 1, WINDOW_W, WINDOW_H};
+        SDL_FillRect(screen, &leftBorder, white);
+        SDL_FillRect(screen, &rightBorder, white);
+        SDL_FillRect(screen, &topBorder, white);
+        SDL_FillRect(screen, &bottomBorder, white);
     }
 }
 
@@ -1665,23 +1677,27 @@ int logicSettingsMenu(void)
             playSound(SOUND_BEEP, sound);
             broadcasts ^= 1;
             break;
-        case 6: /* Toggle duel mode */
+        case 6: /* Toggle border visibility */
+            playSound(SOUND_BEEP, sound);
+            border ^= 1;
+            break;
+        case 7: /* Toggle duel mode */
             playSound(SOUND_BEEP, sound);
             duelmode ^= 1;
             if (duelmode)
                 nPlayers = 2;
             break;
-        case 7: /* Score cap */
+        case 8: /* Score cap */
             playSound(SOUND_BEEP, sound);
             if (scorecap < SCORE_CAP_MAX - 10)
                 scorecap += 10;
             break;
-        case 8:
+        case 9:
             playSound(SOUND_BEEP, sound);
             menuPlayer.choice = 0;
             curScene = &playerMenu;
             break;
-        case 9: /* Back */
+        case 10: /* Back */
             playSound(SOUND_BEP, sound);
             keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
             initMainMenu();
@@ -1693,20 +1709,20 @@ int logicSettingsMenu(void)
         keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
         return 1;
     } else if (qkey(KEY_LEFT)) {
-        if (menuSettings.choice == 7 && scorecap > 0) {
+        if (menuSettings.choice == 8 && scorecap > 0) {
             playSound(SOUND_BEP, sound);
             --scorecap;
         }
         return 1;
     } else if (qkey(KEY_RIGHT)) {
-        if (menuSettings.choice == 7 && scorecap < SCORE_CAP_MAX) {
+        if (menuSettings.choice == 8 && scorecap < SCORE_CAP_MAX) {
             playSound(SOUND_BEEP, sound);
             ++scorecap;
         }
         return 1;
     } else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
-        if (menuSettings.choice == 7) {
+        if (menuSettings.choice == 8) {
             playSound(SOUND_BEP, sound);
             scorecap = 0;
         }
@@ -1714,7 +1730,7 @@ int logicSettingsMenu(void)
     }
 
     /* Special case for the score setting */
-    if (menuSettings.choice == 7) {
+    if (menuSettings.choice == 8) {
         int num = -1;
         if      (keyDown[SDLK_0]) num = 0;
         else if (keyDown[SDLK_1]) num = 1;
@@ -1759,20 +1775,22 @@ void displaySettingsMenu(void)
     char s4[MENU_BUF] = "WEAPONS ";
     char s5[MENU_BUF] = "HOLES ";
     char s6[MENU_BUF] = "BROADCASTS ";
-    char s7[MENU_BUF] = "DUEL MODE ";
-    char s8[MENU_BUF] = "SCORE CAP: ";
+    char s7[MENU_BUF] = "SHOW BORDER ";
+    char s8[MENU_BUF] = "DUEL MODE ";
+    char s9[MENU_BUF] = "SCORE CAP: ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
     strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
     strncat(s3, music ON_OFF, MENU_BUF - strlen(s3));
     strncat(s4, weapons ON_OFF, MENU_BUF - strlen(s4));
     strncat(s5, holes ON_OFF, MENU_BUF - strlen(s5));
     strncat(s6, broadcasts ON_OFF, MENU_BUF - strlen(s6));
-    strncat(s7, duelmode ON_OFF, MENU_BUF - strlen(s7));
+    strncat(s7, border ON_OFF, MENU_BUF - strlen(s7));
+    strncat(s8, duelmode ON_OFF, MENU_BUF - strlen(s8));
     if (scorecap == 0) {
-        strncat(s8, "∞", MENU_BUF);
+        strncat(s9, "∞", MENU_BUF);
     } else {
         snprintf(tmpCap, SCORE_BUF, "%d", scorecap);
-        strncat(s8, tmpCap, MENU_BUF - SCORE_BUF);
+        strncat(s9, tmpCap, MENU_BUF - SCORE_BUF);
     }
     c[0] = s1;
     c[1] = s2;
@@ -1782,8 +1800,9 @@ void displaySettingsMenu(void)
     c[5] = s6;
     c[6] = s7;
     c[7] = s8;
-    c[8] = "PLAYER CONFIG";
-    c[9] = "BACK";
+    c[8] = s9;
+    c[9] = "PLAYER CONFIG";
+    c[10] = "BACK";
 
     displayMenu(c, &menuSettings, 0);
 
@@ -2448,8 +2467,7 @@ void restoreSettings(char *filename)
                         settingParam)) != EOF) {
                 valid = 0;
                 for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
-                    if (strncmp(settingNames[i], settingHandle, STRBUF)
-                        == 0) {
+                    if (strncmp(settingNames[i], settingHandle, STRBUF) == 0) {
                         /* We have a matched setting */
                         *settings[i] = atoi(settingParam);
                         valid = 1;
