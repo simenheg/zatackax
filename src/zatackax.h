@@ -65,6 +65,7 @@
 #define DEFAULT_WEAPONS         1
 #define DEFAULT_HOLES           1
 #define DEFAULT_BROADCASTS      1
+#define DEFAULT_BORDER          0
 #define DEFAULT_DUELMODE        0
 #define DEFAULT_SCORECAP        0
 
@@ -120,12 +121,13 @@ static bool music = DEFAULT_MUSIC;
 static bool weapons = DEFAULT_WEAPONS;
 static bool holes = DEFAULT_HOLES;
 static bool broadcasts = DEFAULT_BROADCASTS;
+static bool border = DEFAULT_BORDER;
 static bool duelmode = DEFAULT_DUELMODE;
-static const char *settingNames[] = {"fullscreen", "sound", "music",
-                                     "weapons", "holes", "broadcasts",
+static const char *settingNames[] = {"fullscreen", "sound", "music", "weapons",
+                                     "holes", "broadcasts", "border",
                                      "duelmode"};
-static bool *settings[7] = {&fullscreen, &sound, &music, &weapons, &holes,
-                            &broadcasts, &duelmode};
+static bool *settings[8] = {&fullscreen, &sound, &music, &weapons, &holes,
+                            &broadcasts, &border, &duelmode};
 
 static unsigned int WINDOW_W;       /* Window width */
 static unsigned int WINDOW_H;       /* Window height */
@@ -203,7 +205,7 @@ int logicGame(void);
 int logicGameStart(void);
 void displayGameStart(void);
 void refreshGameScreen(void);
-void drawScores(void);
+void drawExtras(void);
 void newRound(void);
 void endRound(void);
 
