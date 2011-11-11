@@ -2751,6 +2751,8 @@ int main(int argc, char *argv[])
 
                 if (!initScreen())
                     return 1;
+
+                refreshGameScreen();
             }
         }
         if (!screenFreeze) {
