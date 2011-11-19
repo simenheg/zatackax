@@ -131,9 +131,9 @@ void resetPlayer(int player)
     struct player *p = &(players[player]);
     p->color = player;
     p->speed = 1.0;
-    p->invertedKeys = 0;
-    p->weapon = 0;
-    p->ai = 0;
+    p->invertedKeys = false;
+    p->weapon = false;
+    p->ai = false;
     snprintf(p->name, PLAYER_NAME_LEN, "Player%d", player + 1);
 
     switch (player) {
@@ -220,7 +220,7 @@ void killPlayer(unsigned char victim, unsigned char killer)
 
     struct player *p = &players[victim - 1];
     --alivecount;
-    p->alive = 0;
+    p->alive = false;
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *pt = &players[i];
@@ -229,7 +229,7 @@ void killPlayer(unsigned char victim, unsigned char killer)
                 pt->score++;
                 if (pt->score == scorecap) {
                     playerWon(i);
-                    screenFreeze = 1;
+                    screenFreeze = true;
                 }
             }
         } else {
@@ -267,7 +267,7 @@ void playerWon(unsigned char id)
         newBroadcast(msg);
     }
 
-    winnerDeclared = 1;
+    winnerDeclared = true;
     // printStats(nPlayers);
     // clearStats();
 
@@ -331,7 +331,7 @@ void respawn(struct player *p)
         --n;
     }
 
-    p->alive = 1;
+    p->alive = true;
     p->dir = initPos.dir;
 
     p->initposx = p->posx;
@@ -351,7 +351,7 @@ void respawn(struct player *p)
  */
 void drespawn(struct player *p)
 {
-    p->alive = 1;
+    p->alive = true;
     p->posx = (WINDOW_W / 2) + (p->active == 1 ? -120 : 120);
     p->posy = WINDOW_H / 2;
     p->dir = p->active == 1 ? 0 : PI;
@@ -508,8 +508,7 @@ void setNextName(unsigned char pedit)
 void initHitMap(unsigned int w, unsigned int h)
 {
     size_t len = sizeof(bool) * w * h;
-    hitmap = (bool*)malloc(len);
-    memset(hitmap, '\0', len);
+    hitmap = calloc(len, sizeof(bool));
     recents = NULL;
 }
 
@@ -1023,7 +1022,7 @@ void newRound(void)
 
     if (weapons)
         resetWeapons();
-    winnerDeclared = 0;
+    winnerDeclared = false;
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
@@ -1169,11 +1168,11 @@ int wepConfusion(struct player *p, bool on)
         if (target != p) {
             unsigned int tmpkey = target->lkey;
             if (on && !target->invertedKeys) {
-                target->invertedKeys = 1;
+                target->invertedKeys = true;
                 target->lkey = target->rkey;
                 target->rkey = tmpkey;
             } else if (!on && target->invertedKeys) {
-                target->invertedKeys = 0;
+                target->invertedKeys = false;
                 target->lkey = target->rkey;
                 target->rkey = tmpkey;
             }
@@ -1258,6 +1257,19 @@ int wepGhost(struct player *p, bool on)
         p->inv_others = DURATION_GHOSTWALK;
     }
 
+    return 0;
+}
+
+/**
+ * Weapon: disable
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepDisable(struct player *p, bool on)
+{
+    weaponsDisabled = true;
+    printf("DISABLE\n");
     return 0;
 }
 
@@ -2295,6 +2307,14 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_ghost.png");
         return 0;
     }
+    if ((wiDisable = loadImage("data/gfx/wi_ghost.png")) == NULL) {
+        fileNotFound("data/gfx/wi_ghost.png");
+        return 0;
+    }
+    if ((wisDisable = loadImage("data/gfx/wis_ghost.png")) == NULL) {
+        fileNotFound("data/gfx/wis_ghost.png");
+        return 0;
+    }
     if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
         fileNotFound("data/gfx/wi_switch.png");
         return 0;
@@ -2374,15 +2394,16 @@ int loadFiles(void)
 
     /* Initialize weapon pointer array */
     wepIcons[0] = wiBg;
-    wepIcons[1] = wiSpeed;  smallWepIcons[0] = wisSpeed;
-    wepIcons[2] = wiFrost;  smallWepIcons[1] = wisFrost;
-    wepIcons[3] = wiConf;   smallWepIcons[2] = wisConf;
-    wepIcons[4] = wiTurn;   smallWepIcons[3] = wisTurn;
-    wepIcons[5] = wiStep;   smallWepIcons[4] = wisStep;
-    wepIcons[6] = wiMole;   smallWepIcons[5] = wisMole;
-    wepIcons[7] = wiWarp;   smallWepIcons[6] = wisWarp;
-    wepIcons[8] = wiGhost;  smallWepIcons[7] = wisGhost;
-    wepIcons[9] = wiSwitch; smallWepIcons[8] = wisSwitch;
+    wepIcons[1] = wiSpeed;   smallWepIcons[0] = wisSpeed;
+    wepIcons[2] = wiFrost;   smallWepIcons[1] = wisFrost;
+    wepIcons[3] = wiConf;    smallWepIcons[2] = wisConf;
+    wepIcons[4] = wiTurn;    smallWepIcons[3] = wisTurn;
+    wepIcons[5] = wiStep;    smallWepIcons[4] = wisStep;
+    wepIcons[6] = wiMole;    smallWepIcons[5] = wisMole;
+    wepIcons[7] = wiWarp;    smallWepIcons[6] = wisWarp;
+    wepIcons[8] = wiGhost;   smallWepIcons[7] = wisGhost;
+    wepIcons[9] = wiDisable; smallWepIcons[8] = wisDisable;
+    wepIcons[10] = wiSwitch; smallWepIcons[9] = wisSwitch;
 
     return 1;
 }
@@ -2716,14 +2737,14 @@ int main(int argc, char *argv[])
                     k = event.button.button;
 
                 if (screenFreeze && k == SDLK_RETURN) {
-                    screenFreeze = 0;
+                    screenFreeze = false;
                     endRound();
                     curScene = &mainMenu;
                     curScene->displayFunc();
                 }
 
                 if (k == SDLK_ESCAPE) {
-                    screenFreeze = 0;
+                    screenFreeze = false;
                     if (curScene == &game || curScene == &gameStart)
                         endRound();
                     else if (curScene == &settingsMenu)
