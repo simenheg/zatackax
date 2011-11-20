@@ -114,7 +114,10 @@ static unsigned int alivecount = 0;
 static int countdown;
 static bool winnerDeclared = false;
 static bool screenFreeze = false;
-static bool weaponsDisabled = false;
+
+static bool activeFreeze = false;
+static bool activeConfusion = false;
+static bool activeDisable = false;
 
 static unsigned int scorecap = DEFAULT_SCORECAP;
 static bool fullscreen = DEFAULT_FULLSCREEN;

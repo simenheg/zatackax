@@ -732,7 +732,7 @@ int logicGame(void)
                 unsigned int curx, cury;
 
                 if (weapons && p->wep_time == WEP_NONACTIVE
-                    && p->wep_count > 0 && !weaponsDisabled) {
+                    && p->wep_count > 0 && !activeDisable) {
                     if (p->ai) {
                         if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
                             p->wep_time = wep_list[p->weapon].func(p, 1);
@@ -1000,6 +1000,17 @@ void drawExtras(void)
         SDL_FillRect(screen, &topBorder, white);
         SDL_FillRect(screen, &bottomBorder, white);
     }
+
+    /* Active weapons */
+    if (activeFreeze || activeConfusion || activeDisable) {
+        SDL_Rect offset = {WINDOW_W - wepIcons[0]->w, 0, 0, 0};
+        if (activeFreeze)
+            SDL_BlitSurface(wepIcons[2], NULL, screen, &offset);
+        if (activeConfusion)
+            SDL_BlitSurface(wepIcons[3], NULL, screen, &offset);
+        if (activeDisable)
+            SDL_BlitSurface(wepIcons[9], NULL, screen, &offset);
+    }
 }
 
 /**
@@ -1114,8 +1125,12 @@ int wepFrostwave(struct player *p, bool on)
 {
     int i;
 
+    activeFreeze = on;
+
     if (on)
         playSound(SOUND_FREEZE, sound);
+    else
+        refreshGameScreen();
 
     for (i = 0; i < nPlayers; ++i) {
         struct player *target = &players[i];
@@ -1159,8 +1174,12 @@ int wepSharpturn(struct player *p, bool on)
  */
 int wepConfusion(struct player *p, bool on)
 {
+    activeConfusion = on;
+    
     if (on)
         playSound(SOUND_CONFUSION, sound);
+    else
+        refreshGameScreen();
 
     int i;
     for (i = 0; i < nPlayers; ++i) {
@@ -1171,7 +1190,7 @@ int wepConfusion(struct player *p, bool on)
                 target->invertedKeys = true;
                 target->lkey = target->rkey;
                 target->rkey = tmpkey;
-            } else if (!on) {
+            } else {
                 target->invertedKeys = false;
                 target->lkey = target->rkey;
                 target->rkey = tmpkey;
@@ -1268,10 +1287,13 @@ int wepGhost(struct player *p, bool on)
  */
 int wepDisable(struct player *p, bool on)
 {
-    // TODO: cancel ALT, inkl. lightning speed
+    activeDisable = on;
+
     if (on)
         playSound(SOUND_DISABLE, sound);
-    weaponsDisabled = on;
+    else
+        refreshGameScreen();
+    
     p->invertedKeys = false;
     p->speed = 1.0;
     return DURATION_DISABLE;
