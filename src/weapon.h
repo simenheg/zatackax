@@ -20,7 +20,7 @@
 #define DURATION_CONFUSION      800
 #define DURATION_MOLE           350
 #define DURATION_GHOSTWALK      1720
-#define DURATION_DISABLE        2000
+#define DURATION_DISABLE        2600
 
 struct weapon {
     int (*func)(struct player*, bool);

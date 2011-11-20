@@ -117,7 +117,7 @@ int initSound(void)
         return -1;
     if (loadSound(seGhost, "ghost", SOUND_GHOST) == -1)
         return -1;
-    if (loadSound(seDisable, "ghost", SOUND_DISABLE) == -1)
+    if (loadSound(seDisable, "disable", SOUND_DISABLE) == -1)
         return -1;
     if (loadSound(seSwitch, "switch", SOUND_SWITCH) == -1)
         return -1;
