@@ -134,7 +134,7 @@ void resetPlayer(int player)
     p->invertedKeys = false;
     p->weapon = false;
     p->ai = false;
-    snprintf(p->name, PLAYER_NAME_LEN, "Player%d", player + 1);
+    snprintf(p->name, PLAYER_NAME_LEN, defaultNames[player]);
 
     switch (player) {
     case 0:
@@ -1167,11 +1167,11 @@ int wepConfusion(struct player *p, bool on)
         struct player *target = &players[i];
         if (target != p) {
             unsigned int tmpkey = target->lkey;
-            if (on && !target->invertedKeys) {
+            if (on) {
                 target->invertedKeys = true;
                 target->lkey = target->rkey;
                 target->rkey = tmpkey;
-            } else if (!on && target->invertedKeys) {
+            } else if (!on) {
                 target->invertedKeys = false;
                 target->lkey = target->rkey;
                 target->rkey = tmpkey;
@@ -1268,7 +1268,12 @@ int wepGhost(struct player *p, bool on)
  */
 int wepDisable(struct player *p, bool on)
 {
+    // TODO: cancel ALT, inkl. lightning speed
+    if (on)
+        playSound(SOUND_DISABLE, sound);
     weaponsDisabled = on;
+    p->invertedKeys = false;
+    p->speed = 1.0;
     return DURATION_DISABLE;
 }
 
@@ -2306,12 +2311,12 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_ghost.png");
         return 0;
     }
-    if ((wiDisable = loadImage("data/gfx/wi_ghost.png")) == NULL) {
-        fileNotFound("data/gfx/wi_ghost.png");
+    if ((wiDisable = loadImage("data/gfx/wi_disable.png")) == NULL) {
+        fileNotFound("data/gfx/wi_disable.png");
         return 0;
     }
-    if ((wisDisable = loadImage("data/gfx/wis_ghost.png")) == NULL) {
-        fileNotFound("data/gfx/wis_ghost.png");
+    if ((wisDisable = loadImage("data/gfx/wis_disable.png")) == NULL) {
+        fileNotFound("data/gfx/wis_disable.png");
         return 0;
     }
     if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {

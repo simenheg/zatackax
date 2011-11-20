@@ -50,7 +50,7 @@ static struct weapon wep_list[N_WEAPONS] = {
     {wepMole, 1, "Mole", "Dig your way out.", ""},
     {wepWarp, 3, "Warp", "Warp to a random spot", "on the map."},
     {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
-    {wepDisable, 2, "Disable", "Disables weapon usage.", ""},
+    {wepDisable, 5, "Disable", "Disables weapon usage.", ""},
     {wepSwitch, 1, "Switch-aroo", "SWITCH-AROOOO!", ""}
 };
 
