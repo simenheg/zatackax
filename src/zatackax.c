@@ -2149,7 +2149,7 @@ void initColors(void)
 {
     SDL_Color *c = &colors[0];
     c->r = 0xFF; c->g = 0x00; c->b = 0x00; ++c; /* Red */
-    c->r = 0x00; c->g = 0x00; c->b = 0xFF; ++c; /* Blue */
+    c->r = 0x00; c->g = 0x6F; c->b = 0xFF; ++c; /* Blue */
     c->r = 0x00; c->g = 0xFF; c->b = 0x00; ++c; /* Green */
     c->r = 0xFF; c->g = 0xFF; c->b = 0x00; ++c; /* Yellow */
     c->r = 0xFF; c->g = 0x00; c->b = 0xFF; ++c; /* Pink */
@@ -2486,7 +2486,7 @@ void restoreSettings(char *filename)
         unsigned int i;
         int line = 0;
         bool valid;
-
+        
         for (;;) {
             if ((fscanf(savefile, "%s = %s\n", settingHandle,
                         settingParam)) != EOF) {

@@ -33,7 +33,8 @@ struct player {
 };
 
 struct player players[MAX_PLAYERS];
-static const char *defaultNames[] = {"Rupert", "Grinder", "Eustachio", "Sigmund",
-                                     "Erica", "Terence", "Crazy Yiuf", "Blork"};
+static const char *defaultNames[] = {"Rupert", "Grinder", "Eustachio",
+                                     "Sigmund", "Erica", "Terence",
+                                     "Crazy-Yiuf", "Blork"};
 
 #endif
