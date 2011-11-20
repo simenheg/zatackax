@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <stdbool.h>
 #include "common.h"
 
 #define PLAYER_NAME_LEN 12 + 1

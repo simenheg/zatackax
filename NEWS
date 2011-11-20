@@ -1,3 +1,9 @@
+0.1.6 - xx.xx.xx
+  * General:
+    * Added an option for displaying a white border around the game screen.
+  * Bugs:
+    * Fixed a window-resize bug.
+
 0.1.5 - 01.10.11
   * General:
     * Added logo to the main menu screen.

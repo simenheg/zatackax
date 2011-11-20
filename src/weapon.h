@@ -3,9 +3,9 @@
 
 #include "player.h"
 
-#define N_WEAPONS               9
+#define N_WEAPONS               10
 #define N_ILLEGAL_2P_WEPS       1
-#define WEP_SPACEMOD            50
+#define WEP_SPACEMOD            42
 #define WEP_SMALL_INIT_OFFSET   4    /* Offset between score and icon */
 #define WEP_SMALL_PADDING       25   /* Padding between small weapon icons */
 #define PARROWSELECT_MOD_Y      20
@@ -20,6 +20,7 @@
 #define DURATION_CONFUSION      800
 #define DURATION_MOLE           350
 #define DURATION_GHOSTWALK      1720
+#define DURATION_DISABLE        2000
 
 struct weapon {
     int (*func)(struct player*, bool);
@@ -37,6 +38,7 @@ int wepTimestep(struct player *p, bool on);
 int wepMole(struct player *p, bool on);
 int wepWarp(struct player *p, bool on);
 int wepGhost(struct player *p, bool on);
+int wepDisable(struct player *p, bool on);
 int wepSwitch(struct player *p, bool on);
 
 static struct weapon wep_list[N_WEAPONS] = {
@@ -48,6 +50,7 @@ static struct weapon wep_list[N_WEAPONS] = {
     {wepMole, 1, "Mole", "Dig your way out.", ""},
     {wepWarp, 3, "Warp", "Warp to a random spot", "on the map."},
     {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
+    {wepDisable, 2, "Disable", "Disables weapon usage.", ""},
     {wepSwitch, 1, "Switch-aroo", "SWITCH-AROOOO!", ""}
 };
 

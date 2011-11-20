@@ -6,6 +6,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
@@ -59,15 +60,15 @@
 #define TRIANGLE_PANNING_X      1.8
 #define TRIANGLE_PANNING_Y      6.5
 #define ON_OFF                  ? "[on]" : "[off]"
-#define DEFAULT_FULLSCREEN      0
-#define DEFAULT_SOUND           1
-#define DEFAULT_MUSIC           0
-#define DEFAULT_WEAPONS         1
-#define DEFAULT_HOLES           1
-#define DEFAULT_BROADCASTS      1
-#define DEFAULT_BORDER          0
-#define DEFAULT_DUELMODE        0
-#define DEFAULT_SCORECAP        0
+#define DEFAULT_FULLSCREEN      false
+#define DEFAULT_SOUND           true
+#define DEFAULT_MUSIC           false
+#define DEFAULT_WEAPONS         true
+#define DEFAULT_HOLES           true
+#define DEFAULT_BROADCASTS      true
+#define DEFAULT_BORDER          false
+#define DEFAULT_DUELMODE        false
+#define DEFAULT_SCORECAP        false
 
 struct recentMapPiece {
     int x, y, count;
@@ -111,8 +112,9 @@ static SDL_Event event;
 static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
-static bool winnerDeclared = 0;
-static bool screenFreeze = 0;
+static bool winnerDeclared = false;
+static bool screenFreeze = false;
+static bool weaponsDisabled = false;
 
 static unsigned int scorecap = DEFAULT_SCORECAP;
 static bool fullscreen = DEFAULT_FULLSCREEN;
@@ -164,6 +166,8 @@ static SDL_Surface *wiWarp = NULL;
 static SDL_Surface *wisWarp = NULL;
 static SDL_Surface *wiGhost = NULL;
 static SDL_Surface *wisGhost = NULL;
+static SDL_Surface *wiDisable = NULL;
+static SDL_Surface *wisDisable = NULL;
 static SDL_Surface *wiSwitch = NULL;
 static SDL_Surface *wisSwitch = NULL;
 static struct SDL_Surface **parrows;

@@ -28,6 +28,4 @@ static int olvl = O_DEBUG;
 static int olvl = O_NORMAL;
 #endif
 
-typedef unsigned char bool;
-
 #endif

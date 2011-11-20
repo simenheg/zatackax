@@ -732,7 +732,7 @@ int logicGame(void)
                 unsigned int curx, cury;
 
                 if (weapons && p->wep_time == WEP_NONACTIVE
-                    && p->wep_count > 0) {
+                    && p->wep_count > 0 && !weaponsDisabled) {
                     if (p->ai) {
                         if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
                             p->wep_time = wep_list[p->weapon].func(p, 1);
@@ -1268,9 +1268,8 @@ int wepGhost(struct player *p, bool on)
  */
 int wepDisable(struct player *p, bool on)
 {
-    weaponsDisabled = true;
-    printf("DISABLE\n");
-    return 0;
+    weaponsDisabled = on;
+    return DURATION_DISABLE;
 }
 
 /**

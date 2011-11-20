@@ -22,7 +22,7 @@ CSILENT = -DSILENT
 CDEVEL = -g3 -pg -pedantic -Wall
 CRELEASE = -O2
 
-OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o  src/stats.o
+OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o src/stats.o
 
 release : CFLAGS += $(CRELEASE)
 release : zatackax
