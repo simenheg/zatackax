@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CFLAGS = $(shell sdl-config --cflags) -std=c99
-LDFLAGS = $(shell sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer -fno-common
+CFLAGS = $(shell pkg-config sdl --cflags) -std=c99
+LDFLAGS = $(shell pkg-config sdl --libs) -lm -lSDL_image -lSDL_ttf -lSDL_mixer -fno-common
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE
 CSILENT = -DSILENT
@@ -30,7 +30,7 @@ release : zatackax
 windows : $(OBJECTS)
 windows : CC = i486-mingw32-gcc
 windows : CFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --cflags) -std=c99 -O2
-windows : LDFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --libs) -lSDL_image -lSDL_ttf -lSDL_mixer
+windows : LDFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --libs) -lm -lSDL_image -lSDL_ttf -lSDL_mixer
 windows : zatackax
 
 zatackax : $(OBJECTS)

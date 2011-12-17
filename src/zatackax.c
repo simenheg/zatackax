@@ -787,22 +787,33 @@ int logicGame(void)
 
                     char c = pollAi(p->posx, p->posy, p->dir, p->active,
                                     hitmap, WINDOW_W, WINDOW_H);
-                    if (c == 'l') {
-                        if (p->invertedKeys)
-                            p->dir += 0.0022 * delta * p->speed;
-                        else
+                    if (activeTron) {
+                        if (c == 'l')
+                            p->dir -= PI / 2;
+                        else if (c == 'r')
+                            p->dir += PI / 2;
+                    } else {
+                        if (c == 'l')
                             p->dir -= 0.0022 * delta * p->speed;
-                    } else if (c == 'r') {
-                        if (p->invertedKeys)
-                            p->dir -= 0.0022 * delta * p->speed;
-                        else
+                        else if (c == 'r')
                             p->dir += 0.0022 * delta * p->speed;
                     }
                 } else {
-                    if (keyDown[p->lkey])
-                        p->dir -= 0.0022 * delta * p->speed;
-                    else if (keyDown[p->rkey])
-                        p->dir += 0.0022 * delta * p->speed;
+                    if (activeTron) {
+                        /* Screw smooth angles, TRON MODE from here on! */
+                        if (keyDown[p->lkey]) {
+                            keyDown[p->lkey] = 0;
+                            p->dir -= PI / 2;
+                        } else if (keyDown[p->rkey]) {
+                            keyDown[p->rkey] = 0;
+                            p->dir += PI / 2;
+                        }
+                    } else {
+                        if (keyDown[p->lkey])
+                            p->dir -= 0.0022 * delta * p->speed;
+                        else if (keyDown[p->rkey])
+                            p->dir += 0.0022 * delta * p->speed;
+                    }
                 }
 
                 p->posx += ZATA_SPEED * cos(p->dir) * delta * p->speed;
@@ -1175,7 +1186,7 @@ int wepSharpturn(struct player *p, bool on)
 int wepConfusion(struct player *p, bool on)
 {
     activeConfusion = on;
-    
+
     if (on)
         playSound(SOUND_CONFUSION, sound);
     else
@@ -1280,6 +1291,24 @@ int wepGhost(struct player *p, bool on)
 }
 
 /**
+ * Weapon: tron mode
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepTron(struct player *p, bool on)
+{
+    activeTron = on;
+
+    if (on)
+        playSound(SOUND_GHOST, sound);
+    else
+        refreshGameScreen();
+
+    return DURATION_TRON;
+}
+
+/**
  * Weapon: disable
  *
  * @param p Weapon user.
@@ -1293,7 +1322,7 @@ int wepDisable(struct player *p, bool on)
         playSound(SOUND_DISABLE, sound);
     else
         refreshGameScreen();
-    
+
     p->invertedKeys = false;
     p->speed = 1.0;
     return DURATION_DISABLE;
@@ -2333,6 +2362,14 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_ghost.png");
         return 0;
     }
+    if ((wiTron = loadImage("data/gfx/wi_tron.png")) == NULL) {
+        fileNotFound("data/gfx/wi_tron.png");
+        return 0;
+    }
+    if ((wisTron = loadImage("data/gfx/wis_tron.png")) == NULL) {
+        fileNotFound("data/gfx/wis_tron.png");
+        return 0;
+    }
     if ((wiDisable = loadImage("data/gfx/wi_disable.png")) == NULL) {
         fileNotFound("data/gfx/wi_disable.png");
         return 0;
@@ -2420,16 +2457,17 @@ int loadFiles(void)
 
     /* Initialize weapon pointer array */
     wepIcons[0] = wiBg;
-    wepIcons[1] = wiSpeed;   smallWepIcons[0] = wisSpeed;
-    wepIcons[2] = wiFrost;   smallWepIcons[1] = wisFrost;
-    wepIcons[3] = wiConf;    smallWepIcons[2] = wisConf;
-    wepIcons[4] = wiTurn;    smallWepIcons[3] = wisTurn;
-    wepIcons[5] = wiStep;    smallWepIcons[4] = wisStep;
-    wepIcons[6] = wiMole;    smallWepIcons[5] = wisMole;
-    wepIcons[7] = wiWarp;    smallWepIcons[6] = wisWarp;
-    wepIcons[8] = wiGhost;   smallWepIcons[7] = wisGhost;
-    wepIcons[9] = wiDisable; smallWepIcons[8] = wisDisable;
-    wepIcons[10] = wiSwitch; smallWepIcons[9] = wisSwitch;
+    wepIcons[1] = wiSpeed;    smallWepIcons[0] = wisSpeed;
+    wepIcons[2] = wiFrost;    smallWepIcons[1] = wisFrost;
+    wepIcons[3] = wiConf;     smallWepIcons[2] = wisConf;
+    wepIcons[4] = wiTurn;     smallWepIcons[3] = wisTurn;
+    wepIcons[5] = wiStep;     smallWepIcons[4] = wisStep;
+    wepIcons[6] = wiMole;     smallWepIcons[5] = wisMole;
+    wepIcons[7] = wiWarp;     smallWepIcons[6] = wisWarp;
+    wepIcons[8] = wiGhost;    smallWepIcons[7] = wisGhost;
+    wepIcons[9] = wiTron;     smallWepIcons[8] = wisTron;
+    wepIcons[10] = wiDisable; smallWepIcons[9] = wisDisable;
+    wepIcons[11] = wiSwitch;  smallWepIcons[10] = wisSwitch;
 
     return 1;
 }
@@ -2508,7 +2546,7 @@ void restoreSettings(char *filename)
         unsigned int i;
         int line = 0;
         bool valid;
-        
+
         for (;;) {
             if ((fscanf(savefile, "%s = %s\n", settingHandle,
                         settingParam)) != EOF) {
