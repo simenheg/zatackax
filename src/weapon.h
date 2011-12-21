@@ -23,6 +23,20 @@
 #define DURATION_DISABLE        2600
 #define DURATION_TRON           3000
 
+enum weapons {
+    WEP_LIGHTNINGSPEED = 0,
+    WEP_FROSTWAVE,
+    WEP_CONFUSION,
+    WEP_SHARPTURN,
+    WEP_TIMESTEP,
+    WEP_MOLE,
+    WEP_WARP,
+    WEP_GHOST,
+    WEP_TRON,
+    WEP_DISABLE,
+    WEP_SWITCH
+};
+
 struct weapon {
     int (*func)(struct player*, bool);
     int charges;

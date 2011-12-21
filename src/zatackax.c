@@ -1013,14 +1013,16 @@ void drawExtras(void)
     }
 
     /* Active weapons */
-    if (activeFreeze || activeConfusion || activeDisable) {
+    if (activeFreeze || activeConfusion || activeTron ||activeDisable) {
         SDL_Rect offset = {WINDOW_W - wepIcons[0]->w, 0, 0, 0};
         if (activeFreeze)
-            SDL_BlitSurface(wepIcons[2], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_FROSTWAVE + 1], NULL, screen, &offset);
         if (activeConfusion)
-            SDL_BlitSurface(wepIcons[3], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_CONFUSION + 1], NULL, screen, &offset);
+        if (activeTron)
+            SDL_BlitSurface(wepIcons[WEP_TRON + 1], NULL, screen, &offset);
         if (activeDisable)
-            SDL_BlitSurface(wepIcons[9], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_DISABLE + 1], NULL, screen, &offset);
     }
 }
 
@@ -2457,17 +2459,29 @@ int loadFiles(void)
 
     /* Initialize weapon pointer array */
     wepIcons[0] = wiBg;
-    wepIcons[1] = wiSpeed;    smallWepIcons[0] = wisSpeed;
-    wepIcons[2] = wiFrost;    smallWepIcons[1] = wisFrost;
-    wepIcons[3] = wiConf;     smallWepIcons[2] = wisConf;
-    wepIcons[4] = wiTurn;     smallWepIcons[3] = wisTurn;
-    wepIcons[5] = wiStep;     smallWepIcons[4] = wisStep;
-    wepIcons[6] = wiMole;     smallWepIcons[5] = wisMole;
-    wepIcons[7] = wiWarp;     smallWepIcons[6] = wisWarp;
-    wepIcons[8] = wiGhost;    smallWepIcons[7] = wisGhost;
-    wepIcons[9] = wiTron;     smallWepIcons[8] = wisTron;
-    wepIcons[10] = wiDisable; smallWepIcons[9] = wisDisable;
-    wepIcons[11] = wiSwitch;  smallWepIcons[10] = wisSwitch;
+    wepIcons[WEP_LIGHTNINGSPEED + 1] = wiSpeed;
+    wepIcons[WEP_FROSTWAVE + 1] = wiFrost;
+    wepIcons[WEP_CONFUSION + 1] = wiConf;
+    wepIcons[WEP_SHARPTURN + 1] = wiTurn;
+    wepIcons[WEP_TIMESTEP + 1] = wiStep;
+    wepIcons[WEP_MOLE + 1] = wiMole;
+    wepIcons[WEP_WARP + 1] = wiWarp;
+    wepIcons[WEP_GHOST + 1] = wiGhost;
+    wepIcons[WEP_TRON + 1] = wiTron;
+    wepIcons[WEP_DISABLE + 1] = wiDisable;
+    wepIcons[WEP_SWITCH + 1] = wiSwitch;
+
+    smallWepIcons[WEP_LIGHTNINGSPEED] = wisSpeed;
+    smallWepIcons[WEP_FROSTWAVE] = wisFrost;
+    smallWepIcons[WEP_CONFUSION] = wisConf;
+    smallWepIcons[WEP_SHARPTURN] = wisTurn;
+    smallWepIcons[WEP_TIMESTEP] = wisStep;
+    smallWepIcons[WEP_MOLE] = wisMole;
+    smallWepIcons[WEP_WARP] = wisWarp;
+    smallWepIcons[WEP_GHOST] = wisGhost;
+    smallWepIcons[WEP_TRON] = wisTron;
+    smallWepIcons[WEP_DISABLE] = wisDisable;
+    smallWepIcons[WEP_SWITCH] = wisSwitch;
 
     return 1;
 }
