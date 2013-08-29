@@ -1303,7 +1303,7 @@ int wepTron(struct player *p, bool on)
     activeTron = on;
 
     if (on)
-        playSound(SOUND_GHOST, sound);
+        playSound(SOUND_TRON, sound);
     else
         refreshGameScreen();
 
