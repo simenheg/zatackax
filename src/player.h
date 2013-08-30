@@ -34,6 +34,6 @@ struct player {
 
 struct player players[MAX_PLAYERS];
 static const char *defaultNames[] = {"Red", "Blue", "Green", "Yellow",
-                                     "Pink", "Cyan", "Orange", "White"};
+                                     "Pink", "Cyan", "White", "Orange"};
 
 #endif

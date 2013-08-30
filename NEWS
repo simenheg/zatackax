@@ -1,6 +1,9 @@
-0.1.6 - xx.xx.xx
+0.1.6 - 30.08.13
   * General:
     * Added an option for displaying a white border around the game screen.
+    * Two new weapons have been added: Disable and Tron-mode.
+    * Currently active weapons are now shown in the upper right corner.
+    * New default player names.
   * Bugs:
     * Fixed a window-resize bug.
 
