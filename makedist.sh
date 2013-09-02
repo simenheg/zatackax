@@ -4,7 +4,7 @@ if [ $1 ]; then
     make clean 1>/dev/null;
     rel_name=zatackax-$1.src;
     mkdir $rel_name;
-    cp -r AUTHORS COPYING INSTALL NEWS README TODO data src \
+    cp -r AUTHORS.md COPYING INSTALL.md NEWS.md README.md TODO.md data src \
         Makefile $rel_name;
     tar czvpf $rel_name.tar.gz $rel_name;
     tar cJvpf $rel_name.tar.xz $rel_name;
