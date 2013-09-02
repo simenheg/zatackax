@@ -1,4 +1,4 @@
-## GNU/LINUX/BSD/UNIX-LIKE
+## GNU/Linux/BSD/UNIX-like
 To compile Zatacka X, simply run:
 
     $ make
@@ -19,7 +19,7 @@ following command to install all the required libraries:
     $ sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev \
         libsdl-ttf2.0-dev libsdl-mixer1.2-dev
 
-## MICROSOFT WINDOWS
+## Microsoft Windows
 The following library files are needed to compile with Mingw32.
 
 ### SDL-developer-mingw32
