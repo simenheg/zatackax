@@ -1,3 +1,11 @@
+## 0.1.7 - ??.??.??
+* Balancing:
+  * Increased duration of Ghost walk from 1.7 s to 2.1 s.
+  * Increased duration of Lightning-speed from 1.2 s to 1.3 s.
+  * Increased duration of Frost wave from 1.5 s to 1.6 s.
+  * Decreased duration of Confusion from 0.8 s. to 0.7 s.
+  * Increased Warp charges from 3 to 4.
+
 ## 0.1.6 - 02.09.13
 * General:
   * Added an option for displaying a white border around the game screen.

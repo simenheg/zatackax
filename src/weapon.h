@@ -14,12 +14,12 @@
 #define INV_TIME                250  /* Time one needs to be invincible after
                                         using a potential suicide weapon */
 
-#define DURATION_LIGHTNINGSPEED 1200
-#define DURATION_FROSTWAVE      1500
+#define DURATION_LIGHTNINGSPEED 1300
+#define DURATION_FROSTWAVE      1600
 #define DURATION_SHARPTURN      200
-#define DURATION_CONFUSION      800
+#define DURATION_CONFUSION      700
 #define DURATION_MOLE           350
-#define DURATION_GHOSTWALK      1720
+#define DURATION_GHOSTWALK      2100
 #define DURATION_DISABLE        2600
 #define DURATION_TRON           3000
 
@@ -64,7 +64,7 @@ static struct weapon wep_list[N_WEAPONS] = {
     {wepSharpturn, 3, "Sharp turn", "Perform an ultra sharp", "turn."},
     {wepTimestep, 1, "Time step", "Jump through time and", "space."},
     {wepMole, 1, "Mole", "Dig your way out.", ""},
-    {wepWarp, 3, "Warp", "Warp to a random spot", "on the map."},
+    {wepWarp, 4, "Warp", "Warp to a random spot", "on the map."},
     {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
     {wepTron, 1, "Tron-mode", "No more smooth turns.", ""},
     {wepDisable, 3, "Disable", "Disables weapon usage.", ""},
