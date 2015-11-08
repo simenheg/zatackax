@@ -1,4 +1,4 @@
-## 0.1.7 - ??.??.??
+## 0.1.7 - 08.11.15
 * Balancing:
   * Increased duration of Ghost walk from 1.7 s to 2.1 s.
   * Increased duration of Lightning-speed from 1.2 s to 1.3 s.
