@@ -1,5 +1,5 @@
 /* zatackax -- main game module.
- * Copyright (C) 2010-2013 The Zatacka X development team
+ * Copyright (C) 2010-2016 The Zatacka X development team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1813,8 +1813,6 @@ int logicSettingsMenu(void)
         else if (keyDown[SDLK_9]) num = 9;
 
         if (num != -1) {
-            if (scorecap < 0)
-                scorecap = 0;
             /* Multiply the scorecap by 10 and add the number */
             scorecap = scorecap * 10 + num;
             playSound(SOUND_BEEP, sound);

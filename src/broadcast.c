@@ -1,5 +1,5 @@
 /* broadcast -- creating broadcast messages.
- * Copyright (C) 2010-2013 The Zatacka X development team
+ * Copyright (C) 2010-2016 The Zatacka X development team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     for (i = 1; (strings[i] = strtok(NULL, ";")) != NULL; ++i) {}
 
     for (i = 0; strings[i] != NULL && i < BROADC_PARTS; ++i) {
-        
+
         char pstring[PLAYER_NAME_LEN];
         if (strlen(strings[i]) == 1) {
             int pnum = atoi(strings[i]);
