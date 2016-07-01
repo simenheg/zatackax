@@ -128,6 +128,9 @@ void initPlayers2(void)
  */
 void resetPlayer(int player)
 {
+    char *defaultNames[] = {"Red", "Blue", "Green", "Yellow",
+                            "Pink", "Cyan", "White", "Orange"};
+
     struct player *p = &(players[player]);
     p->color = player;
     p->speed = 1.0;
