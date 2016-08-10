@@ -21,11 +21,11 @@
 #define O_DEBUG     3   /* Debug mode */
 
 #ifdef VERBOSE
-const static int olvl = O_VERBOSE;
+static const int olvl = O_VERBOSE;
 #elif DEBUG
-const static int olvl = O_DEBUG;
+static const int olvl = O_DEBUG;
 #else
-const static int olvl = O_NORMAL;
+static const int olvl = O_NORMAL;
 #endif
 
 #endif
