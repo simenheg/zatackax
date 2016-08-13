@@ -1301,7 +1301,7 @@ int wepGhost(struct player *p, bool on)
  * @param p Weapon user.
  * @param on 1 to use weapon, 0 to disable weapon.
  */
-int wepTron(struct player *p, bool on)
+int wepTron(struct player *p __attribute__ ((unused)), bool on)
 {
     activeTron = on;
 
@@ -2775,7 +2775,7 @@ void exitGame(int status)
     exit(status);
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     WINDOW_W = DEFAULT_WINDOW_W;
     WINDOW_H = DEFAULT_WINDOW_H;
