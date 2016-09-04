@@ -1546,7 +1546,8 @@ void displayMainMenu(void)
 
     int ymod = logo->h / 2;
     displayMenu(c, &menuMain, ymod);
-    SDL_Rect offset = {WINDOW_W / 2 - logo->w / 2, WINDOW_H / 2 - logo->h};
+    SDL_Rect offset = {WINDOW_W / 2 - logo->w / 2, WINDOW_H / 2 - logo->h,
+                       0, 0};
     SDL_BlitSurface(logo, NULL, screen, &offset);
 
     /* This could/should be made smoother... */
