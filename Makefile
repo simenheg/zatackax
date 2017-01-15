@@ -19,7 +19,7 @@ LDFLAGS = $(shell pkg-config sdl --libs) -lm -lSDL_image -lSDL_ttf -lSDL_mixer -
 CDEBUG = -DDEBUG
 CVERBOSE = -DVERBOSE
 CSILENT = -DSILENT
-CDEVEL = -g3 -pg -pedantic -Wall
+CDEVEL = -g3 -pg -pedantic -Wall -Wextra
 CRELEASE = -O2
 
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
