@@ -1353,7 +1353,7 @@ int wepSwitch(struct player *p, bool on)
     i = rand();
     i %= nPlayers;
     while (!valid) {
-        if (i != p->active - 1 && (&players[i])->alive)
+        if (i != (unsigned)(p->active - 1) && (&players[i])->alive)
             valid = 1;
         else
             ++i;
@@ -1364,7 +1364,8 @@ int wepSwitch(struct player *p, bool on)
     r = rand();
     r %= nPlayers;
     while (!valid) {
-        if ((r != p->active - 1) && (r != i) && (&players[r])->alive)
+        if ((r != (unsigned)(p->active - 1)) &&
+                (r != i) && (&players[r])->alive)
             valid = 1;
         else
             ++r;

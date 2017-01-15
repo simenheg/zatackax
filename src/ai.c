@@ -45,7 +45,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             /* left diagonal */
             checkx = posx + i * cos(dir - PI / 4);
             checky = posy + i * sin(dir - PI / 4);
-            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
+            if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
+                    (unsigned)checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
             if (result != id + 8 && result != id + 16 && result != 0)
@@ -53,7 +54,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             /* right diagonal */
             checkx = posx + i * cos(dir + PI / 4);
             checky = posy + i * sin(dir + PI / 4);
-            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
+            if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
+                    (unsigned)checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
             if (result != id + 8 && result != id + 16 && result != 0)
@@ -63,7 +65,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             /* right side */
             checkx = posx + i * cos(dir + PI / 2);
             checky = posy + i * sin(dir + PI / 2);
-            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
+            if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
+                    (unsigned)checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
             if (result != id + 8 && result != id + 16 && result != 0)
@@ -71,7 +74,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             /* left side */
             checkx = posx + i * cos(dir - PI / 2);
             checky = posy + i * sin(dir - PI / 2);
-            if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
+            if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
+                    (unsigned)checky >= h)
                 return 'r';
             result = hitmap[w * checky + checkx];
             if (result != id + 8 && result != id + 16 && result != 0)
@@ -80,7 +84,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
         /* front */
         checkx = posx + i * cos(dir);
         checky = posy + i * sin(dir);
-        if (checkx < 0 || checky < 0 || checkx >= w || checky >= h)
+        if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
+                (unsigned)checky >= h)
             return 'r';
         result = hitmap[w * checky + checkx];
         if (result != id + 8 && result != id + 16 && result != 0) {

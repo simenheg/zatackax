@@ -86,7 +86,7 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     broadcast = SDL_CreateRGBSurface(SDL_HWSURFACE, width, parts[0]->h,
                                      SCREEN_BPP, 0, 0, 0, 0);
 
-    int nparts = i;
+    unsigned int nparts = i;
     int hoffset = 0;
     for (i = 0; i < nparts; ++i) {
         SDL_Rect offset = {hoffset, 0, 0, 0};
