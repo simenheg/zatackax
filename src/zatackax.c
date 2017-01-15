@@ -213,7 +213,7 @@ void killPlayer(unsigned char victim, unsigned char killer)
         if (killer == 0)
             snprintf(msg, BROADC_BUF, "%d; hit the wall", victim);
         else if (killer == victim)
-            snprintf(msg, BROADC_BUF, "%d; commited suicide", victim);
+            snprintf(msg, BROADC_BUF, "%d; committed suicide", victim);
         else
             snprintf(msg, BROADC_BUF, "%d; crashed into ;%d", victim, killer);
 
@@ -910,7 +910,7 @@ void displayGameStart(void)
 
 /**
  * Redraws the whole game screen.
- * Should only be called as a last restort when the whole screen needs to
+ * Should only be called as a last resort when the whole screen needs to
  * be redrawn.
  */
 void refreshGameScreen(void)
@@ -1100,7 +1100,7 @@ int legalWeps(void)
 }
 
 /**
- * Let's the AI pick weapons at random.
+ * Lets the AI pick weapons at random.
  */
 void assignAiWeapons(void)
 {

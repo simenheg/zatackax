@@ -27,7 +27,7 @@
 #define MAX_KEYNAME         8       /* Maximum length of key name */
 
 /* SPAWNING */
-#define START_ROUND_WAIT    1500    /* Miliseconds until the game starts */
+#define START_ROUND_WAIT    1500    /* Milliseconds until the game starts */
 #define SPAWN_SPACE_MIN     100     /* Minimal spawning distance from
                                        screen edges */
 #define ZATA_SPAWN_SPACING  20      /* Minimal spawning distance between
@@ -50,7 +50,7 @@
 #define N_COLORS            8                   /* Available colors */
 
 /* MENUS */
-#define MENU_BUF                32  /* Maxiumum menu string length */
+#define MENU_BUF                32  /* Maximum menu string length */
 #define MENU_FONT_SIZE          22
 #define SPACEMOD                18
 #define BALL_SPACING            30

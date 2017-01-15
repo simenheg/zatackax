@@ -47,7 +47,7 @@ static Mix_Chunk *sounds[N_SOUNDS];
  * @param sound Pointer to where to put the loaded sound.
  * @param soundstr Name of the sound (.ogg added).
  * @param index Index in the sound array (0 --> N_SOUNDS).
- * @return -1 on failiure, 0 else.
+ * @return -1 on failure, 0 else.
  */
 int loadSound(Mix_Chunk *sound, char *soundstr, int index)
 {
@@ -67,7 +67,7 @@ int loadSound(Mix_Chunk *sound, char *soundstr, int index)
 /**
  * Initializes the mixer and loads sound files.
  *
- * @return -1 on failiure, 0 else.
+ * @return -1 on failure, 0 else.
  */
 int initSound(void)
 {
