@@ -23,4 +23,4 @@ See AUTHORS.
 
 ## Contact
 Questions, suggestions, contributions or other inquiries? Please contact
-simenheg@ifi.uio.no.
+simenheg@gmail.com.

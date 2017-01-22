@@ -1,5 +1,5 @@
 ## Lead developer
-* Simen Heggestøyl (simenheg@ifi.uio.no)
+* Simen Heggestøyl (simenheg@gmail.com)
 
 ## Code contributors
 * Gwilym Kuiper
