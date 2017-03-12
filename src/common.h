@@ -1,7 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define PI      3.14159265358
 #define STRBUF  32
 
 /* DEFAULT WINDOW DIMENSIONS */

@@ -297,7 +297,7 @@ struct vel spawn(void)
     rnd = (double)rand() / RAND_MAX;
     initPos.holecount = (rnd * (HOLE_FREQ - HOLE_FIRST_DELAY));
     rnd = (double)rand() / RAND_MAX;
-    initPos.dir = rnd * (2 * PI);
+    initPos.dir = rnd * (2 * M_PI);
     if (initPos.dir < 0)
         initPos.dir *= -1;
 
@@ -357,7 +357,7 @@ void drespawn(struct player *p)
     p->alive = true;
     p->posx = (WINDOW_W / 2) + (p->active == 1 ? -120 : 120);
     p->posy = WINDOW_H / 2;
-    p->dir = p->active == 1 ? 0 : PI;
+    p->dir = p->active == 1 ? 0 : M_PI;
 
     p->initposx = p->posx;
     p->initposy = p->posy;
@@ -756,13 +756,13 @@ int logicGame(void)
                      * be turned on */
                     /*
                       refreshGameScreen();
-                      int checkx = p->posx + 40 * cos(p->dir + PI/2);
-                      int checky = p->posy + 40 * sin(p->dir + PI/2);
+                      int checkx = p->posx + 40 * cos(p->dir + M_PI/2);
+                      int checky = p->posy + 40 * sin(p->dir + M_PI/2);
                       SDL_Rect a = {checkx, checky, 4, 4};
                       SDL_FillRect(screen, &a, SDL_MapRGB(screen->format,
                       0x55, 0x77, 0x99));
-                      checkx = p->posx + 40 * cos(p->dir - PI/2);
-                      checky = p->posy + 40 * sin(p->dir - PI/2);
+                      checkx = p->posx + 40 * cos(p->dir - M_PI/2);
+                      checky = p->posy + 40 * sin(p->dir - M_PI/2);
                       SDL_Rect b = {checkx, checky, 4, 4};
                       SDL_FillRect(screen, &b, SDL_MapRGB(screen->format,
                       0x55, 0x77, 0x99));
@@ -776,13 +776,13 @@ int logicGame(void)
                       SDL_Rect e = {checkx, checky, 4, 4};
                       SDL_FillRect(screen, &e, SDL_MapRGB(screen->format,
                       0xFF, 0x30, 0x30));
-                      checkx = p->posx + 60 * cos(p->dir + PI/4);
-                      checky = p->posy + 60 * sin(p->dir + PI/4);
+                      checkx = p->posx + 60 * cos(p->dir + M_PI/4);
+                      checky = p->posy + 60 * sin(p->dir + M_PI/4);
                       SDL_Rect f = {checkx, checky, 4, 4};
                       SDL_FillRect(screen, &f, SDL_MapRGB(screen->format,
                       0x66, 0x66, 0x66));
-                      checkx = p->posx + 60 * cos(p->dir - PI/4);
-                      checky = p->posy + 60 * sin(p->dir - PI/4);
+                      checkx = p->posx + 60 * cos(p->dir - M_PI/4);
+                      checky = p->posy + 60 * sin(p->dir - M_PI/4);
                       SDL_Rect g = {checkx, checky, 4, 4};
                       SDL_FillRect(screen, &g, SDL_MapRGB(screen->format,
                       0x66, 0x66, 0x66));
@@ -792,9 +792,9 @@ int logicGame(void)
                                     hitmap, WINDOW_W, WINDOW_H);
                     if (activeTron) {
                         if (c == 'l')
-                            p->dir -= PI / 2;
+                            p->dir -= M_PI / 2;
                         else if (c == 'r')
-                            p->dir += PI / 2;
+                            p->dir += M_PI / 2;
                     } else {
                         if (c == 'l')
                             p->dir -= 0.0022 * delta * p->speed;
@@ -806,10 +806,10 @@ int logicGame(void)
                         /* Screw smooth angles, TRON MODE from here on! */
                         if (keyDown[p->lkey]) {
                             keyDown[p->lkey] = 0;
-                            p->dir -= PI / 2;
+                            p->dir -= M_PI / 2;
                         } else if (keyDown[p->rkey]) {
                             keyDown[p->rkey] = 0;
-                            p->dir += PI / 2;
+                            p->dir += M_PI / 2;
                         }
                     } else {
                         if (keyDown[p->lkey])
@@ -895,7 +895,7 @@ void displayGameStart(void)
                 struct player *p = &players[i];
                 SDL_Rect offset = {(int)p->posx - 8, (int)p->posy - 8,
                                    0, 0};
-                int diri = (int)((p->dir) * (32.0 / (2.0 * PI)));
+                int diri = (int)((p->dir) * (32.0 / (2.0 * M_PI)));
                 SDL_BlitSurface(p->arrow, &arrowClip[diri], screen,
                                 &offset);
             } else {
@@ -1172,9 +1172,9 @@ int wepSharpturn(struct player *p, bool on)
         playSound(SOUND_SHARPTURN, sound);
 
         if (keyDown[p->rkey])
-            p->dir += PI / 2;
+            p->dir += M_PI / 2;
         else
-            p->dir -= PI / 2;
+            p->dir -= M_PI / 2;
     }
 
     p->inv_self = INV_TIME;
@@ -1249,11 +1249,11 @@ int wepMole(struct player *p, bool on)
 
         p->posx = p->initposx;
         p->posy = p->initposy;
-        p->dir = p->initdir + PI;
+        p->dir = p->initdir + M_PI;
 
         p->initposx = oldposx;
         p->initposy = oldposy;
-        p->initdir = olddir + PI;
+        p->initdir = olddir + M_PI;
 
         p->inv_self= DURATION_MOLE;
         p->inv_others = DURATION_MOLE;
@@ -1708,9 +1708,9 @@ void displayWepMenu(void)
             if (p->weapon == i) {
                 int diri;
                 if (j >= MAX_PLAYERS / 2) {
-                    diri = (int)((3.0 * PI / 2.0) * (32.0 / (2.0 * PI)));
+                    diri = (int)((3.0 * M_PI / 2.0) * (32.0 / (2.0 * M_PI)));
                 } else {
-                    diri = (int)((PI / 2.0) * (32.0 / (2.0 * PI)));
+                    diri = (int)((M_PI / 2.0) * (32.0 / (2.0 * M_PI)));
                 }
                 SDL_BlitSurface(p->arrow, &arrowClip[diri], screen,
                                 &offset);
