@@ -63,7 +63,7 @@ static struct weapon wep_list[N_WEAPONS] = {
     {wepConfusion, 1, "Confusion", "Inverted controls for", "others."},
     {wepSharpturn, 3, "Sharp turn", "Perform an ultra sharp", "turn."},
     {wepTimestep, 1, "Time step", "Jump through time and", "space."},
-    {wepMole, 1, "Mole", "Dig your way out.", ""},
+    {wepMole, 2, "Mole", "Dig your way out.", ""},
     {wepWarp, 4, "Warp", "Warp to a random spot", "on the map."},
     {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
     {wepTron, 1, "Tron-mode", "No more smooth turns.", ""},

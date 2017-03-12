@@ -1243,9 +1243,17 @@ int wepMole(struct player *p, bool on)
     if (on) {
         playSound(SOUND_MOLE, sound);
 
+        double oldposx = p->posx;
+        double oldposy = p->posy;
+        double olddir = p->dir;
+
         p->posx = p->initposx;
         p->posy = p->initposy;
         p->dir = p->initdir + PI;
+
+        p->initposx = oldposx;
+        p->initposy = oldposy;
+        p->initdir = olddir + PI;
 
         p->inv_self= DURATION_MOLE;
         p->inv_others = DURATION_MOLE;

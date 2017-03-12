@@ -1,3 +1,8 @@
+## 0.1.8 - ??.??.??
+* General:
+  * Mole can now be used a second time to go back where it was first used.
+  * Fixed a spelling error.
+
 ## 0.1.7 - 08.11.15
 * Balancing:
   * Increased duration of Ghost walk from 1.7 s to 2.1 s.
