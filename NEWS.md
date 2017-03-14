@@ -2,6 +2,8 @@
 * General:
   * Mole can now be used a second time to go back where it was first used.
   * Fixed a spelling error.
+* Balancing:
+  * Further decreased the duration of Confusion from 0.7 s. to 0.6 s.
 
 ## 0.1.7 - 08.11.15
 * Balancing:
