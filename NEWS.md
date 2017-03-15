@@ -1,4 +1,4 @@
-## 0.1.8 - ??.??.??
+## 0.1.8 - 15.03.17
 * General:
   * Mole can now be used a second time to go back where it was first used.
   * Fixed a spelling error.
