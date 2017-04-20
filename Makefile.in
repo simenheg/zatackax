@@ -1,4 +1,4 @@
-# Makefile for Zatacka X.
+# @configure_input@
 # Copyright (C) 2010-2017 The Zatacka X development team
 
 # This program is free software: you can redistribute it and/or modify
@@ -14,45 +14,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CFLAGS = $(shell pkg-config sdl --cflags) -std=c99
-LDFLAGS = $(shell pkg-config sdl --libs) -lm -lSDL_image -lSDL_ttf -lSDL_mixer -fno-common
-CDEBUG = -DDEBUG
-CVERBOSE = -DVERBOSE
-CSILENT = -DSILENT
-CDEVEL = -g3 -pg -pedantic -Wall -Wextra
-CRELEASE = -O2
-
+CFLAGS = @CFLAGS@
 OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
 
-release : CFLAGS += $(CRELEASE)
-release : zatackax
-
-windows : $(OBJECTS)
-windows : CC = i486-mingw32-gcc
-windows : CFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --cflags) -std=c99 -O2
-windows : LDFLAGS = $(shell /usr/i486-mingw32/bin/sdl-config --libs) -lm -lSDL_image -lSDL_ttf -lSDL_mixer
-windows : zatackax
-
 zatackax : $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@CC@ $(CFLAGS) $(shell pkg-config sdl --cflags) $^ -o $@ @LDFLAGS@ @LIBS@
 
-devel : CFLAGS += $(CDEVEL)
+devel : CFLAGS += -O0 -g3 -pg -pedantic -Wall -Wextra
 devel : zatackax
 
-debug : CFLAGS += $(CDEBUG)
+debug : CFLAGS += -DDEBUG
 debug : devel
 
-verbose : CFLAGS += $(CVERBOSE)
+verbose : CFLAGS += -DVERBOSE
 verbose : devel
 
-silent : CFLAGS += $(CSILENT)
+silent : CFLAGS += -DSILENT
 silent : devel
 
 src/zatackax.o : src/zatackax.h src/sound.h src/error.h src/ai.h src/broadcast.h src/common.h src/player.h src/weapon.h
+	@CC@ $(CFLAGS) -c -o $@ src/zatackax.c
+
 src/error.o : src/error.h src/common.h
+	@CC@ $(CFLAGS) -c -o $@ src/error.c
+
 src/sound.o : src/sound.h src/error.h src/common.h
+	@CC@ $(CFLAGS) -c -o $@ src/sound.c
+
 src/ai.o : src/ai.h src/common.h
+	@CC@ $(CFLAGS) -c -o $@ src/ai.c
+
 src/broadcast.o : src/broadcast.h src/player.h src/common.h
+	@CC@ $(CFLAGS) -c -o $@ src/broadcast.c
 
 .PHONY: clean
 clean :

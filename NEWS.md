@@ -1,3 +1,7 @@
+## 0.1.9 - ??.??.??
+* General:
+  * Autoconf is now used for building.
+
 ## 0.1.8 - 15.03.17
 * General:
   * Mole can now be used a second time to go back where it was first used.
