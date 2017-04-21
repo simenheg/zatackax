@@ -1,6 +1,7 @@
 ## 0.1.9 - ??.??.??
 * General:
   * Autoconf is now used for building.
+  * FPS is capped at 100, which should make Zatacka X less CPU hungry.
 
 ## 0.1.8 - 15.03.17
 * General:

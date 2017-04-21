@@ -17,6 +17,8 @@
 
 #include "zatackax.h"
 
+static const unsigned int FPS_CAP = 100;
+
 struct menu menuMain = {
     3,
     0,
@@ -2787,6 +2789,8 @@ void exitGame(int status)
 
 int main(void)
 {
+    static Uint32 prevtime = 0;
+
     WINDOW_W = DEFAULT_WINDOW_W;
     WINDOW_H = DEFAULT_WINDOW_H;
 
@@ -2866,8 +2870,17 @@ int main(void)
             }
         }
         if (!screenFreeze) {
-            if (curScene->logicFunc())
+            Uint32 timenow = SDL_GetTicks();
+            Uint32 delta = timenow - prevtime;
+            prevtime = timenow;
+
+            if (delta < 1000/FPS_CAP) {
+                SDL_Delay(1000/FPS_CAP - delta);
+            }
+
+            if (curScene->logicFunc()) {
                 curScene->displayFunc();
+            }
         }
     }
 
