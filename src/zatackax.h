@@ -118,6 +118,7 @@ static bool screenFreeze = false;
 static bool activeFreeze = false;
 static bool activeConfusion = false;
 static bool activeTron = false;
+static bool activeChilirun = false;
 
 static unsigned int scorecap = DEFAULT_SCORECAP;
 static bool fullscreen = DEFAULT_FULLSCREEN;
@@ -171,6 +172,8 @@ static SDL_Surface *wiGhost = NULL;
 static SDL_Surface *wisGhost = NULL;
 static SDL_Surface *wiTron = NULL;
 static SDL_Surface *wisTron = NULL;
+static SDL_Surface *wiChilirun = NULL;
+static SDL_Surface *wisChilirun = NULL;
 static SDL_Surface *wiSwitch = NULL;
 static SDL_Surface *wisSwitch = NULL;
 static struct SDL_Surface **parrows;

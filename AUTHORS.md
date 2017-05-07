@@ -1,26 +1,24 @@
-## Lead developer
+## Programming
 * Simen Heggestøyl (simenheg@gmail.com)
-
-## Code contributors
 * Gwilym Kuiper
 * Patrick Bauge Skevik (patrisk@student.matnat.uio.no)
 
-## Alpha testers
-* Anders Heggestøyl
+## Testing
+* Anders Heggestøyl (anders.heggestoyl@gmail.com)
 * Håkon Normann
 
-## Music
-* Charles Vaughan (cs.vaughan@tiscali.co.uk)
+## Graphics
+* Simen Heggestøyl
+* Anders Heggestøyl
+* Ravenmore (http://dycha.net)
 
 ## Sound effects
-* Charles Vaughan
+* Charles Vaughan (cs.vaughan@tiscali.co.uk)
 * Simen Heggestøyl
 
-## Logo design
-* Anders Heggestøyl (anders.heggestoyl@gmail.com)
+## Music
+* Charles Vaughan
 
-## Font: Anka/Coder (license: Open Font License)
-* Andrey Makarov (makarov at openfontlibrary.org)
-
-## Font: Jura (license: Open Font License)
-* Daniel Johnson (Daniel_J at openfontlibrary.org)
+## Fonts
+* Anka/Coder by Andrey Makarov (OFL)
+* Jura by Daniel Johnson (OFL)

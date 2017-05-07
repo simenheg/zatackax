@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-#define N_WEAPONS               10
+#define N_WEAPONS               11
 #define N_ILLEGAL_2P_WEPS       1
 #define WEP_SPACEMOD            42
 #define WEP_SMALL_INIT_OFFSET   4    /* Offset between score and icon */
@@ -21,6 +21,7 @@
 #define DURATION_MOLE           350
 #define DURATION_GHOSTWALK      2100
 #define DURATION_TRON           3000
+#define DURATION_CHILIRUN       1500
 
 enum weapons {
     WEP_LIGHTNINGSPEED = 0,
@@ -32,6 +33,7 @@ enum weapons {
     WEP_WARP,
     WEP_GHOST,
     WEP_TRON,
+    WEP_CHILI_RUN,
     WEP_SWITCH
 };
 
@@ -52,6 +54,7 @@ int wepMole(struct player *p, bool on);
 int wepWarp(struct player *p, bool on);
 int wepGhost(struct player *p, bool on);
 int wepTron(struct player *p, bool on);
+int wepChilirun(struct player *p, bool on);
 int wepSwitch(struct player *p, bool on);
 
 static struct weapon wep_list[N_WEAPONS] = {
@@ -64,6 +67,7 @@ static struct weapon wep_list[N_WEAPONS] = {
     {wepWarp, 4, "Warp", "Warp to a random spot", "on the map."},
     {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
     {wepTron, 1, "Tron-mode", "No more smooth turns.", ""},
+    {wepChilirun, 1, "Chili run", "Hot hot hot!", ""},
     {wepSwitch, 1, "Switch-aroo", "SWITCH-AROOOO!", ""}
 };
 

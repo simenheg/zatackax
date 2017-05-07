@@ -1,5 +1,6 @@
 ## 0.1.9 - ??.??.??
 * General:
+  * A new weapon has been added: Chili run.
   * The weapon Disable has been removed.
   * Autoconf is now used for building.
   * FPS is capped at 100, which should make Zatacka X less CPU hungry.

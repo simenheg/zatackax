@@ -1015,7 +1015,7 @@ void drawExtras(void)
     }
 
     /* Active weapons */
-    if (activeFreeze || activeConfusion || activeTron) {
+    if (activeFreeze || activeConfusion || activeTron || activeChilirun) {
         SDL_Rect offset = {WINDOW_W - wepIcons[0]->w, 0, 0, 0};
         if (activeFreeze)
             SDL_BlitSurface(wepIcons[WEP_FROSTWAVE + 1], NULL, screen, &offset);
@@ -1023,6 +1023,8 @@ void drawExtras(void)
             SDL_BlitSurface(wepIcons[WEP_CONFUSION + 1], NULL, screen, &offset);
         if (activeTron)
             SDL_BlitSurface(wepIcons[WEP_TRON + 1], NULL, screen, &offset);
+        if (activeChilirun)
+            SDL_BlitSurface(wepIcons[WEP_CHILI_RUN + 1], NULL, screen, &offset);
     }
 }
 
@@ -1316,6 +1318,35 @@ int wepTron(struct player *p __attribute__ ((unused)), bool on)
         refreshGameScreen();
 
     return DURATION_TRON;
+}
+
+/**
+ * Weapon: Chili run
+ *
+ * @param p Weapon user.
+ * @param on 1 to use weapon, 0 to disable weapon.
+ */
+int wepChilirun(struct player *p, bool on)
+{
+    struct player *target;
+    unsigned int i;
+
+    activeChilirun = on;
+
+    if (on) {
+        playSound(SOUND_CHILIRUN, sound);
+    }
+    else {
+        refreshGameScreen();
+    }
+
+    for (target = &players[0], i = 0; i < nPlayers; ++i, ++target) {
+        if (target != p) {
+            target->speed = on ? 2 : 1;
+        }
+    }
+
+    return DURATION_CHILIRUN;
 }
 
 /**
@@ -2360,6 +2391,14 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_tron.png");
         return 0;
     }
+    if ((wiChilirun = loadImage("data/gfx/wi_chilirun.png")) == NULL) {
+        fileNotFound("data/gfx/wi_chilirun.png");
+        return 0;
+    }
+    if ((wisChilirun = loadImage("data/gfx/wis_chilirun.png")) == NULL) {
+        fileNotFound("data/gfx/wis_chilirun.png");
+        return 0;
+    }
     if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
         fileNotFound("data/gfx/wi_switch.png");
         return 0;
@@ -2448,6 +2487,7 @@ int loadFiles(void)
     wepIcons[WEP_WARP + 1] = wiWarp;
     wepIcons[WEP_GHOST + 1] = wiGhost;
     wepIcons[WEP_TRON + 1] = wiTron;
+    wepIcons[WEP_CHILI_RUN + 1] = wiChilirun;
     wepIcons[WEP_SWITCH + 1] = wiSwitch;
 
     smallWepIcons[WEP_LIGHTNINGSPEED] = wisSpeed;
@@ -2459,6 +2499,7 @@ int loadFiles(void)
     smallWepIcons[WEP_WARP] = wisWarp;
     smallWepIcons[WEP_GHOST] = wisGhost;
     smallWepIcons[WEP_TRON] = wisTron;
+    smallWepIcons[WEP_CHILI_RUN] = wisChilirun;
     smallWepIcons[WEP_SWITCH] = wisSwitch;
 
     return 1;

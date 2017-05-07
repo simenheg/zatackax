@@ -37,6 +37,7 @@ static Mix_Chunk *seMole = NULL;
 static Mix_Chunk *seWarp = NULL;
 static Mix_Chunk *seGhost = NULL;
 static Mix_Chunk *seTronmode = NULL;
+static Mix_Chunk *seChilirun = NULL;
 static Mix_Chunk *seSwitch = NULL;
 static Mix_Chunk *sounds[N_SOUNDS];
 
@@ -118,6 +119,8 @@ int initSound(void)
     if (loadSound(seGhost, "ghost", SOUND_GHOST) == -1)
         return -1;
     if (loadSound(seTronmode, "tronmode", SOUND_TRON) == -1)
+        return -1;
+    if (loadSound(seChilirun, "chilirun", SOUND_CHILIRUN) == -1)
         return -1;
     if (loadSound(seSwitch, "switch", SOUND_SWITCH) == -1)
         return -1;
