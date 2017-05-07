@@ -207,7 +207,6 @@ void killPlayer(unsigned char victim, unsigned char killer)
     int i;
 
     playSound(SOUND_CRASH, sound);
-    // registerKill(killer, victim);
 
     if (broadcasts) {
         char msg[BROADC_BUF];
@@ -273,8 +272,6 @@ void playerWon(unsigned char id)
     }
 
     winnerDeclared = true;
-    // printStats(nPlayers);
-    // clearStats();
 
     if (olvl >= O_VERBOSE)
         printf(" -- Player %d won! --\n", id + 1);
