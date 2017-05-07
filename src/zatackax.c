@@ -2666,6 +2666,8 @@ char *keyName(unsigned int key)
             snprintf(keyname, MAX_KEYNAME, "end"); break;
         case SDLK_MENU:
             snprintf(keyname, MAX_KEYNAME, "menu"); break;
+        case SDLK_PRINT:
+            snprintf(keyname, MAX_KEYNAME, "prt-sc"); break;
         case SDLK_PAGEUP:
             snprintf(keyname, MAX_KEYNAME, "pg up"); break;
         case SDLK_PAGEDOWN:
@@ -2694,18 +2696,30 @@ char *keyName(unsigned int key)
             snprintf(keyname, MAX_KEYNAME, "."); break;
         case SDLK_COMMA:
             snprintf(keyname, MAX_KEYNAME, ","); break;
+        case SDLK_SEMICOLON:
+            snprintf(keyname, MAX_KEYNAME, ";"); break;
         case SDLK_MINUS:
             snprintf(keyname, MAX_KEYNAME, "-"); break;
         case SDLK_QUOTE:
             snprintf(keyname, MAX_KEYNAME, "'"); break;
+        case SDLK_BACKQUOTE:
+            snprintf(keyname, MAX_KEYNAME, "`"); break;
         case SDLK_PLUS:
             snprintf(keyname, MAX_KEYNAME, "+"); break;
+        case SDLK_EQUALS:
+            snprintf(keyname, MAX_KEYNAME, "="); break;
         case SDLK_COMPOSE:
             snprintf(keyname, MAX_KEYNAME, "^"); break;
+        case SDLK_SLASH:
+            snprintf(keyname, MAX_KEYNAME, "/"); break;
         case SDLK_BACKSLASH:
             snprintf(keyname, MAX_KEYNAME, "\\"); break;
         case SDLK_LESS:
             snprintf(keyname, MAX_KEYNAME, "<"); break;
+        case SDLK_LEFTBRACKET:
+            snprintf(keyname, MAX_KEYNAME, "["); break;
+        case SDLK_RIGHTBRACKET:
+            snprintf(keyname, MAX_KEYNAME, "]"); break;
         case SDLK_BACKSPACE:
             snprintf(keyname, MAX_KEYNAME, "b-space"); break;
         case SDLK_RETURN:
