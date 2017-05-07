@@ -117,7 +117,6 @@ static bool screenFreeze = false;
 
 static bool activeFreeze = false;
 static bool activeConfusion = false;
-static bool activeDisable = false;
 static bool activeTron = false;
 
 static unsigned int scorecap = DEFAULT_SCORECAP;
@@ -170,8 +169,6 @@ static SDL_Surface *wiWarp = NULL;
 static SDL_Surface *wisWarp = NULL;
 static SDL_Surface *wiGhost = NULL;
 static SDL_Surface *wisGhost = NULL;
-static SDL_Surface *wiDisable = NULL;
-static SDL_Surface *wisDisable = NULL;
 static SDL_Surface *wiTron = NULL;
 static SDL_Surface *wisTron = NULL;
 static SDL_Surface *wiSwitch = NULL;

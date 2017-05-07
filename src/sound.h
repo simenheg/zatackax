@@ -25,7 +25,6 @@ enum sounds {
     SOUND_WARP,
     SOUND_GHOST,
     SOUND_TRON,
-    SOUND_DISABLE,
     SOUND_SWITCH,
     N_SOUNDS
 };

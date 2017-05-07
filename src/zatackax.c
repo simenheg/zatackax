@@ -737,7 +737,7 @@ int logicGame(void)
                 unsigned int curx, cury;
 
                 if (weapons && p->wep_time == WEP_NONACTIVE
-                    && p->wep_count > 0 && !activeDisable) {
+                        && p->wep_count > 0) {
                     if (p->ai) {
                         if (rand() / (double)RAND_MAX < AI_WEP_PROB) {
                             p->wep_time = wep_list[p->weapon].func(p, 1);
@@ -1018,7 +1018,7 @@ void drawExtras(void)
     }
 
     /* Active weapons */
-    if (activeFreeze || activeConfusion || activeTron ||activeDisable) {
+    if (activeFreeze || activeConfusion || activeTron) {
         SDL_Rect offset = {WINDOW_W - wepIcons[0]->w, 0, 0, 0};
         if (activeFreeze)
             SDL_BlitSurface(wepIcons[WEP_FROSTWAVE + 1], NULL, screen, &offset);
@@ -1026,8 +1026,6 @@ void drawExtras(void)
             SDL_BlitSurface(wepIcons[WEP_CONFUSION + 1], NULL, screen, &offset);
         if (activeTron)
             SDL_BlitSurface(wepIcons[WEP_TRON + 1], NULL, screen, &offset);
-        if (activeDisable)
-            SDL_BlitSurface(wepIcons[WEP_DISABLE + 1], NULL, screen, &offset);
     }
 }
 
@@ -1321,26 +1319,6 @@ int wepTron(struct player *p __attribute__ ((unused)), bool on)
         refreshGameScreen();
 
     return DURATION_TRON;
-}
-
-/**
- * Weapon: disable
- *
- * @param p Weapon user.
- * @param on 1 to use weapon, 0 to disable weapon.
- */
-int wepDisable(struct player *p, bool on)
-{
-    activeDisable = on;
-
-    if (on)
-        playSound(SOUND_DISABLE, sound);
-    else
-        refreshGameScreen();
-
-    p->invertedKeys = false;
-    p->speed = 1.0;
-    return DURATION_DISABLE;
 }
 
 /**
@@ -2385,14 +2363,6 @@ int loadFiles(void)
         fileNotFound("data/gfx/wis_tron.png");
         return 0;
     }
-    if ((wiDisable = loadImage("data/gfx/wi_disable.png")) == NULL) {
-        fileNotFound("data/gfx/wi_disable.png");
-        return 0;
-    }
-    if ((wisDisable = loadImage("data/gfx/wis_disable.png")) == NULL) {
-        fileNotFound("data/gfx/wis_disable.png");
-        return 0;
-    }
     if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
         fileNotFound("data/gfx/wi_switch.png");
         return 0;
@@ -2481,7 +2451,6 @@ int loadFiles(void)
     wepIcons[WEP_WARP + 1] = wiWarp;
     wepIcons[WEP_GHOST + 1] = wiGhost;
     wepIcons[WEP_TRON + 1] = wiTron;
-    wepIcons[WEP_DISABLE + 1] = wiDisable;
     wepIcons[WEP_SWITCH + 1] = wiSwitch;
 
     smallWepIcons[WEP_LIGHTNINGSPEED] = wisSpeed;
@@ -2493,7 +2462,6 @@ int loadFiles(void)
     smallWepIcons[WEP_WARP] = wisWarp;
     smallWepIcons[WEP_GHOST] = wisGhost;
     smallWepIcons[WEP_TRON] = wisTron;
-    smallWepIcons[WEP_DISABLE] = wisDisable;
     smallWepIcons[WEP_SWITCH] = wisSwitch;
 
     return 1;
