@@ -1,4 +1,4 @@
-## 0.1.9 - ??.??.??
+## 0.2.0 - 08.07.17
 * General:
   * A new weapon has been added: Chili run.
   * The weapon Disable has been removed.
