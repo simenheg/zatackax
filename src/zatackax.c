@@ -1654,18 +1654,21 @@ void displayWepMenu(void)
         wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
+        SDL_FreeSurface(wep_text);
 
         offset.y += 30;
         snprintf(wep_str, MENU_BUF, "%s", w.name);
         wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
+        SDL_FreeSurface(wep_text);
 
         offset.y += 30;
         snprintf(wep_str, MENU_BUF, "%s", w.desc1);
         wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
+        SDL_FreeSurface(wep_text);
 
         if (w.desc2[0] != '\0') {
             offset.y += BROADC_FONT_SIZE + 2;
@@ -1673,6 +1676,7 @@ void displayWepMenu(void)
             wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
                                              colors[p->color], cMenuBG);
             SDL_BlitSurface(wep_text, NULL, screen, &offset);
+            SDL_FreeSurface(wep_text);
         }
 
         if (i > 3)
@@ -1683,7 +1687,6 @@ void displayWepMenu(void)
         wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
-
         SDL_FreeSurface(wep_text);
     }
 
