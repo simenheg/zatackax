@@ -88,7 +88,7 @@ struct scene {
 
 struct menu {
     const char choices;
-    char choice;
+    signed char choice;
 };
 
 /* The hitmap contains one character for each pixel on the screen. Each
