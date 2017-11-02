@@ -2,6 +2,7 @@
 * Simen Heggestøyl (simenheg@gmail.com)
 * Gwilym Kuiper
 * Patrick Bauge Skevik (patrisk@student.matnat.uio.no)
+* Sebastien Chevalier (sebastien.chev@gmail.com)
 
 ## Testing
 * Anders Heggestøyl (anders.heggestoyl@gmail.com)

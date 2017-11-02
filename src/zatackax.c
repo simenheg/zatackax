@@ -688,11 +688,16 @@ int logicGame(void)
     Uint32 delta = timenow - prevtime;
     prevtime = timenow;
 
-    if (olvl >= O_DEBUG)
+    if (olvl >= O_DEBUG) {
         fprintf(stderr, "delta: %d    prevtime: %d\n", delta, prevtime);
+    }
 
-    if (delta > 35)
+    if (delta > 35) {
         delta = 35;
+    }
+    else if (delta == 0) {
+        return 0;
+    }
 
     for (i = 0; i < MAX_PLAYERS; ++i) {
 
