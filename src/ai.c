@@ -43,8 +43,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
         int checkx, checky, result;
         if (i < COWARDNESS_DIAGS) {
             /* left diagonal */
-            checkx = posx + i * cos(dir - M_PI / 4);
-            checky = posy + i * sin(dir - M_PI / 4);
+            checkx = posx + i*cos(dir - M_PI_4);
+            checky = posy + i*sin(dir - M_PI_4);
             if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
                     (unsigned)checky >= h)
                 return 'r';
@@ -52,8 +52,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             if (result != id + 8 && result != id + 16 && result != 0)
                 return 'r';
             /* right diagonal */
-            checkx = posx + i * cos(dir + M_PI / 4);
-            checky = posy + i * sin(dir + M_PI / 4);
+            checkx = posx + i*cos(dir + M_PI_4);
+            checky = posy + i*sin(dir + M_PI_4);
             if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
                     (unsigned)checky >= h)
                 return 'r';
@@ -63,8 +63,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
         }
         if (i < COWARDNESS_SIDES) {
             /* right side */
-            checkx = posx + i * cos(dir + M_PI / 2);
-            checky = posy + i * sin(dir + M_PI / 2);
+            checkx = posx + i*cos(dir + M_PI_2);
+            checky = posy + i*sin(dir + M_PI_2);
             if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
                     (unsigned)checky >= h)
                 return 'r';
@@ -72,8 +72,8 @@ char pollAi(double posx, double posy, double dir, unsigned char id,
             if (result != id + 8 && result != id + 16 && result != 0)
                 return 'l';
             /* left side */
-            checkx = posx + i * cos(dir - M_PI / 2);
-            checky = posy + i * sin(dir - M_PI / 2);
+            checkx = posx + i*cos(dir - M_PI_2);
+            checky = posy + i*sin(dir - M_PI_2);
             if (checkx < 0 || checky < 0 || (unsigned)checkx >= w ||
                     (unsigned)checky >= h)
                 return 'r';
