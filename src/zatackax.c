@@ -628,15 +628,15 @@ void updateHitMap(Uint32 delta)
     cur = prev->next;
     prev->count -= delta;
 
+    SDL_LockSurface(screen);
+
     while (cur != NULL) {
         cur->count -= delta;
         unsigned char *at =
             &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
         if (holes && cur->count <= HOLE_DELAY && *at > MAX_PLAYERS * 2) {
             *at = 0;
-            SDL_LockSurface(screen);
             putPixel(cur->x, cur->y, cMenuBG, screen->pixels);
-            SDL_UnlockSurface(screen);
             prev->next = cur->next;
             free(cur);
             cur = prev->next;
@@ -650,6 +650,8 @@ void updateHitMap(Uint32 delta)
             cur = cur->next;
         }
     }
+
+    SDL_UnlockSurface(screen);
 }
 
 /**
