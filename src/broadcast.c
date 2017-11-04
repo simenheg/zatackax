@@ -68,7 +68,7 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     strings[0] = strtok(msg, ";");
     for (i = 1; (strings[i] = strtok(NULL, ";")) != NULL; ++i) {}
 
-    for (i = 0; strings[i] != NULL && i < BROADC_PARTS; ++i) {
+    for (i = 0; i < BROADC_PARTS && strings[i] != NULL; ++i) {
 
         char pstring[PLAYER_NAME_LEN];
         if (strlen(strings[i]) == 1) {
