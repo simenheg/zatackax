@@ -1,3 +1,7 @@
+## 0.3.0 - ??.??.??
+* General:
+  * Add experimental gamepad support.
+
 ## 0.2.0 - 08.07.17
 * General:
   * A new weapon has been added: Chili run.

@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "common.h"
+#include "input.h"
 
 #define PLAYER_NAME_LEN 12 + 1
 
@@ -26,9 +27,9 @@ struct player {
     unsigned int prevx;
     unsigned int prevy;
     unsigned int score;
-    unsigned int lkey;
-    unsigned int rkey;
-    unsigned int wkey;
+    button lkey;
+    button rkey;
+    button wkey;
     int holecount;
 };
 

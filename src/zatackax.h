@@ -16,15 +16,13 @@
 #include "broadcast.h"
 #include "weapon.h"
 #include "player.h"
+#include "input.h"
 #include "common.h"
 
 /* SCORES */
 #define SCORE_BUF           8
 #define SCORE_SPACING       25
 #define SCORE_CAP_MAX       65536
-
-/* SPECIAL KEYS */
-#define MAX_KEYNAME         8       /* Maximum length of key name */
 
 /* SPAWNING */
 #define START_ROUND_WAIT    1500    /* Milliseconds until the game starts */
@@ -137,15 +135,6 @@ static bool *settings[8] = {&fullscreen, &sound, &music, &weapons, &holes,
 
 static unsigned int WINDOW_W;       /* Window width */
 static unsigned int WINDOW_H;       /* Window height */
-static unsigned int keyDown[322];   /* 322 is the number of
-                                       possible SDL keys
-                                       (see SDL_keysym.h) */
-
-/* Used for multiple menu navigation input sets */
-enum keySymbols {KEY_LEFT,
-                 KEY_RIGHT,
-                 KEY_UP,
-                 KEY_DOWN};
 
 /* SURFACES */
 static SDL_Surface *screen = NULL;
@@ -225,7 +214,6 @@ void assignAiWeapons(void);
 void resetWeapons(void);
 
 /* MENUS */
-bool qkey(int keysym);
 void initMainMenu(void);
 int logicMainMenu(void);
 void displayMainMenu(void);
@@ -254,9 +242,6 @@ int loadFiles(void);
 void confirmLoading(char *name, SDL_Surface *sprite);
 void saveSettings(char *filename);
 void restoreSettings(char *filename);
-void keyPress(unsigned int key);
-void keyRelease(unsigned int key);
-char *keyName(unsigned int key);
 void displayVoid(void);
 void exitGame(int status);
 

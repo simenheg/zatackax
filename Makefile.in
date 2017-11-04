@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 CFLAGS = @CFLAGS@
-OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o
+OBJECTS = src/zatackax.o src/sound.o src/error.o src/ai.o src/broadcast.o src/input.o
 
 zatackax : $(OBJECTS)
 	@CC@ $(CFLAGS) $(shell pkg-config sdl --cflags) $^ -o $@ @LDFLAGS@ @LIBS@
@@ -32,7 +32,7 @@ verbose : devel
 silent : CFLAGS += -DSILENT
 silent : devel
 
-src/zatackax.o : src/zatackax.c src/zatackax.h src/sound.h src/error.h src/ai.h src/broadcast.h src/common.h src/player.h src/weapon.h
+src/zatackax.o : src/zatackax.c src/zatackax.h src/sound.h src/error.h src/ai.h src/broadcast.h src/common.h src/player.h src/weapon.h src/input.h
 	@CC@ $(CFLAGS) -c -o $@ src/zatackax.c
 
 src/error.o : src/error.c src/error.h src/common.h
@@ -46,6 +46,9 @@ src/ai.o : src/ai.c src/ai.h src/common.h
 
 src/broadcast.o : src/broadcast.c src/broadcast.h src/player.h src/common.h
 	@CC@ $(CFLAGS) -c -o $@ src/broadcast.c
+
+src/input.o: src/input.c src/input.h src/common.h
+	@CC@ $(CFLAGS) -c -o $@ src/input.c
 
 .PHONY: clean
 clean :

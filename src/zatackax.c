@@ -399,15 +399,32 @@ void setNextKey(unsigned char pedit, unsigned char key)
     for (;;) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN
-                || event.type == SDL_MOUSEBUTTONDOWN) {
+                    || event.type == SDL_MOUSEBUTTONDOWN
+                    || event.type == SDL_JOYBUTTONDOWN
+                    || event.type == SDL_JOYAXISMOTION) {
 
                 int k;
-                if (event.type == SDL_KEYDOWN)
-                    k = event.key.keysym.sym;
-                else
-                    k = event.button.button;
+                char *keyname;
 
-                char *keyname = keyName(k);
+                if (event.type == SDL_JOYBUTTONDOWN) {
+                    k = event.button.button | 1 << 9;
+                    keyname = buttonName(k);
+                }
+                else if (event.type == SDL_JOYAXISMOTION) {
+                    k = axisNumber(event.jaxis);
+                    k = (k << 4) | (1 << 9);
+                    keyname = buttonName(k);
+                }
+                else {
+                    if (event.type == SDL_KEYDOWN) {
+                        k = event.key.keysym.sym;
+                    }
+                    else {
+                        k = event.button.button;
+                    }
+
+                    keyname = buttonName(k);
+                }
 
                 if (keyname[0] == '\0') {
                     if (olvl >= O_DEBUG)
@@ -444,7 +461,6 @@ void setNextKey(unsigned char pedit, unsigned char key)
  */
 void setNextName(unsigned char pedit)
 {
-
     struct player *p = &players[pedit];
     bool keyDown[322];
 
@@ -748,10 +764,10 @@ int logicGame(void)
                             p->wep_count -= 1;
                             refreshGameScreen();
                         }
-                    } else if (keyDown[p->wkey]) {
+                    } else if (buttonDown(p->wkey)) {
                         p->wep_time = wep_list[p->weapon].func(p, 1);
                         p->wep_count -= 1;
-                        keyDown[p->wkey] = 0;
+                        clearButton(p->wkey);
                         refreshGameScreen();
                     }
                 }
@@ -818,10 +834,12 @@ int logicGame(void)
                             p->dir += M_PI_2;
                         }
                     } else {
-                        if (keyDown[p->lkey])
+                        if (buttonDown(p->lkey)) {
                             p->dir -= 0.0022 * delta * p->speed;
-                        else if (keyDown[p->rkey])
+                        }
+                        else if (buttonDown(p->rkey)) {
                             p->dir += 0.0022 * delta * p->speed;
+                        }
                     }
                 }
 
@@ -1436,70 +1454,6 @@ void resetWeapons(void)
 }
 
 /**
- * Query key status (for menu navigation).
- *
- * @param keysym One of enum keySymbols.
- * @return True if any of the bound keys are pressed.
- */
-bool qkey(int keysym)
-{
-    switch (keysym) {
-    case KEY_LEFT:
-        if (keyDown[SDLK_LEFT]) {
-            keyDown[SDLK_LEFT] = 0;
-            return 1;
-        } else if (keyDown[SDLK_h]) {
-            keyDown[SDLK_h] = 0;
-            return 1;
-        } else if (keyDown[SDLK_b]) {
-            keyDown[SDLK_b] = 0;
-            return 1;
-        }
-        break;
-    case KEY_RIGHT:
-        if (keyDown[SDLK_RIGHT]) {
-            keyDown[SDLK_RIGHT] = 0;
-            return 1;
-        } else if (keyDown[SDLK_l]) {
-            keyDown[SDLK_l] = 0;
-            return 1;
-        } else if (keyDown[SDLK_f]) {
-            keyDown[SDLK_f] = 0;
-            return 1;
-        }
-        break;
-    case KEY_UP:
-        if (keyDown[SDLK_UP]) {
-            keyDown[SDLK_UP] = 0;
-            return 1;
-        } else if (keyDown[SDLK_k]) {
-            keyDown[SDLK_k] = 0;
-            return 1;
-        } else if (keyDown[SDLK_p]) {
-            keyDown[SDLK_p] = 0;
-            return 1;
-        }
-        break;
-    case KEY_DOWN:
-        if (keyDown[SDLK_DOWN]) {
-            keyDown[SDLK_DOWN] = 0;
-            return 1;
-        } else if (keyDown[SDLK_j]) {
-            keyDown[SDLK_j] = 0;
-            return 1;
-        } else if (keyDown[SDLK_n]) {
-            keyDown[SDLK_n] = 0;
-            return 1;
-        }
-        break;
-    default:
-        break;
-    }
-
-    return 0;
-}
-
-/**
  * Initializes the main menu.
  */
 void initMainMenu(void)
@@ -1514,7 +1468,7 @@ void initMainMenu(void)
  */
 int logicMainMenu(void)
 {
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+    if (enterButtonDown()) {
         switch (menuMain.choice) {
         case 0:
             playSound(SOUND_BEEP, sound);
@@ -1538,16 +1492,16 @@ int logicMainMenu(void)
         default:
             break;
         }
-        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        clearEnterButtons();
         return 1;
-    } else if (qkey(KEY_LEFT)) {
+    } else if (menuButtonQuery(KEY_LEFT)) {
         if (menuMain.choice == 0 && nPlayers > MIN_PLAYERS) {
             --nPlayers;
             playSound(nPlayers - 1, sound);
             deselectWeapons();
         }
         return 1;
-    } else if (qkey(KEY_RIGHT)) {
+    } else if (menuButtonQuery(KEY_RIGHT)) {
         if (!duelmode && menuMain.choice == 0 && nPlayers < MAX_PLAYERS) {
             ++nPlayers;
             playSound(nPlayers - 1, sound);
@@ -1608,26 +1562,34 @@ void displayMainMenu(void)
  */
 int logicWepMenu(void)
 {
-
     int i;
     struct player *p;
 
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+    if (enterButtonDown()) {
         resetWeapons();
         playSound(SOUND_ROUND_BEGIN, sound);
         curScene = &gameStart;
     }
 
     for (p = &players[0], i = 0; i < nPlayers; ++i, ++p) {
-        if (keyDown[p->lkey]) {
-            if (p->weapon == 0) p->weapon = legalWeps() - 1;
-            else p->weapon--;
-            keyDown[p->lkey] = 0;
+        if (buttonDown(p->lkey)) {
+            if (p->weapon == 0) {
+                p->weapon = legalWeps() - 1;
+            }
+            else {
+                p->weapon--;
+            }
+            clearButton(p->lkey);
             return 1;
-        } else if (keyDown[p->rkey]) {
-            if (p->weapon == legalWeps() - 1) p->weapon = 0;
-            else p->weapon++;
-            keyDown[p->rkey] = 0;
+        }
+        else if (buttonDown(p->rkey)) {
+            if (p->weapon == legalWeps() - 1) {
+                p->weapon = 0;
+            }
+            else {
+                p->weapon++;
+            }
+            clearButton(p->rkey);
             return 1;
         }
     }
@@ -1747,7 +1709,7 @@ void displayWepMenu(void)
  */
 int logicSettingsMenu(void)
 {
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+    if (enterButtonDown()) {
         switch (menuSettings.choice) {
         case 0: /* Toggle fullscreen */
             playSound(SOUND_BEEP, sound);
@@ -1799,28 +1761,31 @@ int logicSettingsMenu(void)
             break;
         case 10: /* Back */
             playSound(SOUND_BEP, sound);
-            keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+            clearEnterButtons();
             initMainMenu();
             curScene = curScene->parentScene;
             break;
         default:
             break;
         }
-        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        clearEnterButtons();
         return 1;
-    } else if (qkey(KEY_LEFT)) {
+    }
+    else if (menuButtonQuery(KEY_LEFT)) {
         if (menuSettings.choice == 8 && scorecap > 0) {
             playSound(SOUND_BEP, sound);
             --scorecap;
         }
         return 1;
-    } else if (qkey(KEY_RIGHT)) {
+    }
+    else if (menuButtonQuery(KEY_RIGHT)) {
         if (menuSettings.choice == 8 && scorecap < SCORE_CAP_MAX) {
             playSound(SOUND_BEEP, sound);
             ++scorecap;
         }
         return 1;
-    } else if (keyDown[SDLK_BACKSPACE]) {
+    }
+    else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
         if (menuSettings.choice == 8) {
             playSound(SOUND_BEP, sound);
@@ -1915,7 +1880,7 @@ void displaySettingsMenu(void)
  */
 int logicPlayerMenu(void)
 {
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+    if (enterButtonDown()) {
         if (menuPlayer.choice == 8) {
             playSound(SOUND_BEP, sound);
             curScene = curScene->parentScene;
@@ -1925,7 +1890,7 @@ int logicPlayerMenu(void)
             menuPConf.choice = 0;
             curScene = &pConfMenu;
         }
-        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        clearEnterButtons();
         return 1;
     }
     return handleMenu(&menuPlayer);
@@ -1960,11 +1925,14 @@ void displayPlayerMenu(void)
  */
 int logicPConfMenu(void)
 {
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+    if (enterButtonDown()) {
         switch (menuPConf.choice) {
         case 0:
-            playSound(SOUND_BEEP, sound);
-            setNextName(editPlayer);
+            // Disable name input with joystick for the time being.
+            if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+                playSound(SOUND_BEEP, sound);
+                setNextName(editPlayer);
+            }
             break;
         case 1: /* Toggle AI */
             playSound(SOUND_BEEP, sound);
@@ -1999,14 +1967,14 @@ int logicPConfMenu(void)
         default:
             break;
         }
-        keyDown[SDLK_SPACE] = keyDown[SDLK_RETURN] = 0;
+        clearEnterButtons();
         return 1;
     } else if (menuPConf.choice == 0) {
-        if (qkey(KEY_LEFT)) {
+        if (menuButtonQuery(KEY_LEFT)) {
             playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 0);
             return 1;
-        } else if (qkey(KEY_RIGHT)) {
+        } else if (menuButtonQuery(KEY_RIGHT)) {
             playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 1);
             return 1;
@@ -2033,27 +2001,27 @@ void displayPConfMenu(void)
     char s4[MENU_BUF] = "WEAPON KEY: ";
     char s5[MENU_BUF] = "RIGHT KEY: ";
 
-    char tmpKey[MAX_KEYNAME];
+    char tmpKey[BUTTON_NAME_MAX_LEN];
     struct player *p = (&players[editPlayer]);
-    char *lkey = keyName(p->lkey);
-    char *rkey = keyName(p->rkey);
-    char *wkey = keyName(p->wkey);
+    char *lkey = buttonName(p->lkey);
+    char *rkey = buttonName(p->rkey);
+    char *wkey = buttonName(p->wkey);
     snprintf(s1, MENU_BUF, "%s",
              p->name[0] == '\0' ? "< enter name >" : p->name);
 
     strncat(s2, p->ai ON_OFF, MENU_BUF - strlen(s2));
 
-    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", lkey);
+    snprintf(tmpKey, BUTTON_NAME_MAX_LEN*sizeof(char), "%s", lkey);
     free(lkey);
-    strncat(s3, tmpKey, MAX_KEYNAME - 1);
+    strncat(s3, tmpKey, BUTTON_NAME_MAX_LEN - 1);
 
-    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", wkey);
+    snprintf(tmpKey, BUTTON_NAME_MAX_LEN*sizeof(char), "%s", wkey);
     free(wkey);
-    strncat(s4, tmpKey, MAX_KEYNAME - 1);
+    strncat(s4, tmpKey, BUTTON_NAME_MAX_LEN - 1);
 
-    snprintf(tmpKey, MAX_KEYNAME * sizeof(char), "%s", rkey);
+    snprintf(tmpKey, BUTTON_NAME_MAX_LEN*sizeof(char), "%s", rkey);
     free(rkey);
-    strncat(s5, tmpKey, MAX_KEYNAME - 1);
+    strncat(s5, tmpKey, BUTTON_NAME_MAX_LEN - 1);
 
     c[0] = s1;
     c[1] = s2;
@@ -2076,22 +2044,26 @@ void displayPConfMenu(void)
  */
 int handleMenu(struct menu *m)
 {
-    if (qkey(KEY_DOWN)) {
+    if (menuButtonQuery(KEY_DOWN)) {
         playSound(SOUND_BEEP, sound);
         ++(m->choice);
         return 1;
-    } else if (qkey(KEY_UP)) {
+    }
+    else if (menuButtonQuery(KEY_UP)) {
         playSound(SOUND_BEEP, sound);
         --(m->choice);
         return 1;
     }
+
     if (m->choice >= m->choices) {
         m->choice = 0;
         return 1;
-    } else if (m->choice < 0) {
+    }
+    else if (m->choice < 0) {
         m->choice = m->choices - 1;
         return 1;
     }
+
     return 0;
 }
 
@@ -2277,6 +2249,9 @@ int init(void)
 
     if (atexit(SDL_Quit) != 0)
         return 0;
+
+    openJoysticks();
+    atexit(closeJoysticks);
 
     if (initSound() == -1) {
         if (olvl >= O_NORMAL)
@@ -2658,142 +2633,6 @@ void restoreSettings(char *filename)
 }
 
 /**
- * Turns a pressed key on.
- *
- * @param key The pressed key.
- */
-void keyPress(unsigned int key) {
-    keyDown[key] = 1;
-}
-
-/**
- * Turns a pressed key off.
- *
- * @param key The released key.
- */
-void keyRelease(unsigned int key)
-{
-    keyDown[key] = 0;
-}
-
-/**
- * Generates an appropriate name for a given key.
- *
- * @param key Key to be named.
- * @return The name of the key, zerobytes if it's not valid.
- */
-char *keyName(unsigned int key)
-{
-    char *keyname = calloc(MAX_KEYNAME, sizeof(char));
-
-    if ((key >= SDLK_a && key <= SDLK_z) || (key >= SDLK_0 && key <= SDLK_9))
-        snprintf(keyname, MAX_KEYNAME, "%c", key);
-    else if (key >= SDLK_F1 && key <= SDLK_F15)
-        snprintf(keyname, MAX_KEYNAME, "F%d", key - SDLK_F1 + 1);
-    else {
-        switch (key) {
-        case SDLK_UNKNOWN:
-            snprintf(keyname, MAX_KEYNAME, "none"); break;
-        case SDLK_LEFT:
-            snprintf(keyname, MAX_KEYNAME, "left"); break;
-        case SDLK_RIGHT:
-            snprintf(keyname, MAX_KEYNAME, "right"); break;
-        case SDLK_UP:
-            snprintf(keyname, MAX_KEYNAME, "up"); break;
-        case SDLK_DOWN:
-            snprintf(keyname, MAX_KEYNAME, "down"); break;
-        case SDLK_PAUSE:
-            snprintf(keyname, MAX_KEYNAME, "pause"); break;
-        case SDLK_DELETE:
-            snprintf(keyname, MAX_KEYNAME, "del"); break;
-        case SDLK_INSERT:
-            snprintf(keyname, MAX_KEYNAME, "ins"); break;
-        case SDLK_HOME:
-            snprintf(keyname, MAX_KEYNAME, "home"); break;
-        case SDLK_END:
-            snprintf(keyname, MAX_KEYNAME, "end"); break;
-        case SDLK_MENU:
-            snprintf(keyname, MAX_KEYNAME, "menu"); break;
-        case SDLK_PRINT:
-            snprintf(keyname, MAX_KEYNAME, "prt-sc"); break;
-        case SDLK_PAGEUP:
-            snprintf(keyname, MAX_KEYNAME, "pg up"); break;
-        case SDLK_PAGEDOWN:
-            snprintf(keyname, MAX_KEYNAME, "pg dn"); break;
-        case SDLK_RSHIFT:
-            snprintf(keyname, MAX_KEYNAME, "r-shift"); break;
-        case SDLK_LSHIFT:
-            snprintf(keyname, MAX_KEYNAME, "l-shift"); break;
-        case SDLK_RCTRL:
-            snprintf(keyname, MAX_KEYNAME, "r-ctrl"); break;
-        case SDLK_LCTRL:
-            snprintf(keyname, MAX_KEYNAME, "l-ctrl"); break;
-        case SDLK_RALT:
-            snprintf(keyname, MAX_KEYNAME, "r-alt"); break;
-        case SDLK_LALT:
-            snprintf(keyname, MAX_KEYNAME, "l-alt"); break;
-        case SDLK_MODE:
-            snprintf(keyname, MAX_KEYNAME, "alt gr"); break;
-        case SDLK_RSUPER:
-            snprintf(keyname, MAX_KEYNAME, "r-super"); break;
-        case SDLK_LSUPER:
-            snprintf(keyname, MAX_KEYNAME, "l-super"); break;
-        case SDLK_TAB:
-            snprintf(keyname, MAX_KEYNAME, "tab"); break;
-        case SDLK_PERIOD:
-            snprintf(keyname, MAX_KEYNAME, "."); break;
-        case SDLK_COMMA:
-            snprintf(keyname, MAX_KEYNAME, ","); break;
-        case SDLK_SEMICOLON:
-            snprintf(keyname, MAX_KEYNAME, ";"); break;
-        case SDLK_MINUS:
-            snprintf(keyname, MAX_KEYNAME, "-"); break;
-        case SDLK_QUOTE:
-            snprintf(keyname, MAX_KEYNAME, "'"); break;
-        case SDLK_BACKQUOTE:
-            snprintf(keyname, MAX_KEYNAME, "`"); break;
-        case SDLK_PLUS:
-            snprintf(keyname, MAX_KEYNAME, "+"); break;
-        case SDLK_EQUALS:
-            snprintf(keyname, MAX_KEYNAME, "="); break;
-        case SDLK_COMPOSE:
-            snprintf(keyname, MAX_KEYNAME, "^"); break;
-        case SDLK_SLASH:
-            snprintf(keyname, MAX_KEYNAME, "/"); break;
-        case SDLK_BACKSLASH:
-            snprintf(keyname, MAX_KEYNAME, "\\"); break;
-        case SDLK_LESS:
-            snprintf(keyname, MAX_KEYNAME, "<"); break;
-        case SDLK_LEFTBRACKET:
-            snprintf(keyname, MAX_KEYNAME, "["); break;
-        case SDLK_RIGHTBRACKET:
-            snprintf(keyname, MAX_KEYNAME, "]"); break;
-        case SDLK_BACKSPACE:
-            snprintf(keyname, MAX_KEYNAME, "b-space"); break;
-        case SDLK_RETURN:
-            snprintf(keyname, MAX_KEYNAME, "enter"); break;
-        case SDLK_SPACE:
-            snprintf(keyname, MAX_KEYNAME, "space"); break;
-        case SDL_BUTTON_LEFT:
-            snprintf(keyname, MAX_KEYNAME, "l-mouse"); break;
-        case SDL_BUTTON_MIDDLE:
-            snprintf(keyname, MAX_KEYNAME, "m-mouse"); break;
-        case SDL_BUTTON_RIGHT:
-            snprintf(keyname, MAX_KEYNAME, "r-mouse"); break;
-        case SDLK_WORLD_70:
-            snprintf(keyname, MAX_KEYNAME, "æ"); break;
-        case SDLK_WORLD_88:
-            snprintf(keyname, MAX_KEYNAME, "ø"); break;
-        case SDLK_WORLD_69:
-            snprintf(keyname, MAX_KEYNAME, "å"); break;
-        default:
-            break;
-        }
-    }
-    return keyname;
-}
-
-/**
  * Display nothing.
  */
 void displayVoid(void) {}
@@ -2851,13 +2690,23 @@ int main(void)
     for (;;) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN
-                || event.type == SDL_MOUSEBUTTONDOWN) {
+                    || event.type == SDL_MOUSEBUTTONDOWN
+                    || event.type == SDL_JOYBUTTONDOWN
+                    || event.type == SDL_JOYAXISMOTION) {
 
                 int k;
-                if (event.type == SDL_KEYDOWN)
+                if (event.type == SDL_KEYDOWN) {
                     k = event.key.keysym.sym;
-                else
+                }
+                else if (event.type == SDL_MOUSEBUTTONDOWN) {
                     k = event.button.button;
+                }
+                else if (event.type == SDL_JOYBUTTONDOWN) {
+                    k = event.button.button;
+                }
+                else if (event.type == SDL_JOYAXISMOTION) {
+                    k = axisNumber(event.jaxis) << 4;
+                }
 
                 if (screenFreeze && k == SDLK_RETURN) {
                     screenFreeze = false;
@@ -2866,7 +2715,7 @@ int main(void)
                     curScene->displayFunc();
                 }
 
-                if (k == SDLK_ESCAPE) {
+                if ((event.type == SDL_KEYDOWN && k == SDLK_ESCAPE)) {
                     screenFreeze = false;
                     if (curScene == &game || curScene == &gameStart)
                         endRound();
@@ -2877,24 +2726,60 @@ int main(void)
                     playSound(SOUND_BEP, sound);
                     curScene = curScene->parentScene;
                     curScene->displayFunc();
-                } else {
-                    if (olvl >= O_DEBUG)
-                        fprintf(stderr, "Pressed: %c (%d)\n", k, k);
-                    keyDown[k] = 1;
                 }
-            } else if (event.type == SDL_KEYUP)
-                keyDown[event.key.keysym.sym] = 0;
-            else if (event.type == SDL_MOUSEBUTTONUP)
-                keyDown[event.button.button] = 0;
-            else if (event.type == SDL_QUIT)
-                exitGame(0);
-            else if (event.type == SDL_VIDEORESIZE) {
+                else if (event.type == SDL_JOYBUTTONDOWN) {
+                    if (olvl >= O_DEBUG) {
+                        fprintf(stderr, "Pressed joy button: %d\n", k);
+                    }
+                    joyButtonDown[event.button.which][k] = true;
+                }
+                else if (event.type == SDL_JOYAXISMOTION) {
+                    Uint8 jid = event.jaxis.which;
 
+                    if (event.jaxis.value) {
+                        if (olvl >= O_DEBUG) {
+                            fprintf(stderr, "Joy axis changed: %d\n", k);
+                        }
+                        joyButtonDown[jid][k] = true;
+                    }
+                    else {
+                        if (event.jaxis.axis == JOY_DIR_UP
+                                || event.jaxis.axis == JOY_DIR_DOWN) {
+                            joyButtonDown[jid][JOY_DIR_UP << 4] = false;
+                            joyButtonDown[jid][JOY_DIR_DOWN << 4] = false;
+                        }
+                        else {
+                            joyButtonDown[jid][JOY_DIR_RIGHT << 4] = false;
+                            joyButtonDown[jid][JOY_DIR_LEFT << 4] = false;
+                        }
+                    }
+                }
+                else {
+                    if (olvl >= O_DEBUG) {
+                        fprintf(stderr, "Pressed: %c (%d)\n", k, k);
+                    }
+                    keyDown[k] = true;
+                }
+            }
+            else if (event.type == SDL_KEYUP) {
+                keyDown[event.key.keysym.sym] = false;
+            }
+            else if (event.type == SDL_MOUSEBUTTONUP) {
+                keyDown[event.button.button] = false;
+            }
+            else if (event.type == SDL_JOYBUTTONUP) {
+                joyButtonDown[event.button.which][event.button.button] = false;
+            }
+            else if (event.type == SDL_QUIT) {
+                exitGame(0);
+            }
+            else if (event.type == SDL_VIDEORESIZE) {
                 WINDOW_W = event.resize.w;
                 WINDOW_H = event.resize.h;
 
-                if (!initScreen())
+                if (!initScreen()) {
                     return 1;
+                }
 
                 refreshGameScreen();
             }
