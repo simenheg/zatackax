@@ -62,7 +62,7 @@
 #define ON_OFF                  ? "[on]" : "[off]"
 #define DEFAULT_FULLSCREEN      false
 #define DEFAULT_SOUND           true
-#define DEFAULT_MUSIC           false
+#define DEFAULT_MUSIC           true
 #define DEFAULT_WEAPONS         true
 #define DEFAULT_HOLES           true
 #define DEFAULT_BROADCASTS      true
