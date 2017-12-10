@@ -1,6 +1,13 @@
-## 0.3.0 - ??.??.??
+## 0.3.0 - 10.12.17
 * General:
-  * Add experimental gamepad support.
+  * Zatacka X now runs on Raspberry Pi.
+  * Added experimental gamepad support. This has currently only been
+    tested with one gamepad model, so please let us know if you have
+    any trouble!
+  * The background music is turned on by default.
+* Bugs:
+  * Merged performance improvements and a bug fix from the OpenPandora
+    port of Zatacka X by Sebastien Chevalier.
 
 ## 0.2.0 - 08.07.17
 * General:
