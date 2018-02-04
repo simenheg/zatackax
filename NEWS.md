@@ -1,4 +1,4 @@
-## 0.3.1 - ??.??.??
+## 0.3.1 - 04.02.18
 * Bugs:
   * Support multiple connected gamepads.
 
