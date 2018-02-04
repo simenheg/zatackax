@@ -1,3 +1,7 @@
+## 0.3.1 - ??.??.??
+* Bugs:
+  * Support multiple connected gamepads.
+
 ## 0.3.0 - 10.12.17
 * General:
   * Zatacka X now runs on Raspberry Pi.

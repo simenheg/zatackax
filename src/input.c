@@ -17,7 +17,7 @@
 
 #include "input.h"
 
-const int BUTTON_NAME_MAX_LEN = 10;
+const int BUTTON_NAME_MAX_LEN = 14;
 
 /*
  * The joystick button that is treated as an enter button in the
@@ -30,8 +30,8 @@ bool keyDown[322];
 
 /*
  * A separate map is kept for each possible joystick (0-7). See the
- * `button` type below for details about how buttons and axes are
- * represented.
+ * `button` type in `input.h` for details about how buttons and axes
+ * are represented.
  */
 bool joyButtonDown[MAX_PLAYERS][128];
 
@@ -223,8 +223,14 @@ char *buttonName(button b)
     char *keyname = calloc(BUTTON_NAME_MAX_LEN, sizeof(char));
 
     if (isJoyButton(b)) {
-        snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%d",
-                 joyButtonNumber(b) + 1);
+        if (numJoys > 1) {
+            snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%d (%d)",
+                     joyButtonNumber(b) + 1, joyIndex(b) + 1);
+        }
+        else {
+            snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%d",
+                     joyButtonNumber(b) + 1);
+        }
     }
     else if (isJoyAxis(b)) {
         int axisNumber = joyAxisDir(b);
@@ -241,7 +247,13 @@ char *buttonName(button b)
             axisName = "left"; break;
         }
 
-        snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%s", axisName);
+        if (numJoys > 1) {
+            snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%s (%d)",
+                     axisName, joyIndex(b) + 1);
+        }
+        else {
+            snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%s", axisName);
+        }
     }
     else if ((b >= SDLK_a && b <= SDLK_z)
                  || (b >= SDLK_0 && b <= SDLK_9)) {

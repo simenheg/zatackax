@@ -389,7 +389,8 @@ void setColor(unsigned char pedit, bool up)
 }
 
 /**
- * Catches and sets the next key pressed as a player's directional keys.
+ * Capture and set the next key pressed as a player's directional or
+ * weapon key.
  *
  * @param pedit ID of the player to edit.
  * @param key l - left key, r - right key, w - weapon key
@@ -407,12 +408,14 @@ void setNextKey(unsigned char pedit, unsigned char key)
                 char *keyname;
 
                 if (event.type == SDL_JOYBUTTONDOWN) {
-                    k = event.button.button | 1 << 9;
+                    Uint8 joyIndex = event.jbutton.which + 1;
+                    k = event.jbutton.button | joyIndex << 9;
                     keyname = buttonName(k);
                 }
                 else if (event.type == SDL_JOYAXISMOTION) {
+                    Uint8 joyIndex = event.jaxis.which + 1;
                     k = axisNumber(event.jaxis);
-                    k = (k << 4) | (1 << 9);
+                    k = (k << 4) | (joyIndex << 9);
                     keyname = buttonName(k);
                 }
                 else {
