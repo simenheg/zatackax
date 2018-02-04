@@ -1,5 +1,5 @@
 /* broadcast -- creating broadcast messages.
- * Copyright (C) 2010-2017 The Zatacka X development team
+ * Copyright (C) 2010-2018 The Zatacka X development team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
