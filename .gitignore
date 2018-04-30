@@ -1,0 +1,7 @@
+.zatackax
+Makefile
+config.log
+config.status
+gmon.out
+src/*.o
+zatackax
