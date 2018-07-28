@@ -1844,19 +1844,19 @@ void displaySettingsMenu(void)
     char s7[MENU_BUF] = "SHOW BORDER ";
     char s8[MENU_BUF] = "DUEL MODE ";
     char s9[MENU_BUF] = "SCORE CAP: ";
-    strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1));
-    strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2));
-    strncat(s3, music ON_OFF, MENU_BUF - strlen(s3));
-    strncat(s4, weapons ON_OFF, MENU_BUF - strlen(s4));
-    strncat(s5, holes ON_OFF, MENU_BUF - strlen(s5));
-    strncat(s6, broadcasts ON_OFF, MENU_BUF - strlen(s6));
-    strncat(s7, border ON_OFF, MENU_BUF - strlen(s7));
-    strncat(s8, duelmode ON_OFF, MENU_BUF - strlen(s8));
+    strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1) - 1);
+    strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2) - 1);
+    strncat(s3, music ON_OFF, MENU_BUF - strlen(s3) - 1);
+    strncat(s4, weapons ON_OFF, MENU_BUF - strlen(s4) - 1);
+    strncat(s5, holes ON_OFF, MENU_BUF - strlen(s5) - 1);
+    strncat(s6, broadcasts ON_OFF, MENU_BUF - strlen(s6) - 1);
+    strncat(s7, border ON_OFF, MENU_BUF - strlen(s7) - 1);
+    strncat(s8, duelmode ON_OFF, MENU_BUF - strlen(s8) - 1);
     if (scorecap == 0) {
-        strncat(s9, "∞", MENU_BUF);
+        strncat(s9, "∞", MENU_BUF - strlen(s9) - 1);
     } else {
         snprintf(tmpCap, SCORE_BUF, "%d", scorecap);
-        strncat(s9, tmpCap, MENU_BUF - SCORE_BUF);
+        strncat(s9, tmpCap, MENU_BUF - strlen(s9) - 1);
     }
     c[0] = s1;
     c[1] = s2;
@@ -2012,19 +2012,19 @@ void displayPConfMenu(void)
     snprintf(s1, MENU_BUF, "%s",
              p->name[0] == '\0' ? "< enter name >" : p->name);
 
-    strncat(s2, p->ai ON_OFF, MENU_BUF - strlen(s2));
+    strncat(s2, p->ai ON_OFF, MENU_BUF - strlen(s2) - 1);
 
     snprintf(tmpKey, BUTTON_NAME_MAX_LEN*sizeof(char), "%s", lkey);
     free(lkey);
-    strncat(s3, tmpKey, BUTTON_NAME_MAX_LEN - 1);
+    strncat(s3, tmpKey, MENU_BUF - strlen(s3) - 1);
 
     snprintf(tmpKey, BUTTON_NAME_MAX_LEN*sizeof(char), "%s", wkey);
     free(wkey);
-    strncat(s4, tmpKey, BUTTON_NAME_MAX_LEN - 1);
+    strncat(s4, tmpKey, MENU_BUF - strlen(s4) - 1);
 
     snprintf(tmpKey, BUTTON_NAME_MAX_LEN*sizeof(char), "%s", rkey);
     free(rkey);
-    strncat(s5, tmpKey, BUTTON_NAME_MAX_LEN - 1);
+    strncat(s5, tmpKey, MENU_BUF - strlen(s5) - 1);
 
     c[0] = s1;
     c[1] = s2;
