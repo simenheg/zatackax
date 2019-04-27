@@ -139,7 +139,7 @@ void resetPlayer(int player)
     p->invertedKeys = false;
     p->weapon = false;
     p->ai = false;
-    snprintf(p->name, PLAYER_NAME_LEN, defaultNames[player]);
+    strncpy(p->name, defaultNames[player], PLAYER_NAME_LEN - 1);
 
     switch (player) {
     case 0:
@@ -325,8 +325,8 @@ void respawn(struct player *p)
             /* Securing spawning space between zatas. This may cause
              * trouble at small maps (will never get a fit).
              * ZATA_SPAWN_SPACING cuts off the waiting. */
-            if (abs(p->posx - comp->posx) > ZATA_SPAWN_SPACING
-                && abs(p->posy - comp->posy) > ZATA_SPAWN_SPACING) {
+            if (fabs(p->posx - comp->posx) > ZATA_SPAWN_SPACING
+                && fabs(p->posy - comp->posy) > ZATA_SPAWN_SPACING) {
                 --posOK;
             }
         }
