@@ -2663,7 +2663,7 @@ int main(void)
                     || event.type == SDL_JOYBUTTONDOWN
                     || event.type == SDL_JOYAXISMOTION) {
 
-                int k;
+                int k = -1;
                 if (event.type == SDL_KEYDOWN) {
                     k = event.key.keysym.sym;
                 }
