@@ -992,7 +992,7 @@ void drawExtras(void)
             offset.y += 2;
             offset.x += WEP_SMALL_INIT_OFFSET;
 
-            for (int i = 0; i < p->wep_count; ++i) {
+            for (int j = 0; j < p->wep_count; ++j) {
                 offset.x += WEP_SMALL_PADDING;
                 SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
                                 &offset);
