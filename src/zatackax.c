@@ -89,8 +89,7 @@ struct scene *curScene = NULL;
  */
 void initPlayers1(void)
 {
-    int i;
-    for (i = 0; i < MAX_PLAYERS; ++i)
+    for (int i = 0; i < MAX_PLAYERS; ++i)
         resetPlayer(i);
 }
 
@@ -177,8 +176,7 @@ void resetPlayer(int player)
  */
 void deselectWeapons(void)
 {
-    int i;
-    for (i = 0; i < nPlayers; ++i)
+    for (int i = 0; i < nPlayers; ++i)
         (&players[i])->weapon = 0;
 }
 
@@ -189,9 +187,8 @@ void deselectWeapons(void)
  */
 SDL_Color *extractPColors(void)
 {
-    int i;
     SDL_Color *pcolors = malloc(sizeof(SDL_Color) * N_COLORS);
-    for (i = 0; i < N_COLORS; ++i)
+    for (int i = 0; i < N_COLORS; ++i)
         pcolors[i] = colors[players[i].color];
     return pcolors;
 }
@@ -204,8 +201,6 @@ SDL_Color *extractPColors(void)
  */
 void killPlayer(unsigned char victim, unsigned char killer)
 {
-    int i;
-
     playSound(SOUND_CRASH, sound);
 
     if (broadcasts) {
@@ -226,7 +221,7 @@ void killPlayer(unsigned char victim, unsigned char killer)
     --alivecount;
     p->alive = false;
 
-    for (i = 0; i < MAX_PLAYERS; ++i) {
+    for (int i = 0; i < MAX_PLAYERS; ++i) {
         struct player *pt = &players[i];
         if (pt->active) {
             if (pt->alive) {
@@ -315,12 +310,11 @@ void respawn(struct player *p)
     int n = TRY_SPAWN_THIS_HARD;
 
     while (posOK && n != 0) {
-        int i;
         posOK = p->active - 1;
         initPos = spawn();
         p->posx = initPos.x;
         p->posy = initPos.y;
-        for (i = 0; i < p->active - 1; ++i) {
+        for (int i = 0; i < p->active - 1; ++i) {
             struct player *comp = &players[i];
             /* Securing spawning space between zatas. This may cause
              * trouble at small maps (will never get a fit).
@@ -550,15 +544,13 @@ void initHitMap(unsigned int w, unsigned int h)
 void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                  unsigned char modifier)
 {
-    int i, j;
-
     if (olvl >= O_DEBUG)
         fprintf(stderr, "Added to hitmap: %d, %d...\n", x, y);
 
     SDL_LockSurface(screen);
 
-    for (i = -TOLERANCE; i <= TOLERANCE; ++i) {
-        for (j = -TOLERANCE; j <= TOLERANCE; ++j) {
+    for (int i = -TOLERANCE; i <= TOLERANCE; ++i) {
+        for (int j = -TOLERANCE; j <= TOLERANCE; ++j) {
 
             if (abs(i) + abs(j) > TOLERANCE + 1)
                 continue;
@@ -704,7 +696,6 @@ void cleanHitMap(void)
  */
 int logicGame(void)
 {
-    int i;
     Uint32 timenow = SDL_GetTicks();
     Uint32 delta = timenow - prevtime;
     prevtime = timenow;
@@ -720,8 +711,7 @@ int logicGame(void)
         return 0;
     }
 
-    for (i = 0; i < MAX_PLAYERS; ++i) {
-
+    for (int i = 0; i < MAX_PLAYERS; ++i) {
         if (winnerDeclared)
             return 0;
 
@@ -916,8 +906,7 @@ void displayGameStart(void)
     drawExtras();
 
     if ((countdown % (START_ROUND_WAIT / 4)) > (START_ROUND_WAIT / 8)) {
-        int i;
-        for (i = 0; i < MAX_PLAYERS; ++i) {
+        for (int i = 0; i < MAX_PLAYERS; ++i) {
             if (players[i].active) {
                 struct player *p = &players[i];
                 SDL_Rect offset = {(int)p->posx - 8, (int)p->posy - 8,
@@ -942,10 +931,6 @@ void displayGameStart(void)
  */
 void refreshGameScreen(void)
 {
-    unsigned char *target;
-    unsigned int xx;
-    unsigned int yy;
-
     SDL_UnlockSurface(screen);
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                                                         0x00, 0x00, 0x00));
@@ -954,10 +939,10 @@ void refreshGameScreen(void)
 
     SDL_LockSurface(screen);
 
-    target = screen->pixels;
+    unsigned char *target = screen->pixels;
 
-    for (yy = 0; yy < WINDOW_H; ++yy) {
-        for (xx = 0; xx < WINDOW_W; ++xx, target += 4) {
+    for (unsigned int yy = 0; yy < WINDOW_H; ++yy) {
+        for (unsigned int xx = 0; xx < WINDOW_W; ++xx, target += 4) {
             char charat = hitmap[sizeof(bool)
                                  * ((WINDOW_W * yy) + xx)];
             if (charat != 0) {
@@ -989,13 +974,11 @@ void refreshGameScreen(void)
  */
 void drawExtras(void)
 {
-    int i;
-    struct player *p;
     char score_str[SCORE_BUF];
     SDL_Surface *scoreText;
 
-    for (i = 0; i < nPlayers; ++i) {
-        p = &players[i];
+    for (int i = 0; i < nPlayers; ++i) {
+        struct player *p = &players[i];
 
         SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
 
@@ -1006,11 +989,10 @@ void drawExtras(void)
         SDL_FreeSurface(scoreText);
 
         if (weapons && p->wep_count > 0) {
-            int i;
             offset.y += 2;
             offset.x += WEP_SMALL_INIT_OFFSET;
 
-            for (i = 0; i < p->wep_count; ++i) {
+            for (int i = 0; i < p->wep_count; ++i) {
                 offset.x += WEP_SMALL_PADDING;
                 SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
                                 &offset);
@@ -1018,9 +1000,8 @@ void drawExtras(void)
         }
     }
 
-
     if (broadcasts) {
-        for (i = 0; i < BROADC_LIMIT; ++i) {
+        for (int i = 0; i < BROADC_LIMIT; ++i) {
             if (broadcast[i] != NULL) {
                 SDL_Rect offset = {WINDOW_W - broadcast[i]->w - 4,
                                    WINDOW_H - (broadcast[i]->h * (i + 1)),
@@ -1061,8 +1042,6 @@ void drawExtras(void)
  */
 void newRound(void)
 {
-    int i;
-
     cleanHitMap();
 
     alivecount = nPlayers;
@@ -1078,7 +1057,7 @@ void newRound(void)
         resetWeapons();
     winnerDeclared = false;
 
-    for (i = 0; i < MAX_PLAYERS; ++i) {
+    for (int i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
             if (olvl >= O_VERBOSE)
@@ -1131,8 +1110,7 @@ int legalWeps(void)
  */
 void assignAiWeapons(void)
 {
-    int i;
-    for (i = 0; i < nPlayers; ++i) {
+    for (int i = 0; i < nPlayers; ++i) {
         struct player *p = &players[i];
         if (p->ai) {
             double rnd = (double)rand() / RAND_MAX;
@@ -1166,8 +1144,6 @@ int wepLightningspeed(struct player *p, bool on)
  */
 int wepFrostwave(struct player *p, bool on)
 {
-    int i;
-
     activeFreeze = on;
 
     if (on)
@@ -1175,7 +1151,7 @@ int wepFrostwave(struct player *p, bool on)
     else
         refreshGameScreen();
 
-    for (i = 0; i < nPlayers; ++i) {
+    for (int i = 0; i < nPlayers; ++i) {
         struct player *target = &players[i];
         if (target != p) {
             if (on)
@@ -1224,8 +1200,7 @@ int wepConfusion(struct player *p, bool on)
     else
         refreshGameScreen();
 
-    int i;
-    for (i = 0; i < nPlayers; ++i) {
+    for (int i = 0; i < nPlayers; ++i) {
         struct player *target = &players[i];
         if (target != p) {
             unsigned int tmpkey = target->lkey;
@@ -1441,8 +1416,7 @@ int wepSwitch(struct player *p, bool on)
  */
 void resetWeapons(void)
 {
-    int i;
-    for (i = 0; i < MAX_PLAYERS; ++i) {
+    for (int i = 0; i < MAX_PLAYERS; ++i) {
         struct player *p = &players[i];
         if (p->active) {
 
@@ -1519,7 +1493,6 @@ int logicMainMenu(void)
  */
 void displayMainMenu(void)
 {
-    int i;
     char *c[menuMain.choices];
     c[0] = "START GAME";
     c[1] = "SETTINGS";
@@ -1532,7 +1505,7 @@ void displayMainMenu(void)
     SDL_BlitSurface(logo, NULL, screen, &offset);
 
     /* This could/should be made smoother... */
-    for (i = 0; i < nPlayers; ++i) {
+    for (int i = 0; i < nPlayers; ++i) {
         offset.x = (WINDOW_W / 2)            /* window offset */
             - 60                             /* temp. offset */
             + (i - nPlayers) * BALL_SPACING; /* player modifier */
@@ -1543,7 +1516,7 @@ void displayMainMenu(void)
         SDL_BlitSurface(pballs[i], NULL, screen, &offset);
     }
 
-    for (i = nPlayers; i < MAX_PLAYERS; ++i) {
+    for (int i = nPlayers; i < MAX_PLAYERS; ++i) {
         offset.x = (WINDOW_W / 2)            /* window offset */
             + 68                             /* temp. offset */
             + (i - nPlayers) * BALL_SPACING; /* player modifier */
@@ -1604,7 +1577,6 @@ int logicWepMenu(void)
  */
 void displayWepMenu(void)
 {
-    int i, j;
     struct player *p;
     int nweps = legalWeps();
     int mid = -(nweps / 2);
@@ -1615,7 +1587,7 @@ void displayWepMenu(void)
     SDL_Surface *wep_text;
 
     /* Draw weapon description strings */
-    for (i = 0; i < nPlayers; ++i) {
+    for (int i = 0; i < nPlayers; ++i) {
         p = &players[i];
         struct weapon w = wep_list[p->weapon];
 
@@ -1663,7 +1635,7 @@ void displayWepMenu(void)
     }
 
     /* Draw weapon icons */
-    for (i = 0; i < nweps; ++i, ++mid) {
+    for (int i = 0; i < nweps; ++i, ++mid) {
         SDL_Rect offset = {
             (WINDOW_W / 2)          /* offset */
             - (wepIcons[0]->w / 2)  /* centralize */
@@ -1681,7 +1653,7 @@ void displayWepMenu(void)
 
         /* Draw weapon selection arrows */
         offset.y -= PARROWSELECT_MOD_Y;
-        for (j = 0; j < nPlayers; ++j) {
+        for (int j = 0; j < nPlayers; ++j) {
             if (j == MAX_PLAYERS / 2) {
                 offset.y += wepIcons[0]->h + PARROWSELECT_MOD_Y * 1.2;
                 offset.x -= PARROWSELECT_MOD_X * (MAX_PLAYERS / 2);
@@ -2081,13 +2053,12 @@ int handleMenu(struct menu *m)
  */
 void displayMenu(char *c[], struct menu *m, int ymod)
 {
-    int i;
     int mid = -(m->choices / 2);
 
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                                                         0x00, 0x00, 0x00));
 
-    for (i = 0; i < m->choices; ++i, ++mid) {
+    for (int i = 0; i < m->choices; ++i, ++mid) {
 
         if (i == m->choice) {
             msg = TTF_RenderUTF8_Shaded(font_menub, c[i],
@@ -2168,11 +2139,10 @@ void putPixel(int x, int y, SDL_Color c, unsigned char *target)
  */
 void colorFill(SDL_Color c, SDL_Surface *sprite)
 {
-    int xx, yy;
     unsigned char *target = sprite->pixels;
 
-    for (yy = 0; yy < sprite->h; ++yy) {
-        for (xx = 0; xx < sprite->w; ++xx, target += 4) {
+    for (int yy = 0; yy < sprite->h; ++yy) {
+        for (int xx = 0; xx < sprite->w; ++xx, target += 4) {
             target[0] *= c.b / 255.0;
             target[1] *= c.g / 255.0;
             target[2] *= c.r / 255.0;
@@ -2220,11 +2190,10 @@ void initColors(void)
  */
 void colorBalls(void)
 {
-    int i;
     SDL_Color inactive = {127, 127, 127, 0};
     SDL_Surface **s = pballs;
     struct player *p = &players[0];
-    for (i = 0; i < MAX_PLAYERS; ++i, ++p, ++s) {
+    for (int i = 0; i < MAX_PLAYERS; ++i, ++p, ++s) {
         SDL_BlitSurface(ball, NULL, *s, NULL);
         SDL_LockSurface(*s);
         colorFill(colors[p->color], *s);
@@ -2287,7 +2256,6 @@ int init(void)
  */
 int loadFiles(void)
 {
-    int x, y, i;
     SDL_Surface **p;
 
     /* Load images and fonts */
@@ -2434,8 +2402,8 @@ int loadFiles(void)
     }
 
     /* Clip arrow sprite sheet */
-    for (y = i = 0; y < arrows->h; y += 16) {
-        for (x = 0; x < arrows->w; x += 16, ++i) {
+    for (int y = 0, i = 0; y < arrows->h; y += 16) {
+        for (int x = 0; x < arrows->w; x += 16, ++i) {
             arrowClip[i].x = x;
             arrowClip[i].y = y;
             arrowClip[i].w = 16;
@@ -2446,7 +2414,7 @@ int loadFiles(void)
     /* Make arrow copies */
     parrows = malloc(MAX_PLAYERS * sizeof(SDL_Surface));
     p = parrows;
-    for (i = 0; i < MAX_PLAYERS; ++i, ++p) {
+    for (int i = 0; i < MAX_PLAYERS; ++i, ++p) {
         *p = SDL_CreateRGBSurface(arrows->flags, arrows->w,
                                   arrows->h, arrows->format->BitsPerPixel,
                                   arrows->format->Rmask,
@@ -2457,7 +2425,7 @@ int loadFiles(void)
     /* Make ball copies */
     pballs = malloc((MAX_PLAYERS + 1) * sizeof(SDL_Surface));
     p = pballs;
-    for (i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
+    for (int i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
         *p = SDL_CreateRGBSurface(ball->flags, ball->w,
                                   ball->h, ball->format->BitsPerPixel,
                                   ball->format->Rmask, ball->format->Gmask,
@@ -2512,7 +2480,6 @@ void confirmLoading(char *name, SDL_Surface *sprite)
  */
 void saveSettings(char *filename)
 {
-    unsigned int i;
     FILE *savefile = NULL;
 
     if ((savefile = fopen(filename, "w")) == NULL) {
@@ -2522,11 +2489,11 @@ void saveSettings(char *filename)
         }
         return;
     } else {
-        for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
+        for (unsigned int i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
             fprintf(savefile, "%s = %d\n", settingNames[i], *settings[i]);
         }
         fprintf(savefile, "scorecap = %d\n", scorecap);
-        for (i = 0; i < MAX_PLAYERS; ++i) {
+        for (unsigned int i = 0; i < MAX_PLAYERS; ++i) {
             fprintf(savefile, "%dn = %s\n", i + 1, (&players[i])->name);
             fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
             fprintf(savefile, "%da = %d\n", i + 1, (&players[i])->ai);
@@ -2561,7 +2528,6 @@ void restoreSettings(char *filename)
                     filename);
         return;
     } else {
-
         char settingHandle[STRBUF];
         char settingParam[STRBUF];
         unsigned int i;

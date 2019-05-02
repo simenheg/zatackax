@@ -38,8 +38,7 @@
 char pollAi(double posx, double posy, double dir, unsigned char id,
             unsigned char *hitmap, unsigned int w, unsigned int h)
 {
-    int i;
-    for (i = 0; i < COWARDNESS_FRONT; ++i) {
+    for (int i = 0; i < COWARDNESS_FRONT; ++i) {
         int checkx, checky, result;
         if (i < COWARDNESS_DIAGS) {
             /* left diagonal */

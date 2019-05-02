@@ -22,10 +22,8 @@
  */
 void pushBroadcasts(void)
 {
-    int i;
-
     SDL_FreeSurface(broadcast[BROADC_LIMIT - 1]);
-    for (i = BROADC_LIMIT - 1; i > 0; --i) {
+    for (int i = BROADC_LIMIT - 1; i > 0; --i) {
         broadcast[i] = broadcast[i - 1];
         if (broadcast[i] != NULL) {
             int alpha = 255 - i * (255.0 / BROADC_LIMIT);
@@ -39,8 +37,7 @@ void pushBroadcasts(void)
  */
 void cleanBroadcasts(void)
 {
-    int i;
-    for (i = 0; i < BROADC_LIMIT; ++i) {
+    for (int i = 0; i < BROADC_LIMIT; ++i) {
         SDL_FreeSurface(broadcast[i]);
     }
     memset(broadcast, '\0', BROADC_LIMIT * sizeof(SDL_Surface*));
