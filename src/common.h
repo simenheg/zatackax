@@ -10,7 +10,7 @@
 
 /* PLAYERS */
 #define MIN_PLAYERS         2   /* Minimum number of players */
-#define MAX_PLAYERS         8   /* Maximal number of players */
+#define MAX_PLAYERS         8   /* Maximum number of players */
 #define DEFAULT_N_PLAYERS   2   /* Default number of players */
 
 /* OUTPUT LEVEL */

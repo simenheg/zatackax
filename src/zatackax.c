@@ -30,7 +30,7 @@ struct menu menuSettings = {
 };
 
 struct menu menuPlayer = {
-    9,
+    MAX_PLAYERS + 1,
     0,
 };
 
@@ -1856,7 +1856,7 @@ void displaySettingsMenu(void)
 int logicPlayerMenu(void)
 {
     if (enterButtonDown()) {
-        if (menuPlayer.choice == 8) {
+        if (menuPlayer.choice == menuPlayer.choices - 1) {
             playSound(SOUND_BEP, sound);
             curScene = curScene->parentScene;
         } else {
