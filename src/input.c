@@ -274,6 +274,8 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "up"); break;
         case SDLK_DOWN:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "down"); break;
+        case SDLK_SCROLLOCK:
+            snprintf(keyname, BUTTON_NAME_MAX_LEN, "scr-lk"); break;
         case SDLK_PAUSE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "pause"); break;
         case SDLK_DELETE:
