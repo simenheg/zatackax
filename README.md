@@ -7,6 +7,7 @@ opponents.
 ![screenshot](http://folk.uio.no/simenheg/zatackax_small.png)
 
 ## Installation
+### From source
 To compile Zatacka X, run:
 
     $ ./configure
@@ -19,14 +20,14 @@ Compilation depends on the following libraries:
 * SDL_ttf 2.0
 * SDL_mixer 1.2
 
-All of which are found on the SDL website: http://www.libsdl.org/.
+These are often provided by GNU/Linux distributions. Under Debian, for
+instance, the following command installs the required libraries:
 
-These libraries are probably provided by your GNU/Linux
-distribution. Under Debian, for instance, you could run the following
-command to install all the required libraries:
+    $ sudo apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-mixer1.2-dev
 
-    $ sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev \
-        libsdl-ttf2.0-dev libsdl-mixer1.2-dev
+### From a repository
+* Arch Linux: [Arch User Repository (AUR)](https://aur.archlinux.org/packages/zatackax-git)
+* Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
 
 ## License
 The Zatacka X code is free software, licensed under the GNU General Public
