@@ -234,7 +234,7 @@ char *buttonName(button b)
     }
     else if (isJoyAxis(b)) {
         int axisNumber = joyAxisDir(b);
-        char *axisName;
+        char *axisName = "";
 
         switch (axisNumber) {
         case JOY_DIR_UP:
