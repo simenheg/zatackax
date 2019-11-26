@@ -1,3 +1,9 @@
+## 0.3.2 - ??.??.??
+* General:
+  * The configuration file is now stored in
+    `$XDG_CONFIG_HOME/zatackax`, or in `$HOME/.config/zatackax` if
+    `$XDG_CONFIG_HOME` is unset.
+
 ## 0.3.1 - 04.02.18
 * Bugs:
   * Support multiple connected gamepads.

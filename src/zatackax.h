@@ -17,6 +17,7 @@
 #include "weapon.h"
 #include "player.h"
 #include "input.h"
+#include "config.h"
 #include "common.h"
 
 /* SCORES */
@@ -58,15 +59,6 @@
 #define TRIANGLE_PANNING_X      1.8
 #define TRIANGLE_PANNING_Y      6.5
 #define ON_OFF                  ? "[on]" : "[off]"
-#define DEFAULT_FULLSCREEN      false
-#define DEFAULT_SOUND           true
-#define DEFAULT_MUSIC           true
-#define DEFAULT_WEAPONS         true
-#define DEFAULT_HOLES           true
-#define DEFAULT_BROADCASTS      true
-#define DEFAULT_BORDER          false
-#define DEFAULT_DUELMODE        false
-#define DEFAULT_SCORECAP        false
 
 struct recentMapPiece {
     int x, y, count;
@@ -117,21 +109,6 @@ static bool activeFreeze = false;
 static bool activeConfusion = false;
 static bool activeTron = false;
 static bool activeChilirun = false;
-
-static unsigned int scorecap = DEFAULT_SCORECAP;
-static bool fullscreen = DEFAULT_FULLSCREEN;
-static bool sound = DEFAULT_SOUND;
-static bool music = DEFAULT_MUSIC;
-static bool weapons = DEFAULT_WEAPONS;
-static bool holes = DEFAULT_HOLES;
-static bool broadcasts = DEFAULT_BROADCASTS;
-static bool border = DEFAULT_BORDER;
-static bool duelmode = DEFAULT_DUELMODE;
-static const char *settingNames[] = {"fullscreen", "sound", "music", "weapons",
-                                     "holes", "broadcasts", "border",
-                                     "duelmode"};
-static bool *settings[8] = {&fullscreen, &sound, &music, &weapons, &holes,
-                            &broadcasts, &border, &duelmode};
 
 static unsigned int WINDOW_W;       /* Window width */
 static unsigned int WINDOW_H;       /* Window height */
@@ -240,8 +217,6 @@ void colorBalls(void);
 int init(void);
 int loadFiles(void);
 void confirmLoading(char *name, SDL_Surface *sprite);
-void saveSettings(char *filename);
-void restoreSettings(char *filename);
 void displayVoid(void);
 void exitGame(int status);
 

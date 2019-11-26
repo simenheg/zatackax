@@ -2474,134 +2474,6 @@ void confirmLoading(char *name, SDL_Surface *sprite)
 }
 
 /**
- * Saves the current settings to a configfile.
- *
- * @param filename Name of the file to save current settings to.
- */
-void saveSettings(char *filename)
-{
-    FILE *savefile = NULL;
-
-    if ((savefile = fopen(filename, "w")) == NULL) {
-        if (olvl >= O_NORMAL) {
-            fprintf(stderr, "Couldn't open file '%s' for writing.\n",
-                    filename);
-        }
-        return;
-    } else {
-        for (unsigned int i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
-            fprintf(savefile, "%s = %d\n", settingNames[i], *settings[i]);
-        }
-        fprintf(savefile, "scorecap = %d\n", scorecap);
-        for (unsigned int i = 0; i < MAX_PLAYERS; ++i) {
-            fprintf(savefile, "%dn = %s\n", i + 1, (&players[i])->name);
-            fprintf(savefile, "%dc = %d\n", i + 1, (&players[i])->color);
-            fprintf(savefile, "%da = %d\n", i + 1, (&players[i])->ai);
-            fprintf(savefile, "%dl = %d\n", i + 1, (&players[i])->lkey);
-            fprintf(savefile, "%dw = %d\n", i + 1, (&players[i])->wkey);
-            fprintf(savefile, "%dr = %d\n", i + 1, (&players[i])->rkey);
-        }
-    }
-
-    if (olvl >= O_NORMAL) {
-        if (ferror(savefile)) {
-            if (olvl >= O_NORMAL)
-                fprintf(stderr, "Error writing to file '%s'.\n", filename);
-        }
-    }
-
-    fclose(savefile);
-}
-
-/**
- * Restores previous settings from a configure file.
- *
- * @param filename Name of the file to load the settings from.
- */
-void restoreSettings(char *filename)
-{
-    FILE *savefile = NULL;
-
-    if ((savefile = fopen(filename, "r")) == NULL) {
-        if (olvl >= O_DEBUG)
-            fprintf(stderr, "Couldn't restore settings from file %s.\n",
-                    filename);
-        return;
-    } else {
-        char settingHandle[STRBUF];
-        char settingParam[STRBUF];
-        unsigned int i;
-        int line = 0;
-        bool valid;
-
-        for (;;) {
-            if ((fscanf(savefile, "%s = %s\n", settingHandle,
-                        settingParam)) != EOF) {
-                valid = 0;
-                for (i = 0; i < sizeof(settings) / sizeof(bool*); ++i) {
-                    if (strncmp(settingNames[i], settingHandle, STRBUF) == 0) {
-                        /* We have a matched setting */
-                        *settings[i] = atoi(settingParam);
-                        valid = 1;
-                        break;
-                    }
-                }
-                if (!valid && strncmp("scorecap", settingHandle, STRBUF) == 0)
-                {
-                    scorecap = atoi(settingParam);
-                    valid = 1;
-                } else if (!valid && isdigit(settingHandle[0])) {
-                    switch (settingHandle[1]) {
-                    case 'n': /* Name */
-                        strncpy((&players[settingHandle[0] - '0' - 1])->name,
-                                settingParam, PLAYER_NAME_LEN);
-                        valid = 1;
-                        break;
-                    case 'c': /* Color */
-                        (&players[settingHandle[0] - '0' - 1])->
-                            color = atoi(settingParam);
-                        valid = 1;
-                        break;
-                    case 'a': /* AI */
-                        (&players[settingHandle[0] - '0' - 1])->
-                            ai = atoi(settingParam);
-                        valid = 1;
-                        break;
-                    case 'l': /* Left key */
-                        (&players[settingHandle[0] - '0' - 1])->
-                            lkey = atoi(settingParam);
-                        valid = 1;
-                        break;
-                    case 'w': /* Weapon key */
-                        (&players[settingHandle[0] - '0' - 1])->
-                            wkey = atoi(settingParam);
-                        valid = 1;
-                        break;
-                    case 'r': /* Right key */
-                        (&players[settingHandle[0] - '0' - 1])->
-                            rkey = atoi(settingParam);
-                        valid = 1;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                if (valid == 0) {
-                    if (olvl >= O_NORMAL)
-                        fprintf(stderr, "Unknown config format in '%s', line "
-                                "%d: %s\n", filename, line, settingHandle);
-                }
-                ++line;
-            } else {
-                break;
-            }
-        }
-    }
-
-    fclose(savefile);
-}
-
-/**
  * Display nothing.
  */
 void displayVoid(void) {}
@@ -2619,8 +2491,7 @@ void exitGame(int status)
 
     screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
                               SDL_SWSURFACE);
-
-    saveSettings(".zatackax");
+    saveSettings();
 
     exit(status);
 }
@@ -2633,7 +2504,7 @@ int main(void)
     WINDOW_H = DEFAULT_WINDOW_H;
 
     initPlayers1();
-    restoreSettings(".zatackax");
+    restoreSettings();
 
     if (!init())
         return 1;
