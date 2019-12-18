@@ -17,6 +17,7 @@
 
 bin_PROGRAMS = zatackax
 zatackax_SOURCES = src/ai.c src/ai.h src/broadcast.c src/broadcast.h src/common.h src/config.c src/config.h src/error.c src/error.h src/input.c src/input.h src/player.h src/sound.c src/sound.h src/weapon.h src/zatackax.c src/zatackax.h
+EXTRA_DIST = data AUTHORS.md NEWS.md README.md
 
 devel : CFLAGS += -O0 -g3 -pg -pedantic -Wall -Wextra
 devel : zatackax
