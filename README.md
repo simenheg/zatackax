@@ -10,6 +10,7 @@ opponents.
 ### From source
 To compile Zatacka X, run:
 
+    $ autoreconf -i
     $ ./configure
     $ make
 

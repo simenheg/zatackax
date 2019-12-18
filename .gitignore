@@ -1,7 +1,15 @@
+.deps
+.dirstamp
 .zatackax
 Makefile
+aclocal.m4
+autom4te.cache
+compile
 config.log
 config.status
+depcomp
 gmon.out
+install-sh
+missing
 src/*.o
 zatackax
