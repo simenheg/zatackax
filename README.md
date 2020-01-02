@@ -8,11 +8,15 @@ opponents.
 
 ## Installation
 ### From source
-To compile Zatacka X, run:
+To install Zatacka X from source, run:
 
     $ autoreconf -i
     $ ./configure
     $ make
+    $ make install
+
+When installing from a release tarball, the `autoreconf` step can be
+omitted.
 
 Compilation depends on the following libraries:
 
