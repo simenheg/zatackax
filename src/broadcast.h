@@ -3,11 +3,12 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+
 #include "common.h"
+#include "font.h"
 #include "player.h"
 
 #define BROADC_BUF        64  /* Maximum broadcast name length */
-#define BROADC_FONT_SIZE  13  /* Broadcast font size */
 #define BROADC_LIMIT      6   /* Maximum number of broadcast messages */
 #define BROADC_PARTS      3   /* Maximum parts of a broadcast */
 

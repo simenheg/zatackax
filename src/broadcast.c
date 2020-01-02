@@ -59,6 +59,7 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     unsigned int i;
     char *strings[BROADC_PARTS];
     SDL_Surface *parts[BROADC_PARTS];
+    TTF_Font *font = fonts[FONT_BROADCAST];
     unsigned int width = 0;
 
     /* Split message string */
@@ -66,16 +67,17 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
     for (i = 1; (strings[i] = strtok(NULL, ";")) != NULL; ++i) {}
 
     for (i = 0; i < BROADC_PARTS && strings[i] != NULL; ++i) {
-
         char pstring[PLAYER_NAME_LEN];
         if (strlen(strings[i]) == 1) {
             int pnum = atoi(strings[i]);
             snprintf(pstring, PLAYER_NAME_LEN, "%s", (&players[pnum - 1])->name);
-            parts[i] = TTF_RenderUTF8_Shaded(font_broadc, pstring,
-                                             pcolors[pnum - 1], cMenuBG);
-        } else
-            parts[i] = TTF_RenderUTF8_Shaded(font_broadc, strings[i],
-                                             cBroadcast, cMenuBG);
+            parts[i] = TTF_RenderUTF8_Shaded(font, pstring, pcolors[pnum - 1],
+                                             cMenuBG);
+        }
+        else {
+            parts[i] = TTF_RenderUTF8_Shaded(font, strings[i], cBroadcast,
+                                             cMenuBG);
+        }
 
         width += parts[i]->w;
     }

@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-void fileNotFound(char *filepath);
+void fileNotFound(const char *filename);
 
 #endif

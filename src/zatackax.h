@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
 #include "sound.h"
 #include "error.h"
 #include "ai.h"
@@ -18,6 +17,9 @@
 #include "player.h"
 #include "input.h"
 #include "config.h"
+#include "data.h"
+#include "font.h"
+#include "gfx.h"
 #include "common.h"
 
 /* SCORES */
@@ -49,16 +51,15 @@
 #define N_COLORS            8                   /* Available colors */
 
 /* MENUS */
-#define MENU_BUF                32  /* Maximum menu string length */
-#define MENU_FONT_SIZE          22
-#define SPACEMOD                18
-#define BALL_SPACING            30
-#define BALL_Y_MOD              39
+#define MENU_BUF            32      /* Maximum menu string length */
+#define SPACEMOD            18
+#define BALL_SPACING        30
+#define BALL_Y_MOD          39
 
 /* SETTINGS MENU */
-#define TRIANGLE_PANNING_X      1.8
-#define TRIANGLE_PANNING_Y      6.5
-#define ON_OFF                  ? "[on]" : "[off]"
+#define TRIANGLE_PANNING_X  1.8
+#define TRIANGLE_PANNING_Y  6.5
+#define ON_OFF              ? "[on]" : "[off]"
 
 struct recentMapPiece {
     int x, y, count;
@@ -114,45 +115,12 @@ static unsigned int WINDOW_W;       /* Window width */
 static unsigned int WINDOW_H;       /* Window height */
 
 /* SURFACES */
-static SDL_Surface *screen = NULL;
 static SDL_Surface *msg = NULL;
-static SDL_Surface *logo = NULL;
-static SDL_Surface *arrows = NULL;
-static SDL_Surface *ball = NULL;
-static SDL_Surface *wiBg = NULL;
-static SDL_Surface *wiSpeed = NULL;
-static SDL_Surface *wisSpeed = NULL;
-static SDL_Surface *wiFrost = NULL;
-static SDL_Surface *wisFrost = NULL;
-static SDL_Surface *wiConf = NULL;
-static SDL_Surface *wisConf = NULL;
-static SDL_Surface *wiTurn = NULL;
-static SDL_Surface *wisTurn = NULL;
-static SDL_Surface *wiStep = NULL;
-static SDL_Surface *wisStep = NULL;
-static SDL_Surface *wiMole = NULL;
-static SDL_Surface *wisMole = NULL;
-static SDL_Surface *wiWarp = NULL;
-static SDL_Surface *wisWarp = NULL;
-static SDL_Surface *wiGhost = NULL;
-static SDL_Surface *wisGhost = NULL;
-static SDL_Surface *wiTron = NULL;
-static SDL_Surface *wisTron = NULL;
-static SDL_Surface *wiChilirun = NULL;
-static SDL_Surface *wisChilirun = NULL;
-static SDL_Surface *wiSwitch = NULL;
-static SDL_Surface *wisSwitch = NULL;
+static SDL_Surface *screen = NULL;
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
 static struct SDL_Surface *wepIcons[N_WEAPONS + 1];
 static struct SDL_Surface *smallWepIcons[N_WEAPONS];
-
-/* FONTS */
-static TTF_Font *font_menu = NULL;
-static TTF_Font *font_menub = NULL;
-static TTF_Font *font_score = NULL;
-TTF_Font *font_broadc = NULL;
-TTF_Font *font_broadcb = NULL;
 
 /* PLAYER */
 void initPlayers1(void);
@@ -209,14 +177,12 @@ void displayMenu(char *c[], struct menu *m, int ymod);
 int initScreen(void);
 void putPixel(int x, int y, SDL_Color c, unsigned char *target);
 void colorFill(SDL_Color c, SDL_Surface *sprite);
-SDL_Surface *loadImage(const char filename[]);
 void initColors(void);
 void colorBalls(void);
 
 /* SYSTEM */
 int init(void);
-int loadFiles(void);
-void confirmLoading(char *name, SDL_Surface *sprite);
+void initGraphics(void);
 void displayVoid(void);
 void exitGame(int status);
 

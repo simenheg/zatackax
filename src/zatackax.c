@@ -110,7 +110,7 @@ void initPlayers2(void)
         p->score = 0;
 
         /* Assign arrows */
-        SDL_BlitSurface(arrows, NULL, *s, NULL);
+        SDL_BlitSurface(images[IMG_ARROWS], NULL, *s, NULL);
         SDL_LockSurface(*s);
         colorFill(colors[p->color], *s);
         SDL_UnlockSurface(*s);
@@ -983,7 +983,7 @@ void drawExtras(void)
         SDL_Rect offset = {7, SCORE_SPACING * i, 0, 0};
 
         snprintf(score_str, SCORE_BUF, "%d", p->score);
-        scoreText = TTF_RenderUTF8_Shaded(font_score, score_str,
+        scoreText = TTF_RenderUTF8_Shaded(fonts[FONT_SCORE], score_str,
                                           colors[p->color], cMenuBG);
         SDL_BlitSurface(scoreText, NULL, screen, &offset);
         SDL_FreeSurface(scoreText);
@@ -1498,6 +1498,7 @@ void displayMainMenu(void)
     c[1] = "SETTINGS";
     c[2] = "EXIT";
 
+    SDL_Surface *logo = images[IMG_LOGO];
     int ymod = logo->h / 2;
     displayMenu(c, &menuMain, ymod);
     SDL_Rect offset = {WINDOW_W / 2 - logo->w / 2, WINDOW_H / 2 - logo->h,
@@ -1595,40 +1596,41 @@ void displayWepMenu(void)
                            i > 3 ? screen->h - 118 : 10, 0, 0};
 
         snprintf(wep_str, PLAYER_NAME_LEN, "%s", p->name);
-        wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
+        wep_text = TTF_RenderUTF8_Shaded(fonts[FONT_SCORE], wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
         SDL_FreeSurface(wep_text);
 
         offset.y += 30;
         snprintf(wep_str, MENU_BUF, "%s", w.name);
-        wep_text = TTF_RenderUTF8_Shaded(font_score, wep_str,
+        wep_text = TTF_RenderUTF8_Shaded(fonts[FONT_SCORE], wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
         SDL_FreeSurface(wep_text);
 
         offset.y += 30;
         snprintf(wep_str, MENU_BUF, "%s", w.desc1);
-        wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
+        wep_text = TTF_RenderUTF8_Shaded(fonts[FONT_BROADCAST_BOLD], wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
         SDL_FreeSurface(wep_text);
 
         if (w.desc2[0] != '\0') {
-            offset.y += BROADC_FONT_SIZE + 2;
+            offset.y += FONT_SIZE_BROADCAST + 2;
             snprintf(wep_str, MENU_BUF, "%s", w.desc2);
-            wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
-                                             colors[p->color], cMenuBG);
+            wep_text = TTF_RenderUTF8_Shaded(fonts[FONT_BROADCAST_BOLD],
+                                             wep_str, colors[p->color],
+                                             cMenuBG);
             SDL_BlitSurface(wep_text, NULL, screen, &offset);
             SDL_FreeSurface(wep_text);
         }
 
         if (i > 3)
-            offset.y = screen->h - 10 - BROADC_FONT_SIZE;
+            offset.y = screen->h - 10 - FONT_SIZE_BROADCAST;
         else
             offset.y = 105;
         snprintf(wep_str, MENU_BUF, "Charges: %d", w.charges);
-        wep_text = TTF_RenderUTF8_Shaded(font_broadcb, wep_str,
+        wep_text = TTF_RenderUTF8_Shaded(fonts[FONT_BROADCAST_BOLD], wep_str,
                                          colors[p->color], cMenuBG);
         SDL_BlitSurface(wep_text, NULL, screen, &offset);
         SDL_FreeSurface(wep_text);
@@ -2061,12 +2063,12 @@ void displayMenu(char *c[], struct menu *m, int ymod)
     for (int i = 0; i < m->choices; ++i, ++mid) {
 
         if (i == m->choice) {
-            msg = TTF_RenderUTF8_Shaded(font_menub, c[i],
+            msg = TTF_RenderUTF8_Shaded(fonts[FONT_MENU_BOLD], c[i],
                                         i == 0 && curScene == &pConfMenu
                                         ? colors[(&players[editPlayer])->color]
                                         : cMenuTextH, cMenuBG);
         } else {
-            msg = TTF_RenderUTF8_Solid(font_menu, c[i],
+            msg = TTF_RenderUTF8_Solid(fonts[FONT_MENU], c[i],
                                        i == 0 && curScene == &pConfMenu
                                        ? colors[(&players[editPlayer])->color]
                                        : cMenuText);
@@ -2151,25 +2153,6 @@ void colorFill(SDL_Color c, SDL_Surface *sprite)
 }
 
 /**
- * Loads an image file.
- *
- * @param filename Name of the file to be loaded.
- * @return The loaded image, NULL if it failed.
- */
-SDL_Surface *loadImage(const char filename[])
-{
-    SDL_Surface *loadedImage = IMG_Load(filename);
-    SDL_Surface *optimizedImage = NULL;
-
-    if (loadedImage != NULL)
-        optimizedImage = SDL_DisplayFormatAlpha(loadedImage);
-
-    SDL_FreeSurface(loadedImage);
-
-    return optimizedImage;
-}
-
-/**
  * Initializes the starter colors.
  */
 void initColors(void)
@@ -2194,13 +2177,13 @@ void colorBalls(void)
     SDL_Surface **s = pballs;
     struct player *p = &players[0];
     for (int i = 0; i < MAX_PLAYERS; ++i, ++p, ++s) {
-        SDL_BlitSurface(ball, NULL, *s, NULL);
+        SDL_BlitSurface(images[IMG_BALL], NULL, *s, NULL);
         SDL_LockSurface(*s);
         colorFill(colors[p->color], *s);
         SDL_UnlockSurface(*s);
     }
 
-    SDL_BlitSurface(ball, NULL, *s, NULL);
+    SDL_BlitSurface(images[IMG_BALL], NULL, *s, NULL);
     SDL_LockSurface(*s);
     colorFill(inactive, *s);
     SDL_UnlockSurface(*s);
@@ -2243,165 +2226,23 @@ int init(void)
 
     SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_SetCaption("Zatacka X", "Zatacka X");
-    SDL_WM_SetIcon(SDL_LoadBMP("data/gfx/icon.bmp"), NULL);
+    SDL_Surface *icon = loadIcon("icon.bmp");
+    SDL_WM_SetIcon(icon, NULL);
+    SDL_FreeSurface(icon);
 
     return 1;
 }
 
 /**
- * Loads every file to be used in the game.
- * Also prepares them (clipping, duplicating).
- *
- * @return 1 if all files loaded successfully, 0 if not.
+ * Make miscellaneous graphics preparations, such as sprite clipping
+ * and duplication.
  */
-int loadFiles(void)
+void initGraphics(void)
 {
     SDL_Surface **p;
 
-    /* Load images and fonts */
-    if ((arrows = loadImage("data/gfx/arrowsheet.png")) == NULL) {
-        fileNotFound("data/gfx/arrowsheet.png");
-        return 0;
-    }
-    if ((ball = loadImage("data/gfx/ball.png")) == NULL) {
-        fileNotFound("data/gfx/ball.png");
-        return 0;
-    }
-    if ((logo = loadImage("data/gfx/logo.png")) == NULL) {
-        fileNotFound("data/gfx/logo.png");
-        return 0;
-    }
-    if ((wiBg = loadImage("data/gfx/wi_bg.png")) == NULL) {
-        fileNotFound("data/gfx/wi_bg.png");
-        return 0;
-    }
-    if ((wiSpeed = loadImage("data/gfx/wi_lightningspeed.png")) == NULL) {
-        fileNotFound("data/gfx/wi_lightningspeed.png");
-        return 0;
-    }
-    if ((wisSpeed = loadImage("data/gfx/wis_lightningspeed.png")) == NULL) {
-        fileNotFound("data/gfx/wis_lightningspeed.png");
-        return 0;
-    }
-    if ((wiFrost = loadImage("data/gfx/wi_frostwave.png")) == NULL) {
-        fileNotFound("data/gfx/wi_frostwave.png");
-        return 0;
-    }
-    if ((wisFrost = loadImage("data/gfx/wis_frostwave.png")) == NULL) {
-        fileNotFound("data/gfx/wis_frostwave.png");
-        return 0;
-    }
-    if ((wiConf = loadImage("data/gfx/wi_confusion.png")) == NULL) {
-        fileNotFound("data/gfx/wi_confusion.png");
-        return 0;
-    }
-    if ((wisConf = loadImage("data/gfx/wis_confusion.png")) == NULL) {
-        fileNotFound("data/gfx/wis_confusion.png");
-        return 0;
-    }
-    if ((wiTurn = loadImage("data/gfx/wi_sharpturn.png")) == NULL) {
-        fileNotFound("data/gfx/wi_sharpturn.png");
-        return 0;
-    }
-    if ((wisTurn = loadImage("data/gfx/wis_sharpturn.png")) == NULL) {
-        fileNotFound("data/gfx/wis_sharpturn.png");
-        return 0;
-    }
-    if ((wiStep = loadImage("data/gfx/wi_timestep.png")) == NULL) {
-        fileNotFound("data/gfx/wi_timestep.png");
-        return 0;
-    }
-    if ((wisStep = loadImage("data/gfx/wis_timestep.png")) == NULL) {
-        fileNotFound("data/gfx/wis_timestep.png");
-        return 0;
-    }
-    if ((wiMole = loadImage("data/gfx/wi_mole.png")) == NULL) {
-        fileNotFound("data/gfx/wi_mole.png");
-        return 0;
-    }
-    if ((wisMole = loadImage("data/gfx/wis_mole.png")) == NULL) {
-        fileNotFound("data/gfx/wis_mole.png");
-        return 0;
-    }
-    if ((wiWarp = loadImage("data/gfx/wi_warp.png")) == NULL) {
-        fileNotFound("data/gfx/wi_warp.png");
-        return 0;
-    }
-    if ((wisWarp = loadImage("data/gfx/wis_warp.png")) == NULL) {
-        fileNotFound("data/gfx/wis_warp.png");
-        return 0;
-    }
-    if ((wiGhost = loadImage("data/gfx/wi_ghost.png")) == NULL) {
-        fileNotFound("data/gfx/wi_ghost.png");
-        return 0;
-    }
-    if ((wisGhost = loadImage("data/gfx/wis_ghost.png")) == NULL) {
-        fileNotFound("data/gfx/wis_ghost.png");
-        return 0;
-    }
-    if ((wiTron = loadImage("data/gfx/wi_tron.png")) == NULL) {
-        fileNotFound("data/gfx/wi_tron.png");
-        return 0;
-    }
-    if ((wisTron = loadImage("data/gfx/wis_tron.png")) == NULL) {
-        fileNotFound("data/gfx/wis_tron.png");
-        return 0;
-    }
-    if ((wiChilirun = loadImage("data/gfx/wi_chilirun.png")) == NULL) {
-        fileNotFound("data/gfx/wi_chilirun.png");
-        return 0;
-    }
-    if ((wisChilirun = loadImage("data/gfx/wis_chilirun.png")) == NULL) {
-        fileNotFound("data/gfx/wis_chilirun.png");
-        return 0;
-    }
-    if ((wiSwitch = loadImage("data/gfx/wi_switch.png")) == NULL) {
-        fileNotFound("data/gfx/wi_switch.png");
-        return 0;
-    }
-    if ((wisSwitch = loadImage("data/gfx/wis_switch.png")) == NULL) {
-        fileNotFound("data/gfx/wis_switch.png");
-        return 0;
-    }
-    if ((font_menu = TTF_OpenFont("data/fonts/jura/JuraLight.ttf",
-                                  MENU_FONT_SIZE)) == NULL) {
-        fileNotFound("data/fonts/jura/JuraLight.ttf");
-        return 0;
-    }
-    if ((font_menub = TTF_OpenFont("data/fonts/jura/JuraMedium.ttf",
-                                   MENU_FONT_SIZE)) == NULL) {
-        fileNotFound("data/fonts/jura/JuraMedium.ttf");
-        return 0;
-    }
-    if ((font_broadc = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-r.ttf",
-                                    BROADC_FONT_SIZE)) == NULL) {
-        fileNotFound("data/fonts/ankacoder/AnkaCoder-r.ttf");
-        return 0;
-    }
-    if ((font_broadcb = TTF_OpenFont("data/fonts/ankacoder/AnkaCoder-b.ttf"
-                                     , BROADC_FONT_SIZE)) == NULL) {
-        fileNotFound("data/fonts/ankacoder/AnkaCoder-b.ttf");
-        return 0;
-    }
-    font_score = font_menub;
-
-    if (olvl >= O_DEBUG) {
-        confirmLoading("arrowsheet.png", arrows);
-        confirmLoading("ball.png", ball);
-        confirmLoading("logo.png", logo);
-        confirmLoading("wi_bg.png", wiBg);
-        confirmLoading("wi_lightningspeed.png", wiSpeed);
-        confirmLoading("wi_frostwave.png", wiFrost);
-        confirmLoading("wi_confusion.png", wiConf);
-        confirmLoading("wi_confusion.png", wiTurn);
-        confirmLoading("wi_timestep.png", wiStep);
-        confirmLoading("wi_mole.png", wiMole);
-        confirmLoading("wi_warp.png", wiWarp);
-        confirmLoading("wi_ghost.png", wiGhost);
-        confirmLoading("wi_switch.png", wiSwitch);
-    }
-
     /* Clip arrow sprite sheet */
+    SDL_Surface *arrows = images[IMG_ARROWS];
     for (int y = 0, i = 0; y < arrows->h; y += 16) {
         for (int x = 0; x < arrows->w; x += 16, ++i) {
             arrowClip[i].x = x;
@@ -2425,6 +2266,7 @@ int loadFiles(void)
     /* Make ball copies */
     pballs = malloc((MAX_PLAYERS + 1) * sizeof(SDL_Surface));
     p = pballs;
+    SDL_Surface *ball = images[IMG_BALL];
     for (int i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
         *p = SDL_CreateRGBSurface(ball->flags, ball->w,
                                   ball->h, ball->format->BitsPerPixel,
@@ -2433,44 +2275,30 @@ int loadFiles(void)
     }
 
     /* Initialize weapon pointer array */
-    wepIcons[0] = wiBg;
-    wepIcons[WEP_LIGHTNINGSPEED + 1] = wiSpeed;
-    wepIcons[WEP_FROSTWAVE + 1] = wiFrost;
-    wepIcons[WEP_CONFUSION + 1] = wiConf;
-    wepIcons[WEP_SHARPTURN + 1] = wiTurn;
-    wepIcons[WEP_TIMESTEP + 1] = wiStep;
-    wepIcons[WEP_MOLE + 1] = wiMole;
-    wepIcons[WEP_WARP + 1] = wiWarp;
-    wepIcons[WEP_GHOST + 1] = wiGhost;
-    wepIcons[WEP_TRON + 1] = wiTron;
-    wepIcons[WEP_CHILI_RUN + 1] = wiChilirun;
-    wepIcons[WEP_SWITCH + 1] = wiSwitch;
+    wepIcons[0] = images[IMG_WI_BG];
+    wepIcons[WEP_LIGHTNINGSPEED + 1] = images[IMG_WI_SPEED];
+    wepIcons[WEP_FROSTWAVE + 1] = images[IMG_WI_FROST];
+    wepIcons[WEP_CONFUSION + 1] = images[IMG_WI_CONFUSION];
+    wepIcons[WEP_SHARPTURN + 1] = images[IMG_WI_SHARPTURN];
+    wepIcons[WEP_TIMESTEP + 1] = images[IMG_WI_TIMESTEP];
+    wepIcons[WEP_MOLE + 1] = images[IMG_WI_MOLE];
+    wepIcons[WEP_WARP + 1] = images[IMG_WI_WARP];
+    wepIcons[WEP_GHOST + 1] = images[IMG_WI_GHOST];
+    wepIcons[WEP_TRON + 1] = images[IMG_WI_TRON];
+    wepIcons[WEP_CHILI_RUN + 1] = images[IMG_WI_CHILIRUN];
+    wepIcons[WEP_SWITCH + 1] = images[IMG_WI_SWITCH];
 
-    smallWepIcons[WEP_LIGHTNINGSPEED] = wisSpeed;
-    smallWepIcons[WEP_FROSTWAVE] = wisFrost;
-    smallWepIcons[WEP_CONFUSION] = wisConf;
-    smallWepIcons[WEP_SHARPTURN] = wisTurn;
-    smallWepIcons[WEP_TIMESTEP] = wisStep;
-    smallWepIcons[WEP_MOLE] = wisMole;
-    smallWepIcons[WEP_WARP] = wisWarp;
-    smallWepIcons[WEP_GHOST] = wisGhost;
-    smallWepIcons[WEP_TRON] = wisTron;
-    smallWepIcons[WEP_CHILI_RUN] = wisChilirun;
-    smallWepIcons[WEP_SWITCH] = wisSwitch;
-
-    return 1;
-}
-
-/**
- * Prints a message that confirms a loaded file.
- *
- * @param name Name of the file.
- * @param sprite The loaded image file.
- */
-void confirmLoading(char *name, SDL_Surface *sprite)
-{
-    printf("Loaded: %s\t(w:%d h:%d bpp:%d)\n", name, sprite->w, sprite->h,
-           sprite->format->BitsPerPixel);
+    smallWepIcons[WEP_LIGHTNINGSPEED] = images[IMG_WIS_SPEED];
+    smallWepIcons[WEP_FROSTWAVE] = images[IMG_WIS_FROST];
+    smallWepIcons[WEP_CONFUSION] = images[IMG_WIS_CONFUSION];
+    smallWepIcons[WEP_SHARPTURN] = images[IMG_WIS_SHARPTURN];
+    smallWepIcons[WEP_TIMESTEP] = images[IMG_WIS_TIMESTEP];
+    smallWepIcons[WEP_MOLE] = images[IMG_WIS_MOLE];
+    smallWepIcons[WEP_WARP] = images[IMG_WIS_WARP];
+    smallWepIcons[WEP_GHOST] = images[IMG_WIS_GHOST];
+    smallWepIcons[WEP_TRON] = images[IMG_WIS_TRON];
+    smallWepIcons[WEP_CHILI_RUN] = images[IMG_WIS_CHILIRUN];
+    smallWepIcons[WEP_SWITCH] = images[IMG_WIS_SWITCH];
 }
 
 /**
@@ -2512,12 +2340,28 @@ int main(void)
     if (!initScreen())
         return 1;
 
-    if (!loadFiles()) {
-        if (olvl >= O_NORMAL)
-            fprintf(stderr, "ERROR: Failed to load files.\n");
+    if (!loadImages()) {
+        if (olvl >= O_NORMAL) {
+            fprintf(stderr, "ERROR: Failed to load image files.\n");
+        }
         return 1;
     }
 
+    if (!loadSounds()) {
+        if (olvl >= O_NORMAL) {
+            fprintf(stderr, "ERROR: Failed to load sound files.\n");
+        }
+        return 1;
+    }
+
+    if (!loadFonts()) {
+        if (olvl >= O_NORMAL) {
+            fprintf(stderr, "ERROR: Failed to load font files.\n");
+        }
+        return 1;
+    }
+
+    initGraphics();
     initColors();
     initMainMenu();
 

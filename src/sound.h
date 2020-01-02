@@ -2,10 +2,13 @@
 #define SOUND_H
 
 #include <SDL/SDL_mixer.h>
+#include <stdbool.h>
+
 #include "common.h"
+#include "data.h"
 #include "error.h"
 
-enum sounds {
+typedef enum sound {
     SOUND_BEP = 0,
     SOUND_BEEP,
     SOUND_BEEEP,
@@ -28,10 +31,13 @@ enum sounds {
     SOUND_CHILIRUN,
     SOUND_SWITCH,
     N_SOUNDS
-};
+} Sound;
 
-int loadSound(Mix_Chunk *sound, char *soundstr, int index);
+extern Mix_Music *bgm;
+
 int initSound(void);
+bool loadSound(Sound s, const char *filename);
+bool loadSounds(void);
 void playSound(unsigned int sound, int play);
 void playBGM(void);
 void stopBGM(void);

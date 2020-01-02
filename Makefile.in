@@ -103,7 +103,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_zatackax_OBJECTS = src/ai.$(OBJEXT) src/broadcast.$(OBJEXT) \
-	src/config.$(OBJEXT) src/error.$(OBJEXT) src/input.$(OBJEXT) \
+	src/config.$(OBJEXT) src/data.$(OBJEXT) src/error.$(OBJEXT) \
+	src/font.$(OBJEXT) src/gfx.$(OBJEXT) src/input.$(OBJEXT) \
 	src/sound.$(OBJEXT) src/zatackax.$(OBJEXT)
 zatackax_OBJECTS = $(am_zatackax_OBJECTS)
 zatackax_LDADD = $(LDADD)
@@ -123,9 +124,10 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = src/$(DEPDIR)/ai.Po src/$(DEPDIR)/broadcast.Po \
-	src/$(DEPDIR)/config.Po src/$(DEPDIR)/error.Po \
-	src/$(DEPDIR)/input.Po src/$(DEPDIR)/sound.Po \
-	src/$(DEPDIR)/zatackax.Po
+	src/$(DEPDIR)/config.Po src/$(DEPDIR)/data.Po \
+	src/$(DEPDIR)/error.Po src/$(DEPDIR)/font.Po \
+	src/$(DEPDIR)/gfx.Po src/$(DEPDIR)/input.Po \
+	src/$(DEPDIR)/sound.Po src/$(DEPDIR)/zatackax.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -274,7 +276,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-zatackax_SOURCES = src/ai.c src/ai.h src/broadcast.c src/broadcast.h src/common.h src/config.c src/config.h src/error.c src/error.h src/input.c src/input.h src/player.h src/sound.c src/sound.h src/weapon.h src/zatackax.c src/zatackax.h
+zatackax_SOURCES = src/ai.c src/ai.h src/broadcast.c src/broadcast.h src/common.h src/config.c src/config.h src/data.c src/data.h src/error.c src/error.h src/font.c src/font.h src/gfx.c src/gfx.h src/input.c src/input.h src/player.h src/sound.c src/sound.h src/weapon.h src/zatackax.c src/zatackax.h
+AM_CPPFLAGS = -DDATADIR=\"$(pkgdatadir)\"
 EXTRA_DIST = data AUTHORS.md NEWS.md README.md
 all: all-am
 
@@ -366,7 +369,10 @@ src/broadcast.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/config.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/data.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/error.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
+src/font.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
+src/gfx.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/input.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/sound.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/zatackax.$(OBJEXT): src/$(am__dirstamp) \
@@ -386,7 +392,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/ai.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/broadcast.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/config.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/data.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/error.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/font.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/gfx.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/input.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/sound.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/zatackax.Po@am__quote@ # am--include-marker
@@ -686,7 +695,10 @@ distclean: distclean-am
 		-rm -f src/$(DEPDIR)/ai.Po
 	-rm -f src/$(DEPDIR)/broadcast.Po
 	-rm -f src/$(DEPDIR)/config.Po
+	-rm -f src/$(DEPDIR)/data.Po
 	-rm -f src/$(DEPDIR)/error.Po
+	-rm -f src/$(DEPDIR)/font.Po
+	-rm -f src/$(DEPDIR)/gfx.Po
 	-rm -f src/$(DEPDIR)/input.Po
 	-rm -f src/$(DEPDIR)/sound.Po
 	-rm -f src/$(DEPDIR)/zatackax.Po
@@ -741,7 +753,10 @@ maintainer-clean: maintainer-clean-am
 		-rm -f src/$(DEPDIR)/ai.Po
 	-rm -f src/$(DEPDIR)/broadcast.Po
 	-rm -f src/$(DEPDIR)/config.Po
+	-rm -f src/$(DEPDIR)/data.Po
 	-rm -f src/$(DEPDIR)/error.Po
+	-rm -f src/$(DEPDIR)/font.Po
+	-rm -f src/$(DEPDIR)/gfx.Po
 	-rm -f src/$(DEPDIR)/input.Po
 	-rm -f src/$(DEPDIR)/sound.Po
 	-rm -f src/$(DEPDIR)/zatackax.Po
@@ -786,6 +801,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 devel : CFLAGS += -O0 -g3 -pg -pedantic -Wall -Wextra
+devel : AM_CPPFLAGS = -DDATADIR=\"data\"
 devel : zatackax
 
 debug : CFLAGS += -DDEBUG
@@ -799,7 +815,7 @@ silent : devel
 
 install-data-hook :
 	mkdir -p $(pkgdatadir);
-	cp -r $(srcdir)/data $(pkgdatadir);
+	cp -r $(srcdir)/data/* $(pkgdatadir);
 
 uninstall-hook :
 	rm -rf $(pkgdatadir);

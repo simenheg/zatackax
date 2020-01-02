@@ -1,5 +1,5 @@
-/* error -- error procedures.
- * Copyright (C) 2010-2019 The Zatacka X development team
+/* data -- handling of data files.
+ * Copyright (C) 2010-2020 The Zatacka X development team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "error.h"
+#include "data.h"
 
 /**
- * Print an error message that `filename` was not found.
+ * Return the full file name of the data file named `name`, found in
+ * the data directory named `dir`.
  */
-void fileNotFound(const char *filename)
+char *dataFile(const char *dir, const char *name)
 {
-    fprintf(stderr, "ERROR: Could not open file '%s'.\n", filename);
+    int strlen = snprintf(NULL, 0, "%s/%s/%s", DATADIR, dir, name);
+    char *file = calloc(strlen + 1, sizeof(char));
+    snprintf(file, strlen + 1, "%s/%s/%s", DATADIR, dir, name);
+    return file;
 }
