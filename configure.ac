@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([Zatacka X], [0.3.1], [simenheg@gmail.com], [zatackax],
+AC_INIT([Zatacka X], [0.3.2], [simenheg@gmail.com], [zatackax],
   [https://github.com/simenheg/zatackax])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_SRCDIR([src/zatackax.c])

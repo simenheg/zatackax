@@ -1,8 +1,11 @@
-## 0.3.2 - ??.??.??
+## 0.3.2 - 02.01.20
 * General:
+  * Zatacka X can now be installed with `make install`.
   * The configuration file is now stored in
     `$XDG_CONFIG_HOME/zatackax`, or in `$HOME/.config/zatackax` if
     `$XDG_CONFIG_HOME` is unset.
+  * Scroll Lock is now a valid button choice.
+  * Various code fixes and cleanups.
 
 ## 0.3.1 - 04.02.18
 * Bugs:
