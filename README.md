@@ -33,6 +33,7 @@ instance, the following command installs the required libraries:
     $ sudo apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-mixer1.2-dev
 
 ### From a repository
+* AROS: [The AROS Archives](http://archives.aros-exec.org/?function=showfile&file=game/misc/zatackax.i386-aros.zip)
 * Arch Linux: [Arch User Repository (AUR)](https://aur.archlinux.org/packages/zatackax-git)
 * Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
 
