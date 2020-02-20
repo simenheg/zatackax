@@ -36,6 +36,7 @@ instance, the following command installs the required libraries:
 * AROS: [The AROS Archives](http://archives.aros-exec.org/?function=showfile&file=game/misc/zatackax.i386-aros.zip)
 * Arch Linux: [Arch User Repository (AUR)](https://aur.archlinux.org/packages/zatackax-git)
 * Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
+* OpenDingux: [OpenDingux Software list](https://github.com/retrogamehandheld/OpenDingux/#games--ports)
 
 ## License
 The Zatacka X code is free software, licensed under the GNU General Public
