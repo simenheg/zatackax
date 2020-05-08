@@ -20,7 +20,7 @@ static const SDL_Color cMenuBG    = {0x00, 0x00, 0x00, 0};
 extern TTF_Font *font_broadc;
 extern TTF_Font *font_broadcb;
 
-SDL_Surface *broadcast[BROADC_LIMIT];
+extern SDL_Surface *broadcast[BROADC_LIMIT];
 
 void pushBroadcasts(void);
 void cleanBroadcasts(void);

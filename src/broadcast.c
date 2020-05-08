@@ -17,6 +17,8 @@
 
 #include "broadcast.h"
 
+SDL_Surface *broadcast[BROADC_LIMIT];
+
 /**
  * Pushes the broadcasts one step upwards the list, making room for a new one.
  */
@@ -54,7 +56,6 @@ void cleanBroadcasts(void)
  */
 SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
 {
-    extern struct player players[MAX_PLAYERS];
     SDL_Surface *broadcast;
     unsigned int i;
     char *strings[BROADC_PARTS];

@@ -33,6 +33,6 @@ struct player {
     int holecount;
 };
 
-struct player players[MAX_PLAYERS];
+extern struct player players[MAX_PLAYERS];
 
 #endif

@@ -83,6 +83,8 @@ static struct scene pConfMenu = {
 
 struct scene *curScene = NULL;
 
+struct player players[MAX_PLAYERS];
+
 /**
  * Stage 1 of player initialization.
  * Assigns keys and colors.
