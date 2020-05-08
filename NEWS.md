@@ -1,3 +1,7 @@
+## 0.3.3 - 08.05.20
+* Bugs:
+  * Fixed compilation errors with GCC 10.
+
 ## 0.3.2 - 02.01.20
 * General:
   * Zatacka X can now be installed with `make install`.
