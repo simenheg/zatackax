@@ -20,6 +20,12 @@ zatackax_SOURCES = src/ai.c src/ai.h src/broadcast.c src/broadcast.h src/common.
 AM_CPPFLAGS = -DDATADIR=\"$(pkgdatadir)\"
 EXTRA_DIST = data AUTHORS.md NEWS.md README.md
 
+desktopdir = $(datadir)/applications
+desktop_DATA = zatackax.desktop
+
+appicondir = $(datadir)/icons/hicolor/128x128/apps
+appicon_DATA = data/icons/zatackax.png
+
 devel : CFLAGS += -O0 -g3 -pg -pedantic -Wall -Wextra
 devel : AM_CPPFLAGS = -DDATADIR=\"data\"
 devel : zatackax

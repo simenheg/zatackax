@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Zatacka X
+Comment=A modern, free remake of the classic Achtung, die Kurve!
+Exec=zatackax
+Icon=zatackax
+Terminal=false
+Type=Application
+Categories=Game;

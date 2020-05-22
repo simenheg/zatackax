@@ -3,6 +3,7 @@
   * A particle system has been added. Weapons and player deaths now
     trigger particle effects. This feature can be turned off in the
     settings menu.
+  * A .desktop entry has been added together with an application icon.
   * The weapon Switch-aroo has been removed.
 
 ## 0.3.3 - 08.05.20
