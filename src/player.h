@@ -34,5 +34,6 @@ struct player {
 };
 
 extern struct player players[MAX_PLAYERS];
+extern unsigned char nPlayers;
 
 #endif

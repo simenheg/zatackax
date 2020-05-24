@@ -1,7 +1,12 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
+#include <math.h>
+
+#include "config.h"
 #include "player.h"
+#include "sound.h"
+#include "video.h"
 
 #define N_WEAPONS               10
 #define WEP_SPACEMOD            42
@@ -43,6 +48,11 @@ struct weapon {
     char *desc2;
 };
 
+extern bool activeFreeze;
+extern bool activeConfusion;
+extern bool activeTron;
+extern bool activeChilirun;
+
 int wepLightningspeed(struct player *p, bool on);
 int wepFrostwave(struct player *p, bool on);
 int wepSharpturn(struct player *p, bool on);
@@ -54,17 +64,6 @@ int wepGhost(struct player *p, bool on);
 int wepTron(struct player *p, bool on);
 int wepChilirun(struct player *p, bool on);
 
-static struct weapon wep_list[N_WEAPONS] = {
-    {wepLightningspeed, 1, "Lightning-speed", "Gain lightning-speed.", ""},
-    {wepFrostwave, 1, "Frost wave", "Slow down your", "opponents."},
-    {wepConfusion, 1, "Confusion", "Inverted controls for", "others."},
-    {wepSharpturn, 3, "Sharp turn", "Perform an ultra sharp", "turn."},
-    {wepTimestep, 1, "Time step", "Jump through time and", "space."},
-    {wepMole, 2, "Mole", "Dig your way out.", ""},
-    {wepWarp, 4, "Warp", "Warp to a random spot", "on the map."},
-    {wepGhost, 1, "Ghost walk", "Transform into ghost", "form."},
-    {wepTron, 1, "Tron-mode", "No more smooth turns.", ""},
-    {wepChilirun, 1, "Chili run", "Hot hot hot!", ""}
-};
+extern struct weapon wep_list[N_WEAPONS];
 
 #endif

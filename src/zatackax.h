@@ -29,14 +29,6 @@
 #define SCORE_SPACING       25
 #define SCORE_CAP_MAX       65536
 
-/* SPAWNING */
-#define START_ROUND_WAIT    1500    /* Milliseconds until the game starts */
-#define SPAWN_SPACE_MIN     100     /* Minimal spawning distance from
-                                       screen edges */
-#define ZATA_SPAWN_SPACING  20      /* Minimal spawning distance between
-                                       zatas */
-#define TRY_SPAWN_THIS_HARD 40      /* Try this many times to make a fit */
-
 /* HOLES */
 /* Hole size.
  * Higher number -> smaller hole */
@@ -96,7 +88,6 @@ struct menu {
 static unsigned char *hitmap;
 static struct recentMapPiece *recents;
 static unsigned char editPlayer = 0;
-static unsigned char nPlayers = DEFAULT_N_PLAYERS;
 const SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 const SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
 static SDL_Color colors[N_COLORS];
@@ -106,11 +97,6 @@ static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
 static bool winnerDeclared = false;
-
-static bool activeFreeze = false;
-static bool activeConfusion = false;
-static bool activeTron = false;
-static bool activeChilirun = false;
 
 /* SURFACES */
 static SDL_Surface *msg = NULL;
@@ -145,7 +131,6 @@ void cleanHitMap(void);
 int logicGame(void);
 int logicGameStart(void);
 void displayGameStart(void);
-void refreshGameScreen(void);
 void drawExtras(void);
 void newRound(void);
 void endRound(void);
