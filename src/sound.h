@@ -29,7 +29,6 @@ typedef enum sound {
     SOUND_GHOST,
     SOUND_TRON,
     SOUND_CHILIRUN,
-    SOUND_SWITCH,
     N_SOUNDS
 } Sound;
 

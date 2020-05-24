@@ -1,3 +1,7 @@
+## ?.?.? - ??.??.??
+* General:
+  * The weapon Switch-aroo has been removed.
+
 ## 0.3.3 - 08.05.20
 * Bugs:
   * Fixed compilation errors with GCC 10.

@@ -94,8 +94,7 @@ bool loadSounds(void)
         && loadSound(SOUND_WARP, "warp.ogg")
         && loadSound(SOUND_GHOST, "ghost.ogg")
         && loadSound(SOUND_TRON, "tronmode.ogg")
-        && loadSound(SOUND_CHILIRUN, "chilirun.ogg")
-        && loadSound(SOUND_SWITCH, "switch.ogg");
+        && loadSound(SOUND_CHILIRUN, "chilirun.ogg");
 }
 
 /**

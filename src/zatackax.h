@@ -154,7 +154,6 @@ void newRound(void);
 void endRound(void);
 
 /* WEAPONS */
-int legalWeps(void);
 void assignAiWeapons(void);
 void resetWeapons(void);
 

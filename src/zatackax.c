@@ -1095,19 +1095,6 @@ void endRound(void)
 }
 
 /**
- * Returns the number of legal weapons for the current number of players.
- * This is used to filter out weapons that are unusable in 2-player mode.
- *
- * @return Number of legal weapons for the current number of players.
- */
-int legalWeps(void)
-{
-    if (nPlayers == 2)
-        return N_WEAPONS - N_ILLEGAL_2P_WEPS;
-    return N_WEAPONS;
-}
-
-/**
  * Lets the AI pick weapons at random.
  */
 void assignAiWeapons(void)
@@ -1116,7 +1103,7 @@ void assignAiWeapons(void)
         struct player *p = &players[i];
         if (p->ai) {
             double rnd = (double)rand() / RAND_MAX;
-            p->weapon = (int)(rnd * legalWeps());
+            p->weapon = (int)(rnd * N_WEAPONS);
         }
     }
 }
@@ -1355,65 +1342,6 @@ int wepChilirun(struct player *p, bool on)
 }
 
 /**
- * Weapon: switch-aroo
- *
- * @param p Weapon user.
- * @param on 1 to use weapon, 0 to disable weapon.
- */
-int wepSwitch(struct player *p, bool on)
-{
-    if (on)
-        playSound(SOUND_SWITCH, sound);
-
-    unsigned int i, r;
-    bool valid = 0;
-
-    if (alivecount == 2)
-        return WEP_NONACTIVE;
-
-    i = rand();
-    i %= nPlayers;
-    while (!valid) {
-        if (i != (unsigned)(p->active - 1) && (&players[i])->alive)
-            valid = 1;
-        else
-            ++i;
-        i %= nPlayers;
-    }
-
-    valid = 0;
-    r = rand();
-    r %= nPlayers;
-    while (!valid) {
-        if ((r != (unsigned)(p->active - 1)) &&
-                (r != i) && (&players[r])->alive)
-            valid = 1;
-        else
-            ++r;
-        r %= nPlayers;
-    }
-
-    struct player *target1 = &players[i];
-    struct player *target2 = &players[r];
-    double posx = target2->posx;
-    double posy = target2->posy;
-    double dir = target2->dir;
-
-    target1->inv_others = INV_TIME;
-    target2->inv_others = INV_TIME;
-
-    target2->posx = target1->posx;
-    target2->posy = target1->posy;
-    target2->dir = target1->dir;
-
-    target1->posx = posx;
-    target1->posy = posy;
-    target1->dir = dir;
-
-    return WEP_NONACTIVE;
-}
-
-/**
  * Negates all active weapon effects.
  */
 void resetWeapons(void)
@@ -1553,7 +1481,7 @@ int logicWepMenu(void)
     for (p = &players[0], i = 0; i < nPlayers; ++i, ++p) {
         if (buttonDown(p->lkey)) {
             if (p->weapon == 0) {
-                p->weapon = legalWeps() - 1;
+                p->weapon = N_WEAPONS - 1;
             }
             else {
                 p->weapon--;
@@ -1562,7 +1490,7 @@ int logicWepMenu(void)
             return 1;
         }
         else if (buttonDown(p->rkey)) {
-            if (p->weapon == legalWeps() - 1) {
+            if (p->weapon == N_WEAPONS - 1) {
                 p->weapon = 0;
             }
             else {
@@ -1581,8 +1509,7 @@ int logicWepMenu(void)
 void displayWepMenu(void)
 {
     struct player *p;
-    int nweps = legalWeps();
-    int mid = -(nweps / 2);
+    int mid = -N_WEAPONS/2;
     SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
                                                         0x00, 0x00, 0x00));
 
@@ -1639,12 +1566,12 @@ void displayWepMenu(void)
     }
 
     /* Draw weapon icons */
-    for (int i = 0; i < nweps; ++i, ++mid) {
+    for (int i = 0; i < N_WEAPONS; ++i, ++mid) {
         SDL_Rect offset = {
             (WINDOW_W / 2)          /* offset */
             - (wepIcons[0]->w / 2)  /* centralize */
             + (mid * ((wepIcons[0]->w / 2) + WEP_SPACEMOD))
-            - ((nweps % 2) - 1)
+            - ((N_WEAPONS % 2) - 1)
             * (WEP_SPACEMOD / 1.2)
             ,
             (WINDOW_H / 2)          /* offset */
@@ -2288,7 +2215,6 @@ void initGraphics(void)
     wepIcons[WEP_GHOST + 1] = images[IMG_WI_GHOST];
     wepIcons[WEP_TRON + 1] = images[IMG_WI_TRON];
     wepIcons[WEP_CHILI_RUN + 1] = images[IMG_WI_CHILIRUN];
-    wepIcons[WEP_SWITCH + 1] = images[IMG_WI_SWITCH];
 
     smallWepIcons[WEP_LIGHTNINGSPEED] = images[IMG_WIS_SPEED];
     smallWepIcons[WEP_FROSTWAVE] = images[IMG_WIS_FROST];
@@ -2300,7 +2226,6 @@ void initGraphics(void)
     smallWepIcons[WEP_GHOST] = images[IMG_WIS_GHOST];
     smallWepIcons[WEP_TRON] = images[IMG_WIS_TRON];
     smallWepIcons[WEP_CHILI_RUN] = images[IMG_WIS_CHILIRUN];
-    smallWepIcons[WEP_SWITCH] = images[IMG_WIS_SWITCH];
 }
 
 /**
