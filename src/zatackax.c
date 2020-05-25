@@ -1621,6 +1621,7 @@ int logicSettingsMenu(void)
             playSound(SOUND_BEEP, sound);
             fullscreen ^= 1;
             initScreen();
+            initHitMap(WINDOW_W, WINDOW_H);
             break;
         case 1: /* Toggle sound */
             sound ^= 1;
@@ -2022,29 +2023,6 @@ void displayMenu(char *c[], struct menu *m, int ymod)
 }
 
 /**
- * Initializes the application window and screen.
- *
- * @return 1 if the initialization was successful, 0 if not.
- */
-int initScreen(void)
-{
-    SDL_FreeSurface(screen);
-
-    if (fullscreen)
-        screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
-                                  SDL_SWSURFACE | SDL_FULLSCREEN);
-    else
-        screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
-                                  SDL_SWSURFACE | SDL_RESIZABLE);
-    if (screen == NULL)
-        return 0;
-
-    initHitMap(WINDOW_W, WINDOW_H);
-
-    return 1;
-}
-
-/**
  * Puts a pixel on a surface.
  *
  * @param x x coordinate of the pixel destination.
@@ -2255,9 +2233,6 @@ int main(void)
 {
     static Uint32 prevtime = 0;
 
-    WINDOW_W = DEFAULT_WINDOW_W;
-    WINDOW_H = DEFAULT_WINDOW_H;
-
     initPlayers1();
     restoreSettings();
 
@@ -2266,6 +2241,8 @@ int main(void)
 
     if (!initScreen())
         return 1;
+
+    initHitMap(WINDOW_W, WINDOW_H);
 
     if (!loadImages()) {
         if (olvl >= O_NORMAL) {
@@ -2392,6 +2369,7 @@ int main(void)
                     return 1;
                 }
 
+                initHitMap(WINDOW_W, WINDOW_H);
                 refreshGameScreen();
             }
         }

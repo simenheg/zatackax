@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+
 #include "sound.h"
 #include "error.h"
 #include "ai.h"
@@ -20,6 +21,7 @@
 #include "data.h"
 #include "font.h"
 #include "gfx.h"
+#include "video.h"
 #include "common.h"
 
 /* SCORES */
@@ -104,19 +106,14 @@ static Uint32 prevtime = 0;
 static unsigned int alivecount = 0;
 static int countdown;
 static bool winnerDeclared = false;
-static bool screenFreeze = false;
 
 static bool activeFreeze = false;
 static bool activeConfusion = false;
 static bool activeTron = false;
 static bool activeChilirun = false;
 
-static unsigned int WINDOW_W;       /* Window width */
-static unsigned int WINDOW_H;       /* Window height */
-
 /* SURFACES */
 static SDL_Surface *msg = NULL;
-static SDL_Surface *screen = NULL;
 static struct SDL_Surface **parrows;
 static struct SDL_Surface **pballs;
 static struct SDL_Surface *wepIcons[N_WEAPONS + 1];
@@ -173,7 +170,6 @@ int handleMenu(struct menu *m);
 void displayMenu(char *c[], struct menu *m, int ymod);
 
 /* GRAPHICS */
-int initScreen(void);
 void putPixel(int x, int y, SDL_Color c, unsigned char *target);
 void colorFill(SDL_Color c, SDL_Surface *sprite);
 void initColors(void);

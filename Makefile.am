@@ -16,7 +16,7 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bin_PROGRAMS = zatackax
-zatackax_SOURCES = src/ai.c src/ai.h src/broadcast.c src/broadcast.h src/common.h src/config.c src/config.h src/data.c src/data.h src/error.c src/error.h src/font.c src/font.h src/gfx.c src/gfx.h src/input.c src/input.h src/player.h src/sound.c src/sound.h src/weapon.h src/zatackax.c src/zatackax.h
+zatackax_SOURCES = src/ai.c src/ai.h src/broadcast.c src/broadcast.h src/common.h src/config.c src/config.h src/data.c src/data.h src/error.c src/error.h src/font.c src/font.h src/gfx.c src/gfx.h src/input.c src/input.h src/player.h src/sound.c src/sound.h src/video.c src/video.h src/weapon.h src/zatackax.c src/zatackax.h
 AM_CPPFLAGS = -DDATADIR=\"$(pkgdatadir)\"
 EXTRA_DIST = data AUTHORS.md NEWS.md README.md
 
