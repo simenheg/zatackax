@@ -39,6 +39,7 @@ typedef enum image {
 
 extern SDL_Surface *images[N_IMAGES];
 
+int clearSurface(SDL_Surface *s);
 SDL_Surface *loadIcon(const char *filename);
 bool loadImage(Image i, const char *filename);
 bool loadImages(void);

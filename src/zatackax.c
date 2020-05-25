@@ -903,8 +903,7 @@ int logicGameStart(void)
  */
 void displayGameStart(void)
 {
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
-                                                        0x00, 0x00, 0x00));
+    clearSurface(screen);
 
     drawExtras();
 
@@ -935,8 +934,7 @@ void displayGameStart(void)
 void refreshGameScreen(void)
 {
     SDL_UnlockSurface(screen);
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
-                                                        0x00, 0x00, 0x00));
+    clearSurface(screen);
 
     drawExtras();
 
@@ -1278,8 +1276,7 @@ void displayWepMenu(void)
 {
     struct player *p;
     int mid = -N_WEAPONS/2;
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
-                                                        0x00, 0x00, 0x00));
+    clearSurface(screen);
 
     char wep_str[MENU_BUF];
     SDL_Surface *wep_text;
@@ -1754,9 +1751,7 @@ int handleMenu(struct menu *m)
 void displayMenu(char *c[], struct menu *m, int ymod)
 {
     int mid = -(m->choices / 2);
-
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format,
-                                                        0x00, 0x00, 0x00));
+    clearSurface(screen);
 
     for (int i = 0; i < m->choices; ++i, ++mid) {
 

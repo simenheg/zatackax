@@ -20,6 +20,17 @@
 SDL_Surface *images[N_IMAGES];
 
 /**
+ * Fill a surface with black pixels.
+ *
+ * Return 0 on success, -1 on error.
+ */
+int clearSurface(SDL_Surface *s)
+{
+    Uint32 color = SDL_MapRGB(s->format, 0x00, 0x00, 0x00);
+    return SDL_FillRect(s, &s->clip_rect, color);
+}
+
+/**
  * Load an icon file named `filename`. Return the loaded image, or
  * NULL if it wasn't loaded.
  */
