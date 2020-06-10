@@ -129,6 +129,7 @@ void cleanHitMap(void);
 
 /* GAME */
 int logicGame(void);
+void displayGame(void);
 int logicGameStart(void);
 void displayGameStart(void);
 void drawExtras(void);
@@ -163,7 +164,6 @@ void colorBalls(void);
 /* SYSTEM */
 int init(void);
 void initGraphics(void);
-void displayVoid(void);
 void exitGame(int status);
 
 #endif

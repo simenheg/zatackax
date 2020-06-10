@@ -59,7 +59,7 @@ static struct scene gameStart = {
 
 static struct scene game = {
     logicGame,
-    displayVoid,
+    displayGame,
     &mainMenu
 };
 
@@ -550,7 +550,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
     if (olvl >= O_DEBUG)
         fprintf(stderr, "Added to hitmap: %d, %d...\n", x, y);
 
-    SDL_LockSurface(screen);
+    SDL_LockSurface(gameScreen);
 
     for (int i = -TOLERANCE; i <= TOLERANCE; ++i) {
         for (int j = -TOLERANCE; j <= TOLERANCE; ++j) {
@@ -568,7 +568,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                     &hitmap[sizeof(bool) * ((WINDOW_W * ypx) + xpx)];
                 struct player *p = &players[player - 1];
 
-                putPixel(xpx, ypx, colors[p->color], screen->pixels);
+                putPixel(xpx, ypx, colors[p->color], gameScreen->pixels);
 
                 if (*hit == 0) {
                     struct recentMapPiece *new
@@ -614,10 +614,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
         }
     }
 
-    SDL_UnlockSurface(screen);
-
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UnlockSurface(gameScreen);
 }
 
 /**
@@ -642,7 +639,7 @@ void updateHitMap(Uint32 delta)
     cur = prev->next;
     prev->count -= delta;
 
-    SDL_LockSurface(screen);
+    SDL_LockSurface(gameScreen);
 
     while (cur != NULL) {
         cur->count -= delta;
@@ -650,7 +647,7 @@ void updateHitMap(Uint32 delta)
             &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
         if (holes && cur->count <= HOLE_DELAY && *at > MAX_PLAYERS * 2) {
             *at = 0;
-            putPixel(cur->x, cur->y, cMenuBG, screen->pixels);
+            putPixel(cur->x, cur->y, cMenuBG, gameScreen->pixels);
             prev->next = cur->next;
             free(cur);
             cur = prev->next;
@@ -665,7 +662,7 @@ void updateHitMap(Uint32 delta)
         }
     }
 
-    SDL_UnlockSurface(screen);
+    SDL_UnlockSurface(gameScreen);
 }
 
 /**
@@ -745,7 +742,7 @@ int logicGame(void)
             }
 
             if (alivecount <= 1) {
-                SDL_FreeSurface(screen);
+                clearSurface(gameScreen);
                 newRound();
                 return 0;
             } else if (p->alive) {
@@ -869,8 +866,22 @@ int logicGame(void)
         }
     }
     updateHitMap(delta);
-    SDL_UnlockSurface(screen);
+    SDL_UnlockSurface(gameScreen);
     return 1;
+}
+
+/**
+ * Display a game round.
+ */
+void displayGame(void)
+{
+    clearSurface(screen);
+
+    SDL_BlitSurface(gameScreen, NULL, screen, NULL);
+
+    if (SDL_Flip(screen) == -1) {
+        exit(1);
+    }
 }
 
 /**
@@ -904,8 +915,10 @@ int logicGameStart(void)
 void displayGameStart(void)
 {
     clearSurface(screen);
+    clearSurface(gameScreen);
 
     drawExtras();
+    SDL_BlitSurface(gameScreen, NULL, screen, NULL);
 
     if ((countdown % (START_ROUND_WAIT / 4)) > (START_ROUND_WAIT / 8)) {
         for (int i = 0; i < MAX_PLAYERS; ++i) {
@@ -933,14 +946,14 @@ void displayGameStart(void)
  */
 void refreshGameScreen(void)
 {
-    SDL_UnlockSurface(screen);
-    clearSurface(screen);
+    SDL_UnlockSurface(gameScreen);
+    clearSurface(gameScreen);
 
     drawExtras();
 
-    SDL_LockSurface(screen);
+    SDL_LockSurface(gameScreen);
 
-    unsigned char *target = screen->pixels;
+    unsigned char *target = gameScreen->pixels;
 
     for (unsigned int yy = 0; yy < WINDOW_H; ++yy) {
         for (unsigned int xx = 0; xx < WINDOW_W; ++xx, target += 4) {
@@ -964,10 +977,7 @@ void refreshGameScreen(void)
         }
     }
 
-    SDL_UnlockSurface(screen);
-
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UnlockSurface(gameScreen);
 }
 
 /**
@@ -986,7 +996,7 @@ void drawExtras(void)
         snprintf(score_str, SCORE_BUF, "%d", p->score);
         scoreText = TTF_RenderUTF8_Shaded(fonts[FONT_SCORE], score_str,
                                           colors[p->color], cMenuBG);
-        SDL_BlitSurface(scoreText, NULL, screen, &offset);
+        SDL_BlitSurface(scoreText, NULL, gameScreen, &offset);
         SDL_FreeSurface(scoreText);
 
         if (weapons && p->wep_count > 0) {
@@ -995,7 +1005,7 @@ void drawExtras(void)
 
             for (int j = 0; j < p->wep_count; ++j) {
                 offset.x += WEP_SMALL_PADDING;
-                SDL_BlitSurface(smallWepIcons[p->weapon], NULL, screen,
+                SDL_BlitSurface(smallWepIcons[p->weapon], NULL, gameScreen,
                                 &offset);
             }
         }
@@ -1007,34 +1017,34 @@ void drawExtras(void)
                 SDL_Rect offset = {WINDOW_W - broadcast[i]->w - 4,
                                    WINDOW_H - (broadcast[i]->h * (i + 1)),
                                    0, 0};
-                SDL_BlitSurface(broadcast[i], NULL, screen, &offset);
+                SDL_BlitSurface(broadcast[i], NULL, gameScreen, &offset);
             }
         }
     }
 
     if (border) {
-        Uint32 white = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
+        Uint32 white = SDL_MapRGB(gameScreen->format, 0xFF, 0xFF, 0xFF);
         SDL_Rect leftBorder = {0, 0, 1, WINDOW_H};
         SDL_Rect rightBorder = {WINDOW_W - 1, 0, WINDOW_W, WINDOW_H};
         SDL_Rect topBorder = {0, 0, WINDOW_W, 1};
         SDL_Rect bottomBorder = {0, WINDOW_H - 1, WINDOW_W, WINDOW_H};
-        SDL_FillRect(screen, &leftBorder, white);
-        SDL_FillRect(screen, &rightBorder, white);
-        SDL_FillRect(screen, &topBorder, white);
-        SDL_FillRect(screen, &bottomBorder, white);
+        SDL_FillRect(gameScreen, &leftBorder, white);
+        SDL_FillRect(gameScreen, &rightBorder, white);
+        SDL_FillRect(gameScreen, &topBorder, white);
+        SDL_FillRect(gameScreen, &bottomBorder, white);
     }
 
     /* Active weapons */
     if (activeFreeze || activeConfusion || activeTron || activeChilirun) {
         SDL_Rect offset = {WINDOW_W - wepIcons[0]->w, 0, 0, 0};
         if (activeFreeze)
-            SDL_BlitSurface(wepIcons[WEP_FROSTWAVE + 1], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_FROSTWAVE + 1], NULL, gameScreen, &offset);
         if (activeConfusion)
-            SDL_BlitSurface(wepIcons[WEP_CONFUSION + 1], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_CONFUSION + 1], NULL, gameScreen, &offset);
         if (activeTron)
-            SDL_BlitSurface(wepIcons[WEP_TRON + 1], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_TRON + 1], NULL, gameScreen, &offset);
         if (activeChilirun)
-            SDL_BlitSurface(wepIcons[WEP_CHILI_RUN + 1], NULL, screen, &offset);
+            SDL_BlitSurface(wepIcons[WEP_CHILI_RUN + 1], NULL, gameScreen, &offset);
     }
 }
 
@@ -1968,11 +1978,6 @@ void initGraphics(void)
     smallWepIcons[WEP_TRON] = images[IMG_WIS_TRON];
     smallWepIcons[WEP_CHILI_RUN] = images[IMG_WIS_CHILIRUN];
 }
-
-/**
- * Display nothing.
- */
-void displayVoid(void) {}
 
 /**
  * Exits the game.

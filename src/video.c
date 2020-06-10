@@ -19,6 +19,8 @@
 
 SDL_Surface *screen = NULL;
 
+SDL_Surface *gameScreen = NULL;
+
 unsigned int WINDOW_W = DEFAULT_WINDOW_W;
 
 unsigned int WINDOW_H = DEFAULT_WINDOW_H;
@@ -26,7 +28,7 @@ unsigned int WINDOW_H = DEFAULT_WINDOW_H;
 bool screenFreeze = false;
 
 /**
- * Initialize the application window and screen surface.
+ * Initialize the application window and main screen surfaces.
  *
  * @return 1 if the initialization was successful, 0 if not.
  */
@@ -37,5 +39,16 @@ int initScreen(void)
                               SDL_SWSURFACE | (fullscreen
                                                ? SDL_FULLSCREEN
                                                : SDL_RESIZABLE));
-    return screen == NULL ? 0 : 1;
+
+    SDL_FreeSurface(gameScreen);
+    gameScreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                      screen->w,
+                                      screen->h,
+                                      screen->format->BitsPerPixel,
+                                      screen->format->Rmask,
+                                      screen->format->Gmask,
+                                      screen->format->Bmask,
+                                      0);
+
+    return (screen == NULL || gameScreen == NULL) ? 0 : 1;
 }
