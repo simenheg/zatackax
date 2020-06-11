@@ -25,7 +25,7 @@ struct menu menuMain = {
 };
 
 struct menu menuSettings = {
-    11,
+    12,
     0,
 };
 
@@ -237,6 +237,18 @@ void killPlayer(unsigned char victim, unsigned char killer)
         } else {
             break;
         }
+    }
+
+    if (particleEffects) {
+        SDL_Color color = colors[p->color];
+        addParticles(50,
+                     p->posx, p->posy,
+                     0, 0.5,
+                     p->dir + M_PI - M_PI_4, p->dir + M_PI + M_PI_4,
+                     1, 1, 0.0005,
+                     color.r, color.r,
+                     color.b, color.b,
+                     color.g, color.g);
     }
 
     refreshGameScreen(); /* Update scores */
@@ -726,12 +738,19 @@ int logicGame(void)
                         wep_list[p->weapon].func(p, 0);
                         p->wep_time = WEP_NONACTIVE;
                     }
+                    else if (particleEffects) {
+                        wep_list[p->weapon].particleFunc(p, delta);
+                    }
                 }
 
                 if (p->inv_self > 0) {
                     p->inv_self -= delta;
-                    if (p->inv_self < 0)
+                    if (p->inv_self < 0) {
                         p->inv_self = 0;
+                    }
+                    else if (particleEffects) {
+                        wep_list[p->weapon].particleFunc(p, delta);
+                    }
                 }
 
                 if (p->inv_others > 0) {
@@ -865,7 +884,13 @@ int logicGame(void)
             break;
         }
     }
+
     updateHitMap(delta);
+
+    if (particleEffects) {
+        updateParticles(delta);
+    }
+
     SDL_UnlockSurface(gameScreen);
     return 1;
 }
@@ -876,6 +901,11 @@ int logicGame(void)
 void displayGame(void)
 {
     clearSurface(screen);
+
+    if (particleEffects) {
+        renderParticles(particleScreen);
+        SDL_BlitSurface(particleScreen, NULL, screen, NULL);
+    }
 
     SDL_BlitSurface(gameScreen, NULL, screen, NULL);
 
@@ -1054,6 +1084,10 @@ void drawExtras(void)
 void newRound(void)
 {
     cleanHitMap();
+
+    if (particleEffects) {
+        resetParticles();
+    }
 
     alivecount = nPlayers;
     countdown = START_ROUND_WAIT;
@@ -1421,27 +1455,31 @@ int logicSettingsMenu(void)
             playSound(SOUND_BEEP, sound);
             broadcasts ^= 1;
             break;
-        case 6: /* Toggle border visibility */
+        case 6: /* Toggle particle effects */
+            playSound(SOUND_BEEP, sound);
+            particleEffects ^= 1;
+            break;
+        case 7: /* Toggle border visibility */
             playSound(SOUND_BEEP, sound);
             border ^= 1;
             break;
-        case 7: /* Toggle duel mode */
+        case 8: /* Toggle duel mode */
             playSound(SOUND_BEEP, sound);
             duelmode ^= 1;
             if (duelmode)
                 nPlayers = 2;
             break;
-        case 8: /* Score cap */
+        case 9: /* Score cap */
             playSound(SOUND_BEEP, sound);
             if (scorecap < SCORE_CAP_MAX - 10)
                 scorecap += 10;
             break;
-        case 9:
+        case 10:
             playSound(SOUND_BEEP, sound);
             menuPlayer.choice = 0;
             curScene = &playerMenu;
             break;
-        case 10: /* Back */
+        case 11: /* Back */
             playSound(SOUND_BEP, sound);
             clearEnterButtons();
             initMainMenu();
@@ -1454,14 +1492,14 @@ int logicSettingsMenu(void)
         return 1;
     }
     else if (menuButtonQuery(KEY_LEFT)) {
-        if (menuSettings.choice == 8 && scorecap > 0) {
+        if (menuSettings.choice == 9 && scorecap > 0) {
             playSound(SOUND_BEP, sound);
             --scorecap;
         }
         return 1;
     }
     else if (menuButtonQuery(KEY_RIGHT)) {
-        if (menuSettings.choice == 8 && scorecap < SCORE_CAP_MAX) {
+        if (menuSettings.choice == 9 && scorecap < SCORE_CAP_MAX) {
             playSound(SOUND_BEEP, sound);
             ++scorecap;
         }
@@ -1469,7 +1507,7 @@ int logicSettingsMenu(void)
     }
     else if (keyDown[SDLK_BACKSPACE]) {
         keyDown[SDLK_BACKSPACE] = 0;
-        if (menuSettings.choice == 8) {
+        if (menuSettings.choice == 9) {
             playSound(SOUND_BEP, sound);
             scorecap = 0;
         }
@@ -1477,7 +1515,7 @@ int logicSettingsMenu(void)
     }
 
     /* Special case for the score setting */
-    if (menuSettings.choice == 8) {
+    if (menuSettings.choice == 9) {
         int num = -1;
         if      (keyDown[SDLK_0]) num = 0;
         else if (keyDown[SDLK_1]) num = 1;
@@ -1520,22 +1558,24 @@ void displaySettingsMenu(void)
     char s4[MENU_BUF] = "WEAPONS ";
     char s5[MENU_BUF] = "HOLES ";
     char s6[MENU_BUF] = "BROADCASTS ";
-    char s7[MENU_BUF] = "SHOW BORDER ";
-    char s8[MENU_BUF] = "DUEL MODE ";
-    char s9[MENU_BUF] = "SCORE CAP: ";
+    char s7[MENU_BUF] = "PARTICLE EFFECTS ";
+    char s8[MENU_BUF] = "SHOW BORDER ";
+    char s9[MENU_BUF] = "DUEL MODE ";
+    char s10[MENU_BUF] = "SCORE CAP: ";
     strncat(s1, fullscreen ON_OFF, MENU_BUF - strlen(s1) - 1);
     strncat(s2, sound ON_OFF, MENU_BUF - strlen(s2) - 1);
     strncat(s3, music ON_OFF, MENU_BUF - strlen(s3) - 1);
     strncat(s4, weapons ON_OFF, MENU_BUF - strlen(s4) - 1);
     strncat(s5, holes ON_OFF, MENU_BUF - strlen(s5) - 1);
     strncat(s6, broadcasts ON_OFF, MENU_BUF - strlen(s6) - 1);
-    strncat(s7, border ON_OFF, MENU_BUF - strlen(s7) - 1);
-    strncat(s8, duelmode ON_OFF, MENU_BUF - strlen(s8) - 1);
+    strncat(s7, particleEffects ON_OFF, MENU_BUF - strlen(s7) - 1);
+    strncat(s8, border ON_OFF, MENU_BUF - strlen(s8) - 1);
+    strncat(s9, duelmode ON_OFF, MENU_BUF - strlen(s9) - 1);
     if (scorecap == 0) {
-        strncat(s9, "∞", MENU_BUF - strlen(s9) - 1);
+        strncat(s10, "∞", MENU_BUF - strlen(s10) - 1);
     } else {
         snprintf(tmpCap, SCORE_BUF, "%d", scorecap);
-        strncat(s9, tmpCap, MENU_BUF - strlen(s9) - 1);
+        strncat(s10, tmpCap, MENU_BUF - strlen(s10) - 1);
     }
     c[0] = s1;
     c[1] = s2;
@@ -1546,8 +1586,9 @@ void displaySettingsMenu(void)
     c[6] = s7;
     c[7] = s8;
     c[8] = s9;
-    c[9] = "PLAYER CONFIG";
-    c[10] = "BACK";
+    c[9] = s10;
+    c[10] = "PLAYER CONFIG";
+    c[11] = "BACK";
 
     displayMenu(c, &menuSettings, 0);
 
@@ -1830,22 +1871,6 @@ void colorFill(SDL_Color c, SDL_Surface *sprite)
             target[2] *= c.r / 255.0;
         }
     }
-}
-
-/**
- * Initializes the starter colors.
- */
-void initColors(void)
-{
-    SDL_Color *c = &colors[0];
-    c->r = 0xFF; c->g = 0x00; c->b = 0x00; ++c; /* Red */
-    c->r = 0x00; c->g = 0x6F; c->b = 0xFF; ++c; /* Blue */
-    c->r = 0x00; c->g = 0xFF; c->b = 0x00; ++c; /* Green */
-    c->r = 0xFF; c->g = 0xFF; c->b = 0x00; ++c; /* Yellow */
-    c->r = 0xFF; c->g = 0x00; c->b = 0xFF; ++c; /* Pink */
-    c->r = 0x00; c->g = 0xFF; c->b = 0xFF; ++c; /* Cyan */
-    c->r = 0xFF; c->g = 0xFF; c->b = 0xFF; ++c; /* White */
-    c->r = 0xFF; c->g = 0x80; c->b = 0x00; ++c; /* Orange */
 }
 
 /**

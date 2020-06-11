@@ -9,6 +9,10 @@
 #include "data.h"
 #include "error.h"
 
+#define N_COLORS 8 /* Number of available player colors */
+
+extern SDL_Color colors[N_COLORS];
+
 typedef enum image {
     IMG_ARROWS = 0,
     IMG_BALL,
@@ -43,5 +47,6 @@ int clearSurface(SDL_Surface *s);
 SDL_Surface *loadIcon(const char *filename);
 bool loadImage(Image i, const char *filename);
 bool loadImages(void);
+void initColors(void);
 
 #endif

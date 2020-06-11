@@ -22,6 +22,7 @@
 #include "font.h"
 #include "gfx.h"
 #include "video.h"
+#include "particle.h"
 #include "common.h"
 
 /* SCORES */
@@ -42,7 +43,6 @@
 #define ZATA_SPEED          0.09                /* Speed of the zata */
 #define TOLERANCE           ZATA_SIZE / 2       /* Collision detection */
 #define COUNTDOWN_TOLERANCE 50 * (ZATA_SIZE)    /* Suicide detection */
-#define N_COLORS            8                   /* Available colors */
 
 /* MENUS */
 #define MENU_BUF            32      /* Maximum menu string length */
@@ -90,7 +90,6 @@ static struct recentMapPiece *recents;
 static unsigned char editPlayer = 0;
 const SDL_Color cMenuText = {0x80, 0x80, 0x80, 0};
 const SDL_Color cMenuTextH = {0xFF, 0xFF, 0xFF, 0};
-static SDL_Color colors[N_COLORS];
 static SDL_Rect arrowClip[32];
 static SDL_Event event;
 static Uint32 prevtime = 0;
@@ -158,7 +157,6 @@ void displayMenu(char *c[], struct menu *m, int ymod);
 /* GRAPHICS */
 void putPixel(int x, int y, SDL_Color c, unsigned char *target);
 void colorFill(SDL_Color c, SDL_Surface *sprite);
-void initColors(void);
 void colorBalls(void);
 
 /* SYSTEM */

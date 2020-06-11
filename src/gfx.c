@@ -17,6 +17,8 @@
 
 #include "gfx.h"
 
+SDL_Color colors[N_COLORS];
+
 SDL_Surface *images[N_IMAGES];
 
 /**
@@ -103,4 +105,20 @@ bool loadImages(void)
         && loadImage(IMG_WI_TIMESTEP, "wi_timestep.png")
         && loadImage(IMG_WI_TRON, "wi_tron.png")
         && loadImage(IMG_WI_WARP, "wi_warp.png");
+}
+
+/**
+ * Initialize the player colors.
+ */
+void initColors(void)
+{
+    SDL_Color *c = &colors[0];
+    c->r = 0xFF; c->g = 0x00; c->b = 0x00; ++c; /* Red */
+    c->r = 0x00; c->g = 0x6F; c->b = 0xFF; ++c; /* Blue */
+    c->r = 0x00; c->g = 0xFF; c->b = 0x00; ++c; /* Green */
+    c->r = 0xFF; c->g = 0xFF; c->b = 0x00; ++c; /* Yellow */
+    c->r = 0xFF; c->g = 0x00; c->b = 0xFF; ++c; /* Pink */
+    c->r = 0x00; c->g = 0xFF; c->b = 0xFF; ++c; /* Cyan */
+    c->r = 0xFF; c->g = 0xFF; c->b = 0xFF; ++c; /* White */
+    c->r = 0xFF; c->g = 0x80; c->b = 0x00; ++c; /* Orange */
 }

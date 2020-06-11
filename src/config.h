@@ -11,15 +11,16 @@
 #include "common.h"
 #include "player.h"
 
-#define DEFAULT_FULLSCREEN false
-#define DEFAULT_SOUND      true
-#define DEFAULT_MUSIC      true
-#define DEFAULT_WEAPONS    true
-#define DEFAULT_HOLES      true
-#define DEFAULT_BROADCASTS true
-#define DEFAULT_BORDER     false
-#define DEFAULT_DUELMODE   false
-#define DEFAULT_SCORECAP   false
+#define DEFAULT_FULLSCREEN       false
+#define DEFAULT_SOUND            true
+#define DEFAULT_MUSIC            true
+#define DEFAULT_WEAPONS          true
+#define DEFAULT_HOLES            true
+#define DEFAULT_BROADCASTS       true
+#define DEFAULT_PARTICLE_EFFECTS true
+#define DEFAULT_BORDER           false
+#define DEFAULT_DUELMODE         false
+#define DEFAULT_SCORECAP         false
 
 extern unsigned int scorecap;
 extern bool fullscreen;
@@ -28,6 +29,7 @@ extern bool music;
 extern bool weapons;
 extern bool holes;
 extern bool broadcasts;
+extern bool particleEffects;
 extern bool border;
 extern bool duelmode;
 

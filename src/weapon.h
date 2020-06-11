@@ -7,6 +7,7 @@
 #include "player.h"
 #include "sound.h"
 #include "video.h"
+#include "particle.h"
 
 #define N_WEAPONS               10
 #define WEP_SPACEMOD            42
@@ -42,6 +43,7 @@ enum weapons {
 
 struct weapon {
     int (*func)(struct player*, bool);
+    void (*particleFunc)(struct player*, Uint32);
     int charges;
     char *name;
     char *desc1;
@@ -53,16 +55,34 @@ extern bool activeConfusion;
 extern bool activeTron;
 extern bool activeChilirun;
 
+void addParticlesVoid(struct player *p, Uint32 delta);
+
 int wepLightningspeed(struct player *p, bool on);
+void addParticlesLightningspeed(struct player *p, Uint32 delta);
+
 int wepFrostwave(struct player *p, bool on);
+void addParticlesFrostwave(struct player *p, Uint32 delta);
+
 int wepSharpturn(struct player *p, bool on);
+void addParticlesSharpturn(struct player *p, Uint32 delta);
+
 int wepConfusion(struct player *p, bool on);
+void addParticlesConfusion(struct player *p, Uint32 delta);
+
 int wepTimestep(struct player *p, bool on);
+
 int wepMole(struct player *p, bool on);
+
 int wepWarp(struct player *p, bool on);
+
 int wepGhost(struct player *p, bool on);
+void addParticlesGhost(struct player *p, Uint32 delta);
+
 int wepTron(struct player *p, bool on);
+void addParticlesTron(struct player *p, Uint32 delta);
+
 int wepChilirun(struct player *p, bool on);
+void addParticlesChilirun(struct player *p, Uint32 delta);
 
 extern struct weapon wep_list[N_WEAPONS];
 

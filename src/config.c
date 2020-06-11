@@ -7,12 +7,14 @@ bool music = DEFAULT_MUSIC;
 bool weapons = DEFAULT_WEAPONS;
 bool holes = DEFAULT_HOLES;
 bool broadcasts = DEFAULT_BROADCASTS;
+bool particleEffects = DEFAULT_PARTICLE_EFFECTS;
 bool border = DEFAULT_BORDER;
 bool duelmode = DEFAULT_DUELMODE;
 const char *settingNames[] = {"fullscreen", "sound", "music", "weapons",
-                              "holes", "broadcasts", "border", "duelmode"};
-bool *settings[8] = {&fullscreen, &sound, &music, &weapons, &holes,
-                     &broadcasts, &border, &duelmode};
+                              "holes", "broadcasts", "particleEffects",
+                              "border", "duelmode"};
+bool *settings[9] = {&fullscreen, &sound, &music, &weapons, &holes,
+                     &broadcasts, &particleEffects, &border, &duelmode};
 
 /**
  * Return that path of the directory where the config file resides.

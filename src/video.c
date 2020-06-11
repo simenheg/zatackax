@@ -49,6 +49,9 @@ int initScreen(void)
                                       screen->format->Gmask,
                                       screen->format->Bmask,
                                       0);
+    SDL_SetColorKey(gameScreen, SDL_SRCCOLORKEY, 0);
+
+    initParticleScreen(WINDOW_W, WINDOW_H);
 
     return (screen == NULL || gameScreen == NULL) ? 0 : 1;
 }

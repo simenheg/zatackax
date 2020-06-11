@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "config.h"
+#include "particle.h"
 
 /*
  * The main framebuffer surface.
