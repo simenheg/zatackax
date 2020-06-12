@@ -75,7 +75,7 @@ void addParticleSpinner(int num, struct player *p, double speed, double offset,
                         double velMin, double velMax, double rMin, double rMax,
                         double gMin, double gMax, double bMin, double bMax)
 {
-    unsigned char playerIndex = p->active;
+    unsigned char playerIndex = p->active - 1;
 
     for (int i = 0; i < num; ++i) {
         spinCounters[playerIndex] += speed;
