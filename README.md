@@ -10,15 +10,13 @@ opponents.
 ### From source
 To install Zatacka X from source, run:
 
-    $ autoreconf -i
     $ ./configure
     $ make
-    $ make install
+    $ sudo make install
 
-When installing from a release tarball, the `autoreconf` step can be
-omitted. If you want to run Zatacka X directly from the source
-directory instead of installing it, run `make devel` instead of `make`
-in the third step.
+If you want to run Zatacka X directly from the source directory
+instead of installing it, run `make devel` instead of `make` in the
+second step.
 
 Compilation depends on the following libraries:
 
