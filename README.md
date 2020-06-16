@@ -16,7 +16,11 @@ To install Zatacka X from source, run:
 
 If you want to run Zatacka X directly from the source directory
 instead of installing it, run `make devel` instead of `make` in the
-second step.
+second step:
+
+    $ ./configure
+    $ make devel
+    $ ./zatackax
 
 Compilation depends on the following libraries:
 
