@@ -1,5 +1,5 @@
 /* font -- font file loading.
- * Copyright (C) 2010-2020 The Zatacka X development team
+ * Copyright (C) 2010-2020 Simen Heggestøyl <simenheg@runbox.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

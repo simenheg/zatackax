@@ -53,5 +53,5 @@ file.
 See AUTHORS.
 
 ## Contact
-Questions, suggestions, contributions or other inquiries? Please contact
-simenheg@gmail.com.
+Questions, suggestions, contributions or other inquiries? Please
+contact simenheg@runbox.com.

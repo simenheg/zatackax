@@ -1,5 +1,5 @@
 ## Programming
-* Simen Heggestøyl (simenheg@gmail.com)
+* Simen Heggestøyl (simenheg@runbox.com)
 * Gwilym Kuiper
 * Patrick Bauge Skevik (patrisk@student.matnat.uio.no)
 * Sebastien Chevalier (sebastien.chev@gmail.com)
