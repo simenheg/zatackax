@@ -41,13 +41,13 @@ instance, the following command installs the required libraries:
 * OpenDingux: [OpenDingux Software list](https://github.com/retrogamehandheld/OpenDingux/#games--ports)
 
 ## License
-The Zatacka X code is free software, licensed under the GNU General Public
-License version 3, or (at your option) any later version. See COPYING for
-details.
+The Zatacka X code is free software, licensed under the GNU General
+Public License version 3, or (at your option) any later version. See
+[COPYING](COPYING) for details.
 
-All other content (graphics, audio) are licensed under Creative Commons
-Attribution-ShareAlike (CC BY-SA), unless otherwise noted in the AUTHORS
-file.
+All other content (graphics, audio) are licensed under Creative
+Commons Attribution-ShareAlike (CC BY-SA), unless otherwise noted in
+the [AUTHORS](AUTHORS.md) file.
 
 ## Contact
 Questions, suggestions, contributions or other inquiries? Please
