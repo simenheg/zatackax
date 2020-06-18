@@ -49,9 +49,6 @@ All other content (graphics, audio) are licensed under Creative Commons
 Attribution-ShareAlike (CC BY-SA), unless otherwise noted in the AUTHORS
 file.
 
-## Credits
-See AUTHORS.
-
 ## Contact
 Questions, suggestions, contributions or other inquiries? Please
 contact simenheg@runbox.com.
