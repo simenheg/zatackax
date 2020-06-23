@@ -279,6 +279,9 @@ void playerWon(unsigned char id)
         snprintf(msg, BROADC_BUF, "%d; won the game! (press RETURN to play "
                  "again, or ESC to exit)", id + 1);
         newBroadcast(msg);
+        /* Make sure the winning announcement is drawn. */
+        refreshGameScreen();
+        displayGame();
     }
 
     winnerDeclared = true;
