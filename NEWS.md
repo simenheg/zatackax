@@ -5,6 +5,8 @@
     settings menu.
   * A .desktop entry has been added together with an application icon.
   * The weapon Switch-aroo has been removed.
+* Bugs:
+  * Fixed a score cap overflow bug.
 
 ## 0.3.3 - 08.05.20
 * Bugs:

@@ -28,7 +28,7 @@
 /* SCORES */
 #define SCORE_BUF           8
 #define SCORE_SPACING       25
-#define SCORE_CAP_MAX       65536
+#define SCORE_CAP_MAX       10000
 
 /* HOLES */
 /* Hole size.

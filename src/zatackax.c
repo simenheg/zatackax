@@ -1471,8 +1471,10 @@ int logicSettingsMenu(void)
             break;
         case 9: /* Score cap */
             playSound(SOUND_BEEP, sound);
-            if (scorecap < SCORE_CAP_MAX - 10)
-                scorecap += 10;
+            scorecap += 10;
+            if (scorecap > SCORE_CAP_MAX) {
+                scorecap = SCORE_CAP_MAX;
+            }
             break;
         case 10:
             playSound(SOUND_BEEP, sound);
@@ -1529,8 +1531,10 @@ int logicSettingsMenu(void)
         else if (keyDown[SDLK_9]) num = 9;
 
         if (num != -1) {
-            /* Multiply the scorecap by 10 and add the number */
             scorecap = scorecap * 10 + num;
+            if (scorecap > SCORE_CAP_MAX) {
+                scorecap = SCORE_CAP_MAX;
+            }
             playSound(SOUND_BEEP, sound);
 
             keyDown[SDLK_0] = keyDown[SDLK_1] = keyDown[SDLK_2] = keyDown[SDLK_3] =

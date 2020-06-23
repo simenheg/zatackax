@@ -20,7 +20,7 @@
 #define DEFAULT_PARTICLE_EFFECTS true
 #define DEFAULT_BORDER           false
 #define DEFAULT_DUELMODE         false
-#define DEFAULT_SCORECAP         false
+#define DEFAULT_SCORECAP         0
 
 extern unsigned int scorecap;
 extern bool fullscreen;
