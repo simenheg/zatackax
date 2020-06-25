@@ -1,4 +1,4 @@
-## ?.?.? - ??.??.??
+## 1.0.0 - 25.06.20 - Ten year anniversary release!
 * General:
   * A particle system has been added. Weapons and player deaths now
     trigger particle effects. This feature can be turned off in the
