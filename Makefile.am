@@ -21,7 +21,7 @@ AM_CPPFLAGS = -DDATADIR=\"$(pkgdatadir)\"
 EXTRA_DIST = data AUTHORS.md NEWS.md README.md
 
 desktopdir = $(datadir)/applications
-desktop_DATA = zatackax.desktop
+desktop_DATA = data/zatackax.desktop
 
 appicondir = $(datadir)/icons/hicolor/128x128/apps
 appicon_DATA = data/icons/zatackax.png
