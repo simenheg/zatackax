@@ -40,6 +40,7 @@ instance, the following command installs the required libraries:
 * MorphOS: [MorphOS Storage](https://www.morphos-storage.net/?id=1531852)
 * Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
 * OpenDingux: [OpenDingux Software list](https://github.com/retrogamehandheld/OpenDingux/#games--ports)
+* openSUSE: [openSUSE Software](https://software.opensuse.org/package/zatackax)
 
 ## License
 The Zatacka X code is free software, licensed under the GNU General
