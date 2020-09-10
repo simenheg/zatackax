@@ -1,3 +1,7 @@
+## ?.?.? - ??.??.??
+* Bugs:
+  * Fixed a memory leak when the window is resized.
+
 ## 1.0.0 - 25.06.20 - Ten year anniversary release!
 * General:
   * A particle system has been added. Weapons and player deaths now

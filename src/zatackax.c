@@ -541,6 +541,7 @@ void setNextName(unsigned char pedit)
 void initHitMap(unsigned int w, unsigned int h)
 {
     size_t len = sizeof(bool) * w * h;
+    free(hitmap);
     hitmap = calloc(len, sizeof(unsigned char));
     recents = NULL;
 }
