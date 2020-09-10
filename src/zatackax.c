@@ -541,7 +541,7 @@ void setNextName(unsigned char pedit)
 void initHitMap(unsigned int w, unsigned int h)
 {
     size_t len = sizeof(bool) * w * h;
-    hitmap = calloc(len, sizeof(bool));
+    hitmap = calloc(len, sizeof(unsigned char));
     recents = NULL;
 }
 
@@ -1965,7 +1965,7 @@ void initGraphics(void)
     }
 
     /* Make arrow copies */
-    parrows = malloc(MAX_PLAYERS * sizeof(SDL_Surface));
+    parrows = malloc(MAX_PLAYERS * sizeof(SDL_Surface *));
     p = parrows;
     for (int i = 0; i < MAX_PLAYERS; ++i, ++p) {
         *p = SDL_CreateRGBSurface(arrows->flags, arrows->w,
@@ -1976,7 +1976,7 @@ void initGraphics(void)
     }
 
     /* Make ball copies */
-    pballs = malloc((MAX_PLAYERS + 1) * sizeof(SDL_Surface));
+    pballs = malloc((MAX_PLAYERS + 1) * sizeof(SDL_Surface *));
     p = pballs;
     SDL_Surface *ball = images[IMG_BALL];
     for (int i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
