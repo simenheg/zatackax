@@ -7,6 +7,14 @@ opponents.
 ![screenshot](http://folk.uio.no/simenheg/zatackax_small.png)
 
 ## Installation
+### From a repository
+* AROS: [The AROS Archives](http://archives.aros-exec.org/?function=showfile&file=game/misc/zatackax.i386-aros.zip)
+* Arch Linux: [Arch User Repository (AUR)](https://aur.archlinux.org/packages/zatackax-git)
+* MorphOS: [MorphOS Storage](https://www.morphos-storage.net/?id=1531852)
+* Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
+* OpenDingux: [OpenDingux Software list](https://github.com/retrogamehandheld/OpenDingux/#games--ports)
+* openSUSE: [openSUSE Software](https://software.opensuse.org/package/zatackax)
+
 ### From source
 To install Zatacka X from source, run:
 
@@ -33,14 +41,6 @@ These are often provided by GNU/Linux distributions. Under Debian, for
 instance, the following command installs the required libraries:
 
     $ sudo apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-mixer1.2-dev
-
-### From a repository
-* AROS: [The AROS Archives](http://archives.aros-exec.org/?function=showfile&file=game/misc/zatackax.i386-aros.zip)
-* Arch Linux: [Arch User Repository (AUR)](https://aur.archlinux.org/packages/zatackax-git)
-* MorphOS: [MorphOS Storage](https://www.morphos-storage.net/?id=1531852)
-* Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
-* OpenDingux: [OpenDingux Software list](https://github.com/retrogamehandheld/OpenDingux/#games--ports)
-* openSUSE: [openSUSE Software](https://software.opensuse.org/package/zatackax)
 
 ## License
 The Zatacka X code is free software, licensed under the GNU General
