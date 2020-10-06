@@ -4,7 +4,7 @@ addition to all the features from the original game, Zatacka X includes
 special weapons, updated graphics, sound effects and AI controlled
 opponents.
 
-![screenshot](http://folk.uio.no/simenheg/zatackax_small.png)
+![Screenshot](screenshot.png)
 
 ## Installation
 ### From a repository
