@@ -1,4 +1,4 @@
-## ?.?.? - ??.??.??
+## 1.1.0 - 11.07.21
 * General:
   * A new weapon has been added: Rocker launcher.
 * Bugs:
