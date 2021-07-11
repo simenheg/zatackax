@@ -706,6 +706,36 @@ void cleanHitMap(void)
 }
 
 /**
+ * Delete recent player pieces within a given rectangle region.
+ */
+void clearRecents(int fromX, int toX, int fromY, int toY)
+{
+    while (recents && recents->x >= fromX && recents->x <= toX &&
+           recents->y >= fromY && recents->y <= toY) {
+        recents = recents->next;
+    }
+
+    if (recents == NULL) {
+        return;
+    }
+
+    struct recentMapPiece *prev = recents;
+    struct recentMapPiece *cur = prev->next;
+
+    while (cur) {
+        if (cur->x >= fromX && cur->x <= toX &&
+                cur->y >= fromY && cur->y <= toY) {
+            prev->next = cur->next;
+            free(cur);
+            cur = prev->next;
+        } else {
+            prev = cur;
+            cur = cur->next;
+        }
+    }
+}
+
+/**
  * Logic of the main gameplay.
  *
  * @return 1 if something has changed, and needs to be redrawn, 0 else.
@@ -890,6 +920,10 @@ int logicGame(void)
     }
 
     updateHitMap(delta);
+
+    if (weapons) {
+        updateShots(delta, hitmap);
+    }
 
     if (particleEffects) {
         updateParticles(delta);
@@ -1999,6 +2033,7 @@ void initGraphics(void)
     wepIcons[WEP_GHOST + 1] = images[IMG_WI_GHOST];
     wepIcons[WEP_TRON + 1] = images[IMG_WI_TRON];
     wepIcons[WEP_CHILI_RUN + 1] = images[IMG_WI_CHILIRUN];
+    wepIcons[WEP_ROCKETLAUNCHER + 1] = images[IMG_WI_ROCKETLAUNCHER];
 
     smallWepIcons[WEP_LIGHTNINGSPEED] = images[IMG_WIS_SPEED];
     smallWepIcons[WEP_FROSTWAVE] = images[IMG_WIS_FROST];
@@ -2010,6 +2045,7 @@ void initGraphics(void)
     smallWepIcons[WEP_GHOST] = images[IMG_WIS_GHOST];
     smallWepIcons[WEP_TRON] = images[IMG_WIS_TRON];
     smallWepIcons[WEP_CHILI_RUN] = images[IMG_WIS_CHILIRUN];
+    smallWepIcons[WEP_ROCKETLAUNCHER] = images[IMG_WIS_ROCKETLAUNCHER];
 }
 
 /**

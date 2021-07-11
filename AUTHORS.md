@@ -11,11 +11,14 @@
 ## Graphics
 * Simen Heggestøyl
 * Anders Heggestøyl
-* Ravenmore (http://dycha.net)
+* Chili icon by Ravenmore (http://dycha.net)
+* Rocket icon by rygle at Openclipart.org (CC0)
 
 ## Sound effects
 * Charles Vaughan (cs.vaughan@tiscali.co.uk)
 * Simen Heggestøyl
+* Blaster sound by C3Sabertooth at Freesound.org (CC0)
+* Explosion sound by Tom McCann at Freesound.org (CC0)
 
 ## Music
 * Charles Vaughan

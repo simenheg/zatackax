@@ -85,6 +85,7 @@ bool loadSounds(void)
         && loadSound(SOUND_BEEEEEEEEP, "beeeeeeeep.ogg")
         && loadSound(SOUND_ROUND_BEGIN, "round_begin.ogg")
         && loadSound(SOUND_CRASH, "crash.ogg")
+        && loadSound(SOUND_EXPLOSION, "explosion.ogg")
         && loadSound(SOUND_SPEED, "speed.ogg")
         && loadSound(SOUND_FREEZE, "freeze.ogg")
         && loadSound(SOUND_CONFUSION, "confusion.ogg")
@@ -94,7 +95,8 @@ bool loadSounds(void)
         && loadSound(SOUND_WARP, "warp.ogg")
         && loadSound(SOUND_GHOST, "ghost.ogg")
         && loadSound(SOUND_TRON, "tronmode.ogg")
-        && loadSound(SOUND_CHILIRUN, "chilirun.ogg");
+        && loadSound(SOUND_CHILIRUN, "chilirun.ogg")
+        && loadSound(SOUND_ROCKETLAUNCHER, "rocketlauncher.ogg");
 }
 
 /**

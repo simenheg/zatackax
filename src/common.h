@@ -36,5 +36,6 @@ static const int olvl = O_NORMAL;
 #endif
 
 void refreshGameScreen(void);
+void clearRecents(int fromX, int toX, int fromY, int toY);
 
 #endif

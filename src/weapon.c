@@ -22,6 +22,10 @@ bool activeConfusion = false;
 bool activeTron = false;
 bool activeChilirun = false;
 
+Shot shots[MAX_SHOTS];
+
+static unsigned int numShots = 0;
+
 struct weapon wep_list[N_WEAPONS] = {
     {wepLightningspeed, addParticlesLightningspeed, 1, "Lightning-speed",
      "Gain lightning-speed.", ""},
@@ -42,7 +46,9 @@ struct weapon wep_list[N_WEAPONS] = {
     {wepTron, addParticlesTron, 1, "Tron-mode",
      "No more smooth turns.", ""},
     {wepChilirun, addParticlesChilirun, 1, "Chili run",
-     "Hot hot hot!", ""}
+     "Hot hot hot!", ""},
+    {wepRocketlauncher, addParticlesVoid, 1, "Rocket launcher",
+     "Launch a rocket to blast", "a hole."}
 };
 
 void addParticlesVoid(struct player *p __attribute__((unused)),
@@ -395,4 +401,110 @@ void addParticlesChilirun(struct player *p, Uint32 delta)
                          26, 220);
         }
     }
+}
+
+void addShot(double x, double y, double vel, double angle, unsigned char owner)
+{
+    if (numShots >= MAX_SHOTS) {
+        return;
+    }
+
+    shots[numShots].x = x;
+    shots[numShots].y = y;
+    shots[numShots].vel = vel;
+    shots[numShots].angle = angle;
+    shots[numShots].owner = owner;
+
+    numShots++;
+}
+
+void removeShot(unsigned int i)
+{
+    shots[i] = shots[numShots - 1];
+    --numShots;
+}
+
+struct player *shotHit(double oldX, double oldY, double newX, double newY,
+                       unsigned char *hitmap, unsigned char owner)
+{
+    for (int i = 0; i < 10; ++i) {
+        int x = (int)(oldX + (newX - oldX)*(i / 10.0));
+        int y = (int)(oldY + (newY - oldY)*(i / 10.0));
+        unsigned char charat = hitmap[WINDOW_W*y + x];
+        if (charat &&
+                charat != MAX_PLAYERS + owner &&    // Fresh player piece
+                charat != MAX_PLAYERS*2 + owner) {  // Player hole piece
+            return &players[(charat - 1) % MAX_PLAYERS];
+        }
+    }
+
+    return 0;
+}
+
+void updateShots(Uint32 delta, unsigned char *hitmap)
+{
+    for (unsigned int i = 0; i < numShots; ++i) {
+        Shot s = shots[i];
+        double newX = s.x + cos(s.angle) * s.vel * delta;
+        double newY = s.y + sin(s.angle) * s.vel * delta;
+        struct player *hit = NULL;
+
+        if (newX <= 0 || newY <= 0 ||
+                newX >= screen->w || newY >= screen->h ||
+                (hit = shotHit(s.x, s.y, newX, newY, hitmap, s.owner))) {
+            if (hit) {
+                SDL_Color color = colors[hit->color];
+                addParticles(1000,
+                             s.x, s.y,
+                             0, 0.5,
+                             0, 2*M_PI,
+                             0.9, 1, 0.0005,
+                             color.r, fmin(color.r + 100, 255),
+                             color.g, fmin(color.g + 100, 255),
+                             color.b, fmin(color.b + 100, 255));
+                int fromX = s.x - 15;
+                int toX = s.x + 15;
+                int fromY = s.y - 15;
+                int toY = s.y + 15;
+                for (int y = fromY; y <= toY; ++y) {
+                    for (int x = fromX; x <= toX; ++x) {
+                        if (y >= 0 && y < screen->h &&
+                                x >= 0 && x < screen->w) {
+                            hitmap[WINDOW_W*(int)y + (int)x] = 0;
+                        }
+                    }
+                }
+                playSound(SOUND_EXPLOSION, sound);
+                refreshGameScreen();
+                clearRecents(fromX, toX, fromY, toY);
+            }
+            removeShot(i);
+            --i;
+            continue;
+        }
+
+        addParticles(delta * 10,
+                     newX, newY,
+                     0, 0.4,
+                     s.angle + M_PI - 0.2, s.angle + M_PI + 0.2,
+                     0.1, 1, 0.001,
+                     223, 255,
+                     31, 200,
+                     26, 200);
+
+        shots[i].x = newX;
+        shots[i].y = newY;
+    }
+}
+
+/**
+ * Weapon: Rocket launcher.
+ */
+int wepRocketlauncher(struct player *p, bool on)
+{
+    if (on) {
+        playSound(SOUND_ROCKETLAUNCHER, sound);
+        addShot(p->posx, p->posy, 1, p->dir, p->active);
+    }
+    return WEP_NONACTIVE;
 }

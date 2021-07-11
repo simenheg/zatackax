@@ -1,4 +1,6 @@
 ## ?.?.? - ??.??.??
+* General:
+  * A new weapon has been added: Rocker launcher.
 * Bugs:
   * Fixed a memory leak when the window is resized.
 

@@ -19,6 +19,7 @@ typedef enum sound {
     SOUND_BEEEEEEEEP,
     SOUND_ROUND_BEGIN,
     SOUND_CRASH,
+    SOUND_EXPLOSION,
     SOUND_SPEED,
     SOUND_FREEZE,
     SOUND_CONFUSION,
@@ -29,6 +30,7 @@ typedef enum sound {
     SOUND_GHOST,
     SOUND_TRON,
     SOUND_CHILIRUN,
+    SOUND_ROCKETLAUNCHER,
     N_SOUNDS
 } Sound;
 

@@ -9,7 +9,7 @@
 #include "video.h"
 #include "particle.h"
 
-#define N_WEAPONS               10
+#define N_WEAPONS               11
 #define WEP_SPACEMOD            42
 #define WEP_SMALL_INIT_OFFSET   4    /* Offset between score and icon */
 #define WEP_SMALL_PADDING       25   /* Padding between small weapon icons */
@@ -38,7 +38,8 @@ enum weapons {
     WEP_WARP,
     WEP_GHOST,
     WEP_TRON,
-    WEP_CHILI_RUN
+    WEP_CHILI_RUN,
+    WEP_ROCKETLAUNCHER
 };
 
 struct weapon {
@@ -49,6 +50,17 @@ struct weapon {
     char *desc1;
     char *desc2;
 };
+
+typedef struct shot {
+    double x;
+    double y;
+    double vel;
+    double angle;
+    unsigned char owner;
+} Shot;
+
+#define MAX_SHOTS MAX_PLAYERS
+extern Shot shots[MAX_SHOTS];
 
 extern bool activeFreeze;
 extern bool activeConfusion;
@@ -83,6 +95,12 @@ void addParticlesTron(struct player *p, Uint32 delta);
 
 int wepChilirun(struct player *p, bool on);
 void addParticlesChilirun(struct player *p, Uint32 delta);
+
+int wepRocketlauncher(struct player *p, bool on);
+
+/* Shots */
+void updateShots(Uint32 delta, unsigned char *hitmap);
+void resetShots(void);
 
 extern struct weapon wep_list[N_WEAPONS];
 
