@@ -10,7 +10,6 @@ opponents.
 ### From a repository
 * AROS: [The AROS Archives](http://archives.aros-exec.org/?function=showfile&file=game/misc/zatackax.i386-aros.zip)
 * Arch Linux: [Arch User Repository (AUR)](https://aur.archlinux.org/packages/zatackax-git)
-* KISS: [KISS GAMES](https://github.com/sdsddsd1/kiss-games)
 * MorphOS: [MorphOS Storage](https://www.morphos-storage.net/?id=1612660)
 * Nintendo Switch: [lizardman0/zatackax](https://github.com/lizardman0/zatackax/releases)
 * Open Pandora: [repo.openpandora.org](https://repo.openpandora.org/?page=detail&app=zatackax_ptitseb)
