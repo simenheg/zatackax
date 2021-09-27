@@ -4120,7 +4120,6 @@ _ACEOF
 else
   as_fn_error $? "cannot find library SDL" "$LINENO" 5
 fi
-ac_cv_lib_SDL=ac_cv_lib_SDL_main
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_image" >&5
 $as_echo_n "checking for main in -lSDL_image... " >&6; }
@@ -4162,7 +4161,6 @@ _ACEOF
 else
   as_fn_error $? "cannot find library SDL_image" "$LINENO" 5
 fi
-ac_cv_lib_SDL_image=ac_cv_lib_SDL_image_main
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_mixer" >&5
 $as_echo_n "checking for main in -lSDL_mixer... " >&6; }
@@ -4204,7 +4202,6 @@ _ACEOF
 else
   as_fn_error $? "cannot find library SDL_mixer" "$LINENO" 5
 fi
-ac_cv_lib_SDL_mixer=ac_cv_lib_SDL_mixer_main
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_ttf" >&5
 $as_echo_n "checking for main in -lSDL_ttf... " >&6; }
@@ -4246,7 +4243,6 @@ _ACEOF
 else
   as_fn_error $? "cannot find library SDL_ttf" "$LINENO" 5
 fi
-ac_cv_lib_SDL_ttf=ac_cv_lib_SDL_ttf_main
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lm" >&5
 $as_echo_n "checking for main in -lm... " >&6; }
@@ -4286,7 +4282,6 @@ _ACEOF
   LIBS="-lm $LIBS"
 
 fi
-ac_cv_lib_m=ac_cv_lib_m_main
 
 
 # Checks for header files.
