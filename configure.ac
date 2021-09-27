@@ -9,7 +9,6 @@ AC_CONFIG_SRCDIR([src/zatackax.c])
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
