@@ -28,8 +28,8 @@ SDL_Surface *images[N_IMAGES];
  */
 int clearSurface(SDL_Surface *s)
 {
-    Uint32 color = SDL_MapRGB(s->format, 0x00, 0x00, 0x00);
-    return SDL_FillRect(s, &s->clip_rect, color);
+    /* Uint32 color = SDL_MapRGB(0, 0x00, 0x00, 0x00); */
+    return SDL_FillRect(s, &s->clip_rect, 0);
 }
 
 /**
@@ -64,10 +64,10 @@ bool loadImage(Image i, const char *filename)
         return false;
     }
 
-    images[i] = SDL_DisplayFormatAlpha(loadedImage);
+    images[i] = loadedImage;
     if (olvl >= O_DEBUG) {
         printf("Loaded: %s\t(w:%d h:%d bpp:%d)\n", filename, images[i]->w,
-               images[i]->h, images[i]->format->BitsPerPixel);
+               images[i]->h, 32);
     }
     SDL_FreeSurface(loadedImage);
 

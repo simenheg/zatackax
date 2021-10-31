@@ -29,7 +29,7 @@ void pushBroadcasts(void)
         broadcast[i] = broadcast[i - 1];
         if (broadcast[i] != NULL) {
             int alpha = 255 - i * (255.0 / BROADC_LIMIT);
-            SDL_SetAlpha(broadcast[i], SDL_SRCALPHA, alpha);
+            SDL_SetSurfaceAlphaMod(broadcast[i], alpha);
         }
     }
 }
@@ -83,8 +83,8 @@ SDL_Surface *makeBroadcast(char *msg, SDL_Color pcolors[MAX_PLAYERS])
         width += parts[i]->w;
     }
 
-    broadcast = SDL_CreateRGBSurface(SDL_HWSURFACE, width, parts[0]->h,
-                                     SCREEN_BPP, 0, 0, 0, 0);
+    broadcast = SDL_CreateRGBSurface(0, width, parts[0]->h, SCREEN_BPP,
+                                     0, 0, 0, 0);
 
     unsigned int nparts = i;
     int hoffset = 0;

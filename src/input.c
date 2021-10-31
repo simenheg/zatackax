@@ -179,7 +179,7 @@ void clearButton(button b)
  */
 bool menuButtonQuery(enum keySymbol ks)
 {
-    SDLKey lkeys[4][3] =
+    SDL_KeyCode lkeys[4][3] =
         {{SDLK_UP,    SDLK_k, SDLK_p},
          {SDLK_RIGHT, SDLK_l, SDLK_f},
          {SDLK_DOWN,  SDLK_j, SDLK_n},
@@ -275,8 +275,8 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "up"); break;
         case SDLK_DOWN:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "down"); break;
-        case SDLK_SCROLLOCK:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "scr-lk"); break;
+        /* case SDLK_SCROLLOCK: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "scr-lk"); break; */
         case SDLK_PAUSE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "pause"); break;
         case SDLK_DELETE:
@@ -289,8 +289,8 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "end"); break;
         case SDLK_MENU:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "menu"); break;
-        case SDLK_PRINT:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "prt-sc"); break;
+        /* case SDLK_PRINT: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "prt-sc"); break; */
         case SDLK_PAGEUP:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "pg up"); break;
         case SDLK_PAGEDOWN:
@@ -309,10 +309,10 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-alt"); break;
         case SDLK_MODE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "alt gr"); break;
-        case SDLK_RSUPER:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-super"); break;
-        case SDLK_LSUPER:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-super"); break;
+        /* case SDLK_RSUPER: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-super"); break; */
+        /* case SDLK_LSUPER: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-super"); break; */
         case SDLK_TAB:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "tab"); break;
         case SDLK_PERIOD:
@@ -331,8 +331,8 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "+"); break;
         case SDLK_EQUALS:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "="); break;
-        case SDLK_COMPOSE:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "^"); break;
+        /* case SDLK_COMPOSE: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "^"); break; */
         case SDLK_SLASH:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "/"); break;
         case SDLK_BACKSLASH:
@@ -355,12 +355,12 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "m-mouse"); break;
         case SDL_BUTTON_RIGHT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-mouse"); break;
-        case SDLK_WORLD_70:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "æ"); break;
-        case SDLK_WORLD_88:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "ø"); break;
-        case SDLK_WORLD_69:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "å"); break;
+        /* case SDLK_WORLD_70: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "æ"); break; */
+        /* case SDLK_WORLD_88: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "ø"); break; */
+        /* case SDLK_WORLD_69: */
+        /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "å"); break; */
         default:
             break;
         }

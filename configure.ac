@@ -11,13 +11,13 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
-AC_CHECK_LIB([SDL], [main], [],
-  [AC_MSG_ERROR([cannot find library SDL])])
-AC_CHECK_LIB([SDL_image], [main], [],
+AC_CHECK_LIB([SDL2], [main], [],
+  [AC_MSG_ERROR([cannot find library SDL2])])
+AC_CHECK_LIB([SDL2_image], [main], [],
   [AC_MSG_ERROR([cannot find library SDL_image])])
-AC_CHECK_LIB([SDL_mixer], [main], [],
+AC_CHECK_LIB([SDL2_mixer], [main], [],
   [AC_MSG_ERROR([cannot find library SDL_mixer])])
-AC_CHECK_LIB([SDL_ttf], [main], [],
+AC_CHECK_LIB([SDL2_ttf], [main], [],
   [AC_MSG_ERROR([cannot find library SDL_ttf])])
 AC_CHECK_LIB([m], [main])
 

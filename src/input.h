@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_stdinc.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_stdinc.h>
 #include "common.h"
 
 extern const int BUTTON_NAME_MAX_LEN;

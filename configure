@@ -4448,14 +4448,14 @@ fi
 
 # Checks for libraries.
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL" >&5
-printf %s "checking for main in -lSDL... " >&6; }
-if test ${ac_cv_lib_SDL_main+y}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL2" >&5
+printf %s "checking for main in -lSDL2... " >&6; }
+if test ${ac_cv_lib_SDL2_main+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lSDL  $LIBS"
+LIBS="-lSDL2  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4470,34 +4470,34 @@ return main ();
 _ACEOF
 if ac_fn_c_try_link "$LINENO"
 then :
-  ac_cv_lib_SDL_main=yes
+  ac_cv_lib_SDL2_main=yes
 else $as_nop
-  ac_cv_lib_SDL_main=no
+  ac_cv_lib_SDL2_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_main" >&5
-printf "%s\n" "$ac_cv_lib_SDL_main" >&6; }
-if test "x$ac_cv_lib_SDL_main" = xyes
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL2_main" >&5
+printf "%s\n" "$ac_cv_lib_SDL2_main" >&6; }
+if test "x$ac_cv_lib_SDL2_main" = xyes
 then :
-  printf "%s\n" "#define HAVE_LIBSDL 1" >>confdefs.h
+  printf "%s\n" "#define HAVE_LIBSDL2 1" >>confdefs.h
 
-  LIBS="-lSDL $LIBS"
+  LIBS="-lSDL2 $LIBS"
 
 else $as_nop
-  as_fn_error $? "cannot find library SDL" "$LINENO" 5
+  as_fn_error $? "cannot find library SDL2" "$LINENO" 5
 fi
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_image" >&5
-printf %s "checking for main in -lSDL_image... " >&6; }
-if test ${ac_cv_lib_SDL_image_main+y}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL2_image" >&5
+printf %s "checking for main in -lSDL2_image... " >&6; }
+if test ${ac_cv_lib_SDL2_image_main+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lSDL_image  $LIBS"
+LIBS="-lSDL2_image  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4512,34 +4512,34 @@ return main ();
 _ACEOF
 if ac_fn_c_try_link "$LINENO"
 then :
-  ac_cv_lib_SDL_image_main=yes
+  ac_cv_lib_SDL2_image_main=yes
 else $as_nop
-  ac_cv_lib_SDL_image_main=no
+  ac_cv_lib_SDL2_image_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_image_main" >&5
-printf "%s\n" "$ac_cv_lib_SDL_image_main" >&6; }
-if test "x$ac_cv_lib_SDL_image_main" = xyes
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL2_image_main" >&5
+printf "%s\n" "$ac_cv_lib_SDL2_image_main" >&6; }
+if test "x$ac_cv_lib_SDL2_image_main" = xyes
 then :
-  printf "%s\n" "#define HAVE_LIBSDL_IMAGE 1" >>confdefs.h
+  printf "%s\n" "#define HAVE_LIBSDL2_IMAGE 1" >>confdefs.h
 
-  LIBS="-lSDL_image $LIBS"
+  LIBS="-lSDL2_image $LIBS"
 
 else $as_nop
   as_fn_error $? "cannot find library SDL_image" "$LINENO" 5
 fi
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_mixer" >&5
-printf %s "checking for main in -lSDL_mixer... " >&6; }
-if test ${ac_cv_lib_SDL_mixer_main+y}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL2_mixer" >&5
+printf %s "checking for main in -lSDL2_mixer... " >&6; }
+if test ${ac_cv_lib_SDL2_mixer_main+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lSDL_mixer  $LIBS"
+LIBS="-lSDL2_mixer  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4554,34 +4554,34 @@ return main ();
 _ACEOF
 if ac_fn_c_try_link "$LINENO"
 then :
-  ac_cv_lib_SDL_mixer_main=yes
+  ac_cv_lib_SDL2_mixer_main=yes
 else $as_nop
-  ac_cv_lib_SDL_mixer_main=no
+  ac_cv_lib_SDL2_mixer_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_mixer_main" >&5
-printf "%s\n" "$ac_cv_lib_SDL_mixer_main" >&6; }
-if test "x$ac_cv_lib_SDL_mixer_main" = xyes
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL2_mixer_main" >&5
+printf "%s\n" "$ac_cv_lib_SDL2_mixer_main" >&6; }
+if test "x$ac_cv_lib_SDL2_mixer_main" = xyes
 then :
-  printf "%s\n" "#define HAVE_LIBSDL_MIXER 1" >>confdefs.h
+  printf "%s\n" "#define HAVE_LIBSDL2_MIXER 1" >>confdefs.h
 
-  LIBS="-lSDL_mixer $LIBS"
+  LIBS="-lSDL2_mixer $LIBS"
 
 else $as_nop
   as_fn_error $? "cannot find library SDL_mixer" "$LINENO" 5
 fi
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_ttf" >&5
-printf %s "checking for main in -lSDL_ttf... " >&6; }
-if test ${ac_cv_lib_SDL_ttf_main+y}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL2_ttf" >&5
+printf %s "checking for main in -lSDL2_ttf... " >&6; }
+if test ${ac_cv_lib_SDL2_ttf_main+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lSDL_ttf  $LIBS"
+LIBS="-lSDL2_ttf  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4596,21 +4596,21 @@ return main ();
 _ACEOF
 if ac_fn_c_try_link "$LINENO"
 then :
-  ac_cv_lib_SDL_ttf_main=yes
+  ac_cv_lib_SDL2_ttf_main=yes
 else $as_nop
-  ac_cv_lib_SDL_ttf_main=no
+  ac_cv_lib_SDL2_ttf_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_ttf_main" >&5
-printf "%s\n" "$ac_cv_lib_SDL_ttf_main" >&6; }
-if test "x$ac_cv_lib_SDL_ttf_main" = xyes
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL2_ttf_main" >&5
+printf "%s\n" "$ac_cv_lib_SDL2_ttf_main" >&6; }
+if test "x$ac_cv_lib_SDL2_ttf_main" = xyes
 then :
-  printf "%s\n" "#define HAVE_LIBSDL_TTF 1" >>confdefs.h
+  printf "%s\n" "#define HAVE_LIBSDL2_TTF 1" >>confdefs.h
 
-  LIBS="-lSDL_ttf $LIBS"
+  LIBS="-lSDL2_ttf $LIBS"
 
 else $as_nop
   as_fn_error $? "cannot find library SDL_ttf" "$LINENO" 5

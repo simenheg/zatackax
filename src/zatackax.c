@@ -947,9 +947,10 @@ void displayGame(void)
 
     SDL_BlitSurface(gameScreen, NULL, screen, NULL);
 
-    if (SDL_Flip(screen) == -1) {
-        exit(1);
-    }
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1003,8 +1004,10 @@ void displayGameStart(void)
         }
     }
 
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1213,7 +1216,7 @@ void resetWeapons(void)
  */
 void initMainMenu(void)
 {
-    colorBalls();
+    /* colorBalls(); */
 }
 
 /**
@@ -1281,33 +1284,35 @@ void displayMainMenu(void)
     displayMenu(c, &menuMain, ymod);
     SDL_Rect offset = {WINDOW_W / 2 - logo->w / 2, WINDOW_H / 2 - logo->h,
                        0, 0};
-    SDL_BlitSurface(logo, NULL, screen, &offset);
+    /* SDL_BlitSurface(logo, NULL, screen, &offset); */
 
     /* This could/should be made smoother... */
-    for (int i = 0; i < nPlayers; ++i) {
-        offset.x = (WINDOW_W / 2)            /* window offset */
-            - 60                             /* temp. offset */
-            + (i - nPlayers) * BALL_SPACING; /* player modifier */
+    /* for (int i = 0; i < nPlayers; ++i) { */
+    /*     offset.x = (WINDOW_W / 2)            /\* window offset *\/ */
+    /*         - 60                             /\* temp. offset *\/ */
+    /*         + (i - nPlayers) * BALL_SPACING; /\* player modifier *\/ */
 
-        offset.y = (WINDOW_H / 2)            /* window offset */
-            - BALL_Y_MOD + ymod;             /* temp. offset */
+    /*     offset.y = (WINDOW_H / 2)            /\* window offset *\/ */
+    /*         - BALL_Y_MOD + ymod;             /\* temp. offset *\/ */
 
-        SDL_BlitSurface(pballs[i], NULL, screen, &offset);
-    }
+    /*     SDL_BlitSurface(pballs[i], NULL, screen, &offset); */
+    /* } */
 
-    for (int i = nPlayers; i < MAX_PLAYERS; ++i) {
-        offset.x = (WINDOW_W / 2)            /* window offset */
-            + 68                             /* temp. offset */
-            + (i - nPlayers) * BALL_SPACING; /* player modifier */
+    /* for (int i = nPlayers; i < MAX_PLAYERS; ++i) { */
+    /*     offset.x = (WINDOW_W / 2)            /\* window offset *\/ */
+    /*         + 68                             /\* temp. offset *\/ */
+    /*         + (i - nPlayers) * BALL_SPACING; /\* player modifier *\/ */
 
-        offset.y = (WINDOW_H / 2)            /* window offset */
-            - BALL_Y_MOD + ymod;             /* temp. offset */
+    /*     offset.y = (WINDOW_H / 2)            /\* window offset *\/ */
+    /*         - BALL_Y_MOD + ymod;             /\* temp. offset *\/ */
 
-        SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset);
-    }
+    /*     SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset); */
+    /* } */
 
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1451,8 +1456,10 @@ void displayWepMenu(void)
         }
     }
 
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1634,8 +1641,10 @@ void displaySettingsMenu(void)
 
     displayMenu(c, &menuSettings, 0);
 
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1679,8 +1688,10 @@ void displayPlayerMenu(void)
 
     displayMenu(c, &menuPlayer, 0);
 
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1798,8 +1809,10 @@ void displayPConfMenu(void)
 
     displayMenu(c, &menuPConf, 0);
 
-    if (SDL_Flip(screen) == -1)
-        exit(1);
+    SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }
 
 /**
@@ -1972,9 +1985,8 @@ int init(void)
     srand(SDL_GetTicks());
 
     SDL_ShowCursor(SDL_DISABLE);
-    SDL_WM_SetCaption("Zatacka X", "Zatacka X");
     SDL_Surface *icon = loadIcon("icon.bmp");
-    SDL_WM_SetIcon(icon, NULL);
+    /* SDL_WM_SetIcon(icon, NULL); */
     SDL_FreeSurface(icon);
 
     return 1;
@@ -2002,12 +2014,12 @@ void initGraphics(void)
     /* Make arrow copies */
     parrows = malloc(MAX_PLAYERS * sizeof(SDL_Surface *));
     p = parrows;
-    for (int i = 0; i < MAX_PLAYERS; ++i, ++p) {
-        *p = SDL_CreateRGBSurface(arrows->flags, arrows->w,
-                                  arrows->h, arrows->format->BitsPerPixel,
-                                  arrows->format->Rmask,
-                                  arrows->format->Gmask,
-                                  arrows->format->Bmask, 0);
+        for (int i = 0; i < MAX_PLAYERS; ++i, ++p) {
+        *p = SDL_CreateRGBSurface(0, arrows->w, arrows->h, 32,
+                                  0x00ff0000,
+                                  0x0000ff00,
+                                  0x000000ff,
+                                  0xff000000);
     }
 
     /* Make ball copies */
@@ -2015,10 +2027,11 @@ void initGraphics(void)
     p = pballs;
     SDL_Surface *ball = images[IMG_BALL];
     for (int i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
-        *p = SDL_CreateRGBSurface(ball->flags, ball->w,
-                                  ball->h, ball->format->BitsPerPixel,
-                                  ball->format->Rmask, ball->format->Gmask,
-                                  ball->format->Bmask, 0);
+        *p = SDL_CreateRGBSurface(0, ball->w, ball->h, 32,
+                                  0x00ff0000,
+                                  0x0000ff00,
+                                  0x000000ff,
+                                  0xff000000);
     }
 
     /* Initialize weapon pointer array */
@@ -2059,8 +2072,9 @@ void exitGame(int status)
     free(parrows);
     free(pballs);
 
-    screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
-                              SDL_SWSURFACE);
+    /* screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP, */
+    /*                           SDL_SWSURFACE); */
+
     saveSettings();
 
     exit(status);
@@ -2088,12 +2102,12 @@ int main(void)
         return 1;
     }
 
-    if (!loadSounds()) {
-        if (olvl >= O_NORMAL) {
-            fprintf(stderr, "ERROR: Failed to load sound files.\n");
-        }
-        return 1;
-    }
+    /* if (!loadSounds()) { */
+    /*     if (olvl >= O_NORMAL) { */
+    /*         fprintf(stderr, "ERROR: Failed to load sound files.\n"); */
+    /*     } */
+    /*     return 1; */
+    /* } */
 
     if (!loadFonts()) {
         if (olvl >= O_NORMAL) {
@@ -2109,8 +2123,8 @@ int main(void)
     curScene = &mainMenu;
     curScene->displayFunc();
 
-    if (music)
-        playBGM();
+    /* if (music) */
+    /*     playBGM(); */
 
     for (;;) {
         while (SDL_PollEvent(&event)) {
@@ -2198,9 +2212,9 @@ int main(void)
             else if (event.type == SDL_QUIT) {
                 exitGame(0);
             }
-            else if (event.type == SDL_VIDEORESIZE) {
-                WINDOW_W = event.resize.w;
-                WINDOW_H = event.resize.h;
+            else if (event.type == SDL_WINDOWEVENT_RESIZED) {
+                WINDOW_W = event.window.data1;
+                WINDOW_H = event.window.data2;
 
                 if (!initScreen()) {
                     return 1;
@@ -2219,9 +2233,9 @@ int main(void)
                 SDL_Delay(1000/FPS_CAP - delta);
             }
 
-            if (curScene->logicFunc()) {
-                curScene->displayFunc();
-            }
+            /* if (curScene->logicFunc()) { */
+            /*     curScene->displayFunc(); */
+            /* } */
         }
     }
 

@@ -25,8 +25,8 @@ Mix_Chunk *sounds[N_SOUNDS];
  */
 int initSound(void)
 {
-    return Mix_OpenAudio(MIX_DEFAULT_FREQUENCY * 2, MIX_DEFAULT_FORMAT, 2,
-                         512);
+    /* return Mix_OpenAudio(MIX_DEFAULT_FREQUENCY * 2, MIX_DEFAULT_FORMAT, 2, */
+                         /* 512); */
 }
 
 /**
@@ -35,18 +35,18 @@ int initSound(void)
  */
 bool loadSound(Sound s, const char *filename)
 {
-    char *file = dataFile("sound", filename);
-    Mix_Chunk *sound = Mix_LoadWAV(file);
+    /* char *file = dataFile("sound", filename); */
+    /* Mix_Chunk *sound = Mix_LoadWAV(file); */
 
-    if (sound == NULL) {
-        fileNotFound(file);
-        free(file);
-        return false;
-    }
+    /* if (sound == NULL) { */
+    /*     fileNotFound(file); */
+    /*     free(file); */
+    /*     return false; */
+    /* } */
 
-    sounds[s] = sound;
-    free(file);
-    return true;
+    /* sounds[s] = sound; */
+    /* free(file); */
+    /* return true; */
 }
 
 /**
@@ -55,17 +55,17 @@ bool loadSound(Sound s, const char *filename)
  */
 bool loadBGM(const char *filename)
 {
-    char *file = dataFile("sound", filename);
-    bgm = Mix_LoadMUS(file);
+    /* char *file = dataFile("sound", filename); */
+    /* bgm = Mix_LoadMUS(file); */
 
-    if (bgm == NULL) {
-        fileNotFound(file);
-        free(file);
-        return false;
-    }
+    /* if (bgm == NULL) { */
+    /*     fileNotFound(file); */
+    /*     free(file); */
+    /*     return false; */
+    /* } */
 
-    free(file);
-    return true;
+    /* free(file); */
+    /* return true; */
 }
 
 /**
@@ -74,29 +74,29 @@ bool loadBGM(const char *filename)
  */
 bool loadSounds(void)
 {
-    return loadBGM("theme1.ogg")
-        && loadSound(SOUND_BEP, "bep.ogg")
-        && loadSound(SOUND_BEEP, "beep.ogg")
-        && loadSound(SOUND_BEEEP, "beeep.ogg")
-        && loadSound(SOUND_BEEEEP, "beeeep.ogg")
-        && loadSound(SOUND_BEEEEEP, "beeeeep.ogg")
-        && loadSound(SOUND_BEEEEEEP, "beeeeeep.ogg")
-        && loadSound(SOUND_BEEEEEEEP, "beeeeeeep.ogg")
-        && loadSound(SOUND_BEEEEEEEEP, "beeeeeeeep.ogg")
-        && loadSound(SOUND_ROUND_BEGIN, "round_begin.ogg")
-        && loadSound(SOUND_CRASH, "crash.ogg")
-        && loadSound(SOUND_EXPLOSION, "explosion.ogg")
-        && loadSound(SOUND_SPEED, "speed.ogg")
-        && loadSound(SOUND_FREEZE, "freeze.ogg")
-        && loadSound(SOUND_CONFUSION, "confusion.ogg")
-        && loadSound(SOUND_SHARPTURN, "sharpturn.ogg")
-        && loadSound(SOUND_TIMESTEP, "timestep.ogg")
-        && loadSound(SOUND_MOLE, "mole.ogg")
-        && loadSound(SOUND_WARP, "warp.ogg")
-        && loadSound(SOUND_GHOST, "ghost.ogg")
-        && loadSound(SOUND_TRON, "tronmode.ogg")
-        && loadSound(SOUND_CHILIRUN, "chilirun.ogg")
-        && loadSound(SOUND_ROCKETLAUNCHER, "rocketlauncher.ogg");
+    /* return loadBGM("theme1.ogg") */
+    /*     && loadSound(SOUND_BEP, "bep.ogg") */
+    /*     && loadSound(SOUND_BEEP, "beep.ogg") */
+    /*     && loadSound(SOUND_BEEEP, "beeep.ogg") */
+    /*     && loadSound(SOUND_BEEEEP, "beeeep.ogg") */
+    /*     && loadSound(SOUND_BEEEEEP, "beeeeep.ogg") */
+    /*     && loadSound(SOUND_BEEEEEEP, "beeeeeep.ogg") */
+    /*     && loadSound(SOUND_BEEEEEEEP, "beeeeeeep.ogg") */
+    /*     && loadSound(SOUND_BEEEEEEEEP, "beeeeeeeep.ogg") */
+    /*     && loadSound(SOUND_ROUND_BEGIN, "round_begin.ogg") */
+    /*     && loadSound(SOUND_CRASH, "crash.ogg") */
+    /*     && loadSound(SOUND_EXPLOSION, "explosion.ogg") */
+    /*     && loadSound(SOUND_SPEED, "speed.ogg") */
+    /*     && loadSound(SOUND_FREEZE, "freeze.ogg") */
+    /*     && loadSound(SOUND_CONFUSION, "confusion.ogg") */
+    /*     && loadSound(SOUND_SHARPTURN, "sharpturn.ogg") */
+    /*     && loadSound(SOUND_TIMESTEP, "timestep.ogg") */
+    /*     && loadSound(SOUND_MOLE, "mole.ogg") */
+    /*     && loadSound(SOUND_WARP, "warp.ogg") */
+    /*     && loadSound(SOUND_GHOST, "ghost.ogg") */
+    /*     && loadSound(SOUND_TRON, "tronmode.ogg") */
+    /*     && loadSound(SOUND_CHILIRUN, "chilirun.ogg") */
+    /*     && loadSound(SOUND_ROCKETLAUNCHER, "rocketlauncher.ogg"); */
 }
 
 /**
@@ -107,8 +107,8 @@ bool loadSounds(void)
  */
 void playSound(unsigned int sound, int play)
 {
-    if (play)
-        Mix_PlayChannel(-1, sounds[sound], 0);
+    /* if (play) */
+    /*     Mix_PlayChannel(-1, sounds[sound], 0); */
 }
 
 /**
@@ -116,12 +116,12 @@ void playSound(unsigned int sound, int play)
  */
 void playBGM(void)
 {
-    if (!Mix_PlayingMusic()) {
-        if ((Mix_PlayMusic(bgm, -1) == -1)) {
-            if (olvl >= O_NORMAL)
-                fprintf(stderr, "Couldn't play music: %s\n", Mix_GetError());
-        }
-    }
+    /* if (!Mix_PlayingMusic()) { */
+    /*     if ((Mix_PlayMusic(bgm, -1) == -1)) { */
+    /*         if (olvl >= O_NORMAL) */
+    /*             fprintf(stderr, "Couldn't play music: %s\n", Mix_GetError()); */
+    /*     } */
+    /* } */
 }
 
 /**
@@ -129,5 +129,5 @@ void playBGM(void)
  */
 void stopBGM(void)
 {
-    Mix_HaltMusic();
+    /* Mix_HaltMusic(); */
 }

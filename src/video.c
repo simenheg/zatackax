@@ -17,7 +17,13 @@
 
 #include "video.h"
 
+SDL_Window *window = NULL;
+
+SDL_Renderer *renderer = NULL;
+
 SDL_Surface *screen = NULL;
+
+SDL_Texture *screen_t = NULL;
 
 SDL_Surface *gameScreen = NULL;
 
@@ -34,22 +40,33 @@ bool screenFreeze = false;
  */
 int initScreen(void)
 {
+    window = SDL_CreateWindow("Zatacka X",
+                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                              WINDOW_W, WINDOW_H,
+                              (fullscreen ?
+                               SDL_WINDOW_FULLSCREEN :
+                               SDL_WINDOW_RESIZABLE));
+    renderer = SDL_CreateRenderer(window, -1, 0);
+
     SDL_FreeSurface(screen);
-    screen = SDL_SetVideoMode(WINDOW_W, WINDOW_H, SCREEN_BPP,
-                              SDL_SWSURFACE | (fullscreen
-                                               ? SDL_FULLSCREEN
-                                               : SDL_RESIZABLE));
+    screen = SDL_CreateRGBSurface(0, WINDOW_W, WINDOW_H, 32,
+                                  0x00ff0000,
+                                  0x0000ff00,
+                                  0x000000ff,
+                                  0xff000000);
+    screen_t = SDL_CreateTexture(renderer,
+                                 SDL_PIXELFORMAT_ARGB8888,
+                                 SDL_TEXTUREACCESS_STREAMING,
+                                 WINDOW_W,
+                                 WINDOW_H);
 
     SDL_FreeSurface(gameScreen);
-    gameScreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                      screen->w,
-                                      screen->h,
-                                      screen->format->BitsPerPixel,
-                                      screen->format->Rmask,
-                                      screen->format->Gmask,
-                                      screen->format->Bmask,
-                                      0);
-    SDL_SetColorKey(gameScreen, SDL_SRCCOLORKEY, 0);
+    gameScreen = SDL_CreateRGBSurface(0, screen->w, screen->h, 32,
+                                      0x00ff0000,
+                                      0x0000ff00,
+                                      0x000000ff,
+                                      0xff000000);
+    /* SDL_SetColorKey(gameScreen, SDL_SRCCOLORKEY, 0); */
 
     initParticleScreen(WINDOW_W, WINDOW_H);
 

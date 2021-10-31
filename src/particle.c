@@ -149,7 +149,7 @@ int initParticleScreen(int width, int height)
 {
     particleScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
                                           SCREEN_BPP, 0, 0, 0, 0);
-    SDL_SetColorKey(particleScreen, SDL_SRCCOLORKEY, 0);
+    /* SDL_SetColorKey(particleScreen, SDL_SRCCOLORKEY, 0); */
 
     if (particleScreen == NULL) {
         return 0;

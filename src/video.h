@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "common.h"
 #include "config.h"
@@ -13,6 +13,10 @@
  * The main framebuffer surface.
  */
 extern SDL_Surface *screen;
+extern SDL_Texture *screen_t;
+
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
 
 /*
  * Surface holding graphics that don't need to change every frame
