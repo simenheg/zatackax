@@ -17,7 +17,7 @@
 
 #include "input.h"
 
-const int BUTTON_NAME_MAX_LEN = 14;
+const int BUTTON_NAME_MAX_LEN = 20;
 
 /*
  * The joystick button that is treated as an enter button in the
@@ -225,11 +225,12 @@ char *buttonName(button b)
     if (isJoyButton(b)) {
         if (numJoys > 1) {
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%d (%d)",
-                     joyButtonNumber(b) + 1, joyIndex(b) + 1);
+                     (short) joyButtonNumber(b) + 1,
+                     (short) joyIndex(b) + 1);
         }
         else {
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%d",
-                     joyButtonNumber(b) + 1);
+                     (short) joyButtonNumber(b) + 1);
         }
     }
     else if (isJoyAxis(b)) {
@@ -249,7 +250,7 @@ char *buttonName(button b)
 
         if (numJoys > 1) {
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%s (%d)",
-                     axisName, joyIndex(b) + 1);
+                     axisName, (short) joyIndex(b) + 1);
         }
         else {
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%s", axisName);
