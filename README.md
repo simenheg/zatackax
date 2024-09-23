@@ -33,15 +33,15 @@ second step:
 
 Compilation depends on the following libraries:
 
-* SDL 1.2
-* SDL_image 1.2
-* SDL_ttf 2.0
-* SDL_mixer 1.2
+* SDL2 2.0
+* SDL2_image 2.0
+* SDL2_ttf 2.0
+* SDL2_mixer 2.0
 
 These are often provided by GNU/Linux distributions. Under Debian, for
 instance, the following command installs the required libraries:
 
-    $ sudo apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-mixer1.2-dev
+    $ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 
 ## License
 The Zatacka X code is free software, licensed under the GNU General

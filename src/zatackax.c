@@ -145,29 +145,29 @@ void resetPlayer(int player)
 
     switch (player) {
     case 0:
-        p->lkey = SDLK_LEFT; p->rkey = SDLK_RIGHT;
-        p->wkey = SDLK_UP;
+        p->lkey = SDL_SCANCODE_LEFT; p->rkey = SDL_SCANCODE_RIGHT;
+        p->wkey = SDL_SCANCODE_UP;
         break;
     case 1:
-        p->lkey = 'z'; p->rkey = 'c'; p->wkey = 'x';
+        p->lkey = SDL_SCANCODE_Z; p->rkey = SDL_SCANCODE_C; p->wkey = SDL_SCANCODE_X;
         break;
     case 2:
-        p->lkey = 'v'; p->rkey = 'n'; p->wkey = 'b';
+        p->lkey = SDL_SCANCODE_V; p->rkey = SDL_SCANCODE_N; p->wkey = SDL_SCANCODE_B;
         break;
     case 3:
-        p->lkey = ','; p->rkey = '-'; p->wkey = '.';
+        p->lkey = SDL_SCANCODE_COMMA; p->rkey = SDL_SCANCODE_MINUS; p->wkey = SDL_SCANCODE_PERIOD;
         break;
     case 4:
-        p->lkey = 'q'; p->rkey = 'e'; p->wkey = 'w';
+        p->lkey = SDL_SCANCODE_Q; p->rkey = SDL_SCANCODE_E; p->wkey = SDL_SCANCODE_W;
         break;
     case 5:
-        p->lkey = 'r'; p->rkey = 'y'; p->wkey = 't';
+        p->lkey = SDL_SCANCODE_R; p->rkey = SDL_SCANCODE_Y; p->wkey = SDL_SCANCODE_T;
         break;
     case 6:
-        p->lkey = 'i'; p->rkey = 'p'; p->wkey = 'o';
+        p->lkey = SDL_SCANCODE_I; p->rkey = SDL_SCANCODE_P; p->wkey = SDL_SCANCODE_O;
         break;
     case 7:
-        p->lkey = SDLK_F1; p->rkey = SDLK_F3; p->wkey = SDLK_F2;
+        p->lkey = SDL_SCANCODE_F1; p->rkey = SDL_SCANCODE_F3; p->wkey = SDL_SCANCODE_F2;
         break;
     default:
         break;
@@ -432,7 +432,7 @@ void setNextKey(unsigned char pedit, unsigned char key)
                 }
                 else {
                     if (event.type == SDL_KEYDOWN) {
-                        k = event.key.keysym.sym;
+                        k = event.key.keysym.scancode;
                     }
                     else {
                         k = event.button.button;
@@ -477,9 +477,9 @@ void setNextKey(unsigned char pedit, unsigned char key)
 void setNextName(unsigned char pedit)
 {
     struct player *p = &players[pedit];
-    bool keyDown[322];
+    bool keyDown[SDL_NUM_SCANCODES];
 
-    memset(keyDown, '\0', 322);
+    memset(keyDown, '\0', SDL_NUM_SCANCODES);
     memset(p->name, '\0', PLAYER_NAME_LEN);
     displayPConfMenu();
     int chars = 0;
@@ -496,9 +496,10 @@ void setNextName(unsigned char pedit)
         if (event.type == SDL_KEYDOWN) {
 
             int k = event.key.keysym.sym;
+            int scan = event.key.keysym.scancode;
 
-            if (!keyDown[k]) {
-                keyDown[k] = 1;
+            if (!keyDown[scan]) {
+                keyDown[scan] = 1;
 
                 if (k >= SDLK_EXCLAIM && k <= SDLK_z) {
                     if (event.key.keysym.mod & KMOD_LSHIFT ||
@@ -516,19 +517,19 @@ void setNextName(unsigned char pedit)
             }
 
             if (chars > 0 &&
-                (k == SDLK_ESCAPE || k == SDLK_RETURN ||
-                 k == SDLK_DOWN   || k == SDLK_UP)) {
+                (scan == SDL_SCANCODE_ESCAPE || scan == SDL_SCANCODE_RETURN ||
+                 scan == SDL_SCANCODE_DOWN   || scan == SDL_SCANCODE_UP)) {
 
                 playSound(SOUND_BEEP, sound);
 
-                if (k == SDLK_DOWN)
+                if (scan == SDL_SCANCODE_DOWN)
                     menuPConf.choice++;
-                else if (k == SDLK_UP)
+                else if (scan == SDL_SCANCODE_UP)
                     menuPConf.choice = menuPConf.choices - 1;
                 return;
             }
         } else if (event.type == SDL_KEYUP)
-            keyDown[event.key.keysym.sym] = 0;
+            keyDown[event.key.keysym.scancode] = 0;
     }
 }
 
@@ -584,7 +585,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                     &hitmap[sizeof(bool) * ((WINDOW_W * ypx) + xpx)];
                 struct player *p = &players[player - 1];
 
-                putPixel(xpx, ypx, colors[p->color], gameScreen->pixels);
+                putPixel(xpx, ypx, colors[p->color], gameScreen);
 
                 if (*hit == 0) {
                     struct recentMapPiece *new
@@ -602,6 +603,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                     if (player == *hit) {
                         if (olvl >= O_VERBOSE)
                             printf("Player %d committed suicide!\n", player);
+                        SDL_UnlockSurface(gameScreen);
                         killPlayer(player, *hit);
                     } else if (!p->inv_others) {
                         int killer = *hit;
@@ -611,6 +613,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                         if (olvl >= O_VERBOSE)
                             printf("Player %d crashed into Player %d!\n",
                                    player, killer);
+                        SDL_UnlockSurface(gameScreen);
                         killPlayer(player, killer);
                     }
                     if (olvl >= O_DEBUG)
@@ -624,6 +627,7 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                 if (olvl >= O_DEBUG)
                     fprintf(stderr, "Player %d walled at: (%d, %d)\n",
                             player, xpx, ypx);
+                SDL_UnlockSurface(gameScreen);
                 killPlayer(player, 0);
                 return;
             }
@@ -663,7 +667,7 @@ void updateHitMap(Uint32 delta)
             &hitmap[sizeof(bool) * ((WINDOW_W * cur->y) + cur->x)];
         if (holes && cur->count <= HOLE_DELAY && *at > MAX_PLAYERS * 2) {
             *at = 0;
-            putPixel(cur->x, cur->y, cMenuBG, gameScreen->pixels);
+            putPixel(cur->x, cur->y, cMenuBG, gameScreen);
             prev->next = cur->next;
             free(cur);
             cur = prev->next;
@@ -929,7 +933,6 @@ int logicGame(void)
         updateParticles(delta);
     }
 
-    SDL_UnlockSurface(gameScreen);
     return 1;
 }
 
@@ -1017,17 +1020,15 @@ void displayGameStart(void)
  */
 void refreshGameScreen(void)
 {
-    SDL_UnlockSurface(gameScreen);
     clearSurface(gameScreen);
 
     drawExtras();
 
     SDL_LockSurface(gameScreen);
 
-    unsigned char *target = gameScreen->pixels;
-
     for (unsigned int yy = 0; yy < WINDOW_H; ++yy) {
-        for (unsigned int xx = 0; xx < WINDOW_W; ++xx, target += 4) {
+        for (unsigned int xx = 0; xx < WINDOW_W; ++xx) {
+            unsigned char *target = (unsigned char *) gameScreen->pixels + yy * gameScreen->pitch + xx * gameScreen->format->BytesPerPixel;
             char charat = hitmap[sizeof(bool)
                                  * ((WINDOW_W * yy) + xx)];
             if (charat != 0) {
@@ -1044,6 +1045,7 @@ void refreshGameScreen(void)
                 target[0] = (&colors[p->color])->b;
                 target[1] = (&colors[p->color])->g;
                 target[2] = (&colors[p->color])->r;
+                target[3] = 255;
             }
         }
     }
@@ -1216,7 +1218,7 @@ void resetWeapons(void)
  */
 void initMainMenu(void)
 {
-    /* colorBalls(); */
+    colorBalls();
 }
 
 /**
@@ -1284,30 +1286,30 @@ void displayMainMenu(void)
     displayMenu(c, &menuMain, ymod);
     SDL_Rect offset = {WINDOW_W / 2 - logo->w / 2, WINDOW_H / 2 - logo->h,
                        0, 0};
-    /* SDL_BlitSurface(logo, NULL, screen, &offset); */
+    SDL_BlitSurface(logo, NULL, screen, &offset);
 
     /* This could/should be made smoother... */
-    /* for (int i = 0; i < nPlayers; ++i) { */
-    /*     offset.x = (WINDOW_W / 2)            /\* window offset *\/ */
-    /*         - 60                             /\* temp. offset *\/ */
-    /*         + (i - nPlayers) * BALL_SPACING; /\* player modifier *\/ */
+    for (int i = 0; i < nPlayers; ++i) {
+        offset.x = (WINDOW_W / 2)            /* window offset */
+            - 60                             /* temp. offset */
+            + (i - nPlayers) * BALL_SPACING; /* player modifier */
 
-    /*     offset.y = (WINDOW_H / 2)            /\* window offset *\/ */
-    /*         - BALL_Y_MOD + ymod;             /\* temp. offset *\/ */
+        offset.y = (WINDOW_H / 2)            /* window offset */
+            - BALL_Y_MOD + ymod;             /* temp. offset */
 
-    /*     SDL_BlitSurface(pballs[i], NULL, screen, &offset); */
-    /* } */
+        SDL_BlitSurface(pballs[i], NULL, screen, &offset);
+    }
 
-    /* for (int i = nPlayers; i < MAX_PLAYERS; ++i) { */
-    /*     offset.x = (WINDOW_W / 2)            /\* window offset *\/ */
-    /*         + 68                             /\* temp. offset *\/ */
-    /*         + (i - nPlayers) * BALL_SPACING; /\* player modifier *\/ */
+    for (int i = nPlayers; i < MAX_PLAYERS; ++i) {
+        offset.x = (WINDOW_W / 2)            /* window offset */
+            + 68                             /* temp. offset */
+            + (i - nPlayers) * BALL_SPACING; /* player modifier */
 
-    /*     offset.y = (WINDOW_H / 2)            /\* window offset *\/ */
-    /*         - BALL_Y_MOD + ymod;             /\* temp. offset *\/ */
+        offset.y = (WINDOW_H / 2)            /* window offset */
+            - BALL_Y_MOD + ymod;             /* temp. offset */
 
-    /*     SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset); */
-    /* } */
+        SDL_BlitSurface(pballs[MAX_PLAYERS], NULL, screen, &offset);
+    }
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
@@ -1552,8 +1554,8 @@ int logicSettingsMenu(void)
         }
         return 1;
     }
-    else if (keyDown[SDLK_BACKSPACE]) {
-        keyDown[SDLK_BACKSPACE] = 0;
+    else if (keyDown[SDL_SCANCODE_BACKSPACE]) {
+        keyDown[SDL_SCANCODE_BACKSPACE] = 0;
         if (menuSettings.choice == 9) {
             playSound(SOUND_BEP, sound);
             scorecap = 0;
@@ -1564,16 +1566,16 @@ int logicSettingsMenu(void)
     /* Special case for the score setting */
     if (menuSettings.choice == 9) {
         int num = -1;
-        if      (keyDown[SDLK_0]) num = 0;
-        else if (keyDown[SDLK_1]) num = 1;
-        else if (keyDown[SDLK_2]) num = 2;
-        else if (keyDown[SDLK_3]) num = 3;
-        else if (keyDown[SDLK_4]) num = 4;
-        else if (keyDown[SDLK_5]) num = 5;
-        else if (keyDown[SDLK_6]) num = 6;
-        else if (keyDown[SDLK_7]) num = 7;
-        else if (keyDown[SDLK_8]) num = 8;
-        else if (keyDown[SDLK_9]) num = 9;
+        if      (keyDown[SDL_SCANCODE_0]) num = 0;
+        else if (keyDown[SDL_SCANCODE_1]) num = 1;
+        else if (keyDown[SDL_SCANCODE_2]) num = 2;
+        else if (keyDown[SDL_SCANCODE_3]) num = 3;
+        else if (keyDown[SDL_SCANCODE_4]) num = 4;
+        else if (keyDown[SDL_SCANCODE_5]) num = 5;
+        else if (keyDown[SDL_SCANCODE_6]) num = 6;
+        else if (keyDown[SDL_SCANCODE_7]) num = 7;
+        else if (keyDown[SDL_SCANCODE_8]) num = 8;
+        else if (keyDown[SDL_SCANCODE_9]) num = 9;
 
         if (num != -1) {
             scorecap = scorecap * 10 + num;
@@ -1582,9 +1584,9 @@ int logicSettingsMenu(void)
             }
             playSound(SOUND_BEEP, sound);
 
-            keyDown[SDLK_0] = keyDown[SDLK_1] = keyDown[SDLK_2] = keyDown[SDLK_3] =
-                keyDown[SDLK_4] = keyDown[SDLK_5] = keyDown[SDLK_6] =
-                keyDown[SDLK_7] = keyDown[SDLK_8] = keyDown[SDLK_9] = 0;
+            keyDown[SDL_SCANCODE_0] = keyDown[SDL_SCANCODE_1] = keyDown[SDL_SCANCODE_2] = keyDown[SDL_SCANCODE_3] =
+                keyDown[SDL_SCANCODE_4] = keyDown[SDL_SCANCODE_5] = keyDown[SDL_SCANCODE_6] =
+                keyDown[SDL_SCANCODE_7] = keyDown[SDL_SCANCODE_8] = keyDown[SDL_SCANCODE_9] = 0;
 
             return 1;
         }
@@ -1705,7 +1707,7 @@ int logicPConfMenu(void)
         switch (menuPConf.choice) {
         case 0:
             // Disable name input with joystick for the time being.
-            if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+            if (keyDown[SDL_SCANCODE_SPACE] || keyDown[SDL_SCANCODE_RETURN]) {
                 playSound(SOUND_BEEP, sound);
                 setNextName(editPlayer);
             }
@@ -1716,19 +1718,19 @@ int logicPConfMenu(void)
             break;
         case 2:
             playSound(SOUND_BEEP, sound);
-            (&players[editPlayer])->lkey = SDLK_CLEAR;
+            (&players[editPlayer])->lkey = SDL_SCANCODE_CLEAR;
             displayPConfMenu(); /* Update menu before catching key */
             setNextKey(editPlayer, 'l');
             break;
         case 3:
             playSound(SOUND_BEEP, sound);
-            (&players[editPlayer])->wkey = SDLK_CLEAR;
+            (&players[editPlayer])->wkey = SDL_SCANCODE_CLEAR;
             displayPConfMenu(); /* Update menu before catching key */
             setNextKey(editPlayer, 'w');
             break;
         case 4:
             playSound(SOUND_BEEP, sound);
-            (&players[editPlayer])->rkey = SDLK_CLEAR;
+            (&players[editPlayer])->rkey = SDL_SCANCODE_CLEAR;
             displayPConfMenu(); /* Update menu before catching key */
             setNextKey(editPlayer, 'r');
             break;
@@ -1754,8 +1756,8 @@ int logicPConfMenu(void)
             playSound(SOUND_BEEP, sound);
             setColor(editPlayer, 1);
             return 1;
-        } else if (keyDown[SDLK_BACKSPACE]) {
-            keyDown[SDLK_BACKSPACE] = 0;
+        } else if (keyDown[SDL_SCANCODE_BACKSPACE]) {
+            keyDown[SDL_SCANCODE_BACKSPACE] = 0;
             playSound(SOUND_BEEP, sound);
             setNextName(editPlayer);
             return 1;
@@ -1897,14 +1899,17 @@ void displayMenu(char *c[], struct menu *m, int ymod)
  * @param x x coordinate of the pixel destination.
  * @param y y coordinate of the pixel destination.
  * @param c Desired color of the pixel.
- * @param target Points to which SDL_Surface the pixel should be put.
+ * @param targetSurface Points to which SDL_Surface the pixel should be put.
  */
-void putPixel(int x, int y, SDL_Color c, unsigned char *target)
+void putPixel(int x, int y, SDL_Color c, SDL_Surface *targetSurface)
 {
-    target += 4 * ((WINDOW_W * y) + x);
+    unsigned char *target = (unsigned char *) targetSurface->pixels + y * targetSurface->pitch + x * targetSurface->format->BytesPerPixel;
     target[0] = c.b;
     target[1] = c.g;
     target[2] = c.r;
+    if (targetSurface->format->BytesPerPixel == 4) {
+        target[3] = 255;
+    }
 }
 
 /**
@@ -1917,13 +1922,12 @@ void putPixel(int x, int y, SDL_Color c, unsigned char *target)
  */
 void colorFill(SDL_Color c, SDL_Surface *sprite)
 {
-    unsigned char *target = sprite->pixels;
-
     for (int yy = 0; yy < sprite->h; ++yy) {
-        for (int xx = 0; xx < sprite->w; ++xx, target += 4) {
-            target[0] *= c.b / 255.0;
+        for (int xx = 0; xx < sprite->w; ++xx) {
+            unsigned char *target = (unsigned char *) sprite->pixels + yy * sprite->pitch + xx * sprite->format->BytesPerPixel;
+            target[0] *= c.r / 255.0;
             target[1] *= c.g / 255.0;
-            target[2] *= c.r / 255.0;
+            target[2] *= c.b / 255.0;
         }
     }
 }
@@ -1986,7 +1990,7 @@ int init(void)
 
     SDL_ShowCursor(SDL_DISABLE);
     SDL_Surface *icon = loadIcon("icon.bmp");
-    /* SDL_WM_SetIcon(icon, NULL); */
+    SDL_SetWindowIcon(window, icon);
     SDL_FreeSurface(icon);
 
     return 1;
@@ -2014,12 +2018,12 @@ void initGraphics(void)
     /* Make arrow copies */
     parrows = malloc(MAX_PLAYERS * sizeof(SDL_Surface *));
     p = parrows;
-        for (int i = 0; i < MAX_PLAYERS; ++i, ++p) {
-        *p = SDL_CreateRGBSurface(0, arrows->w, arrows->h, 32,
-                                  0x00ff0000,
-                                  0x0000ff00,
-                                  0x000000ff,
-                                  0xff000000);
+    for (int i = 0; i < MAX_PLAYERS; ++i, ++p) {
+        *p = SDL_CreateRGBSurface(0, arrows->w, arrows->h, arrows->format->BitsPerPixel,
+                                  arrows->format->Rmask,
+                                  arrows->format->Gmask,
+                                  arrows->format->Bmask,
+                                  arrows->format->Amask);
     }
 
     /* Make ball copies */
@@ -2027,11 +2031,11 @@ void initGraphics(void)
     p = pballs;
     SDL_Surface *ball = images[IMG_BALL];
     for (int i = 0; i < MAX_PLAYERS + 1; ++i, ++p) {
-        *p = SDL_CreateRGBSurface(0, ball->w, ball->h, 32,
-                                  0x00ff0000,
-                                  0x0000ff00,
-                                  0x000000ff,
-                                  0xff000000);
+        *p = SDL_CreateRGBSurface(ball->flags, ball->w, ball->h, ball->format->BitsPerPixel,
+                                  ball->format->Rmask,
+                                  ball->format->Gmask,
+                                  ball->format->Bmask,
+                                  ball->format->Amask);
     }
 
     /* Initialize weapon pointer array */
@@ -2087,10 +2091,10 @@ int main(void)
     initPlayers1();
     restoreSettings();
 
-    if (!init())
+    if (!initScreen())
         return 1;
 
-    if (!initScreen())
+    if (!init())
         return 1;
 
     initHitMap(WINDOW_W, WINDOW_H);
@@ -2102,12 +2106,12 @@ int main(void)
         return 1;
     }
 
-    /* if (!loadSounds()) { */
-    /*     if (olvl >= O_NORMAL) { */
-    /*         fprintf(stderr, "ERROR: Failed to load sound files.\n"); */
-    /*     } */
-    /*     return 1; */
-    /* } */
+    if (!loadSounds()) {
+        if (olvl >= O_NORMAL) {
+            fprintf(stderr, "ERROR: Failed to load sound files.\n");
+        }
+        return 1;
+    }
 
     if (!loadFonts()) {
         if (olvl >= O_NORMAL) {
@@ -2123,8 +2127,8 @@ int main(void)
     curScene = &mainMenu;
     curScene->displayFunc();
 
-    /* if (music) */
-    /*     playBGM(); */
+    if (music)
+        playBGM();
 
     for (;;) {
         while (SDL_PollEvent(&event)) {
@@ -2135,7 +2139,7 @@ int main(void)
 
                 int k = -1;
                 if (event.type == SDL_KEYDOWN) {
-                    k = event.key.keysym.sym;
+                    k = event.key.keysym.scancode;
                 }
                 else if (event.type == SDL_MOUSEBUTTONDOWN) {
                     k = event.button.button;
@@ -2147,14 +2151,14 @@ int main(void)
                     k = axisNumber(event.jaxis) << 4;
                 }
 
-                if (screenFreeze && k == SDLK_RETURN) {
+                if (screenFreeze && k == SDL_SCANCODE_RETURN) {
                     screenFreeze = false;
                     endRound();
                     curScene = &mainMenu;
                     curScene->displayFunc();
                 }
 
-                if ((event.type == SDL_KEYDOWN && k == SDLK_ESCAPE)) {
+                if ((event.type == SDL_KEYDOWN && k == SDL_SCANCODE_ESCAPE)) {
                     screenFreeze = false;
                     if (curScene == &game || curScene == &gameStart)
                         endRound();
@@ -2201,7 +2205,7 @@ int main(void)
                 }
             }
             else if (event.type == SDL_KEYUP) {
-                keyDown[event.key.keysym.sym] = false;
+                keyDown[event.key.keysym.scancode] = false;
             }
             else if (event.type == SDL_MOUSEBUTTONUP) {
                 keyDown[event.button.button] = false;
@@ -2233,9 +2237,9 @@ int main(void)
                 SDL_Delay(1000/FPS_CAP - delta);
             }
 
-            /* if (curScene->logicFunc()) { */
-            /*     curScene->displayFunc(); */
-            /* } */
+            if (curScene->logicFunc()) {
+                 curScene->displayFunc();
+            }
         }
     }
 

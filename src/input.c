@@ -25,8 +25,8 @@ const int BUTTON_NAME_MAX_LEN = 20;
  */
 const Uint8 JOY_ENTER_BUTTON = 1;
 
-// 322 is the number of possible SDL keys (see SDL_keysym.h).
-bool keyDown[322];
+// Number of possible SDL keys (see SDL_scancode.h).
+bool keyDown[SDL_NUM_SCANCODES];
 
 /*
  * A separate map is kept for each possible joystick (0-7). See the
@@ -122,7 +122,7 @@ int axisNumber(SDL_JoyAxisEvent e)
  */
 bool enterButtonDown(void)
 {
-    if (keyDown[SDLK_SPACE] || keyDown[SDLK_RETURN]) {
+    if (keyDown[SDL_SCANCODE_SPACE] || keyDown[SDL_SCANCODE_RETURN]) {
         return true;
     }
 
@@ -140,8 +140,8 @@ bool enterButtonDown(void)
  */
 void clearEnterButtons(void)
 {
-    keyDown[SDLK_RETURN] = false;
-    keyDown[SDLK_SPACE] = false;
+    keyDown[SDL_SCANCODE_RETURN] = false;
+    keyDown[SDL_SCANCODE_SPACE] = false;
 
     for (unsigned int i = 0; i < numJoys; i++) {
         joyButtonDown[i][JOY_ENTER_BUTTON] = false;
@@ -179,11 +179,11 @@ void clearButton(button b)
  */
 bool menuButtonQuery(enum keySymbol ks)
 {
-    SDL_KeyCode lkeys[4][3] =
-        {{SDLK_UP,    SDLK_k, SDLK_p},
-         {SDLK_RIGHT, SDLK_l, SDLK_f},
-         {SDLK_DOWN,  SDLK_j, SDLK_n},
-         {SDLK_LEFT,  SDLK_h, SDLK_b}};
+    SDL_Scancode lkeys[4][3] =
+        {{SDL_SCANCODE_UP,    SDL_SCANCODE_K, SDL_SCANCODE_P},
+         {SDL_SCANCODE_RIGHT, SDL_SCANCODE_L, SDL_SCANCODE_F},
+         {SDL_SCANCODE_DOWN,  SDL_SCANCODE_J, SDL_SCANCODE_N},
+         {SDL_SCANCODE_LEFT,  SDL_SCANCODE_H, SDL_SCANCODE_B}};
 
     for (int i = 0; i < 3; i++) {
         if (keyDown[lkeys[ks][i]]) {
@@ -256,98 +256,101 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "joy-%s", axisName);
         }
     }
-    else if ((b >= SDLK_a && b <= SDLK_z)
-                 || (b >= SDLK_0 && b <= SDLK_9)) {
-        snprintf(keyname, BUTTON_NAME_MAX_LEN, "%c", b);
+    else if ((b >= SDL_SCANCODE_A && b <= SDL_SCANCODE_Z)
+                 || (b >= SDL_SCANCODE_0 && b <= SDL_SCANCODE_9)) {
+        snprintf(keyname, BUTTON_NAME_MAX_LEN, "%c", SDL_GetKeyFromScancode(b));
     }
-    else if (b >= SDLK_F1 && b <= SDLK_F15) {
-        snprintf(keyname, BUTTON_NAME_MAX_LEN, "F%d", b - SDLK_F1 + 1);
+    else if (b >= SDL_SCANCODE_F1 && b <= SDL_SCANCODE_F12) {
+        snprintf(keyname, BUTTON_NAME_MAX_LEN, "F%d", b - SDL_SCANCODE_F1 + 1);
+    }
+    else if (b >= SDL_SCANCODE_F13 && b <= SDL_SCANCODE_F15) {
+        snprintf(keyname, BUTTON_NAME_MAX_LEN, "F%d", b - SDL_SCANCODE_F13 + 13);
     }
     else {
         switch (b) {
-        case SDLK_UNKNOWN:
+        case SDL_SCANCODE_UNKNOWN:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "none"); break;
-        case SDLK_LEFT:
+        case SDL_SCANCODE_LEFT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "left"); break;
-        case SDLK_RIGHT:
+        case SDL_SCANCODE_RIGHT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "right"); break;
-        case SDLK_UP:
+        case SDL_SCANCODE_UP:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "up"); break;
-        case SDLK_DOWN:
+        case SDL_SCANCODE_DOWN:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "down"); break;
-        /* case SDLK_SCROLLOCK: */
+        /* case SDL_SCANCODE_SCROLLOCK: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "scr-lk"); break; */
-        case SDLK_PAUSE:
+        case SDL_SCANCODE_PAUSE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "pause"); break;
-        case SDLK_DELETE:
+        case SDL_SCANCODE_DELETE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "del"); break;
-        case SDLK_INSERT:
+        case SDL_SCANCODE_INSERT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "ins"); break;
-        case SDLK_HOME:
+        case SDL_SCANCODE_HOME:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "home"); break;
-        case SDLK_END:
+        case SDL_SCANCODE_END:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "end"); break;
-        case SDLK_MENU:
+        case SDL_SCANCODE_MENU:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "menu"); break;
-        /* case SDLK_PRINT: */
+        /* case SDL_SCANCODE_PRINT: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "prt-sc"); break; */
-        case SDLK_PAGEUP:
+        case SDL_SCANCODE_PAGEUP:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "pg up"); break;
-        case SDLK_PAGEDOWN:
+        case SDL_SCANCODE_PAGEDOWN:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "pg dn"); break;
-        case SDLK_RSHIFT:
+        case SDL_SCANCODE_RSHIFT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-shift"); break;
-        case SDLK_LSHIFT:
+        case SDL_SCANCODE_LSHIFT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-shift"); break;
-        case SDLK_RCTRL:
+        case SDL_SCANCODE_RCTRL:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-ctrl"); break;
-        case SDLK_LCTRL:
+        case SDL_SCANCODE_LCTRL:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-ctrl"); break;
-        case SDLK_RALT:
+        case SDL_SCANCODE_RALT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-alt"); break;
-        case SDLK_LALT:
+        case SDL_SCANCODE_LALT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-alt"); break;
-        case SDLK_MODE:
+        case SDL_SCANCODE_MODE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "alt gr"); break;
-        /* case SDLK_RSUPER: */
+        /* case SDL_SCANCODE_RSUPER: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-super"); break; */
-        /* case SDLK_LSUPER: */
+        /* case SDL_SCANCODE_LSUPER: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-super"); break; */
-        case SDLK_TAB:
+        case SDL_SCANCODE_TAB:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "tab"); break;
-        case SDLK_PERIOD:
+        case SDL_SCANCODE_PERIOD:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "."); break;
-        case SDLK_COMMA:
+        case SDL_SCANCODE_COMMA:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, ","); break;
-        case SDLK_SEMICOLON:
+        case SDL_SCANCODE_SEMICOLON:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, ";"); break;
-        case SDLK_MINUS:
+        case SDL_SCANCODE_MINUS:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "-"); break;
-        case SDLK_QUOTE:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "'"); break;
-        case SDLK_BACKQUOTE:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "`"); break;
-        case SDLK_PLUS:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "+"); break;
-        case SDLK_EQUALS:
+        // case SDL_SCANCODE_QUOTE:
+        //     snprintf(keyname, BUTTON_NAME_MAX_LEN, "'"); break;
+        // case SDL_SCANCODE_BACKQUOTE:
+        //     snprintf(keyname, BUTTON_NAME_MAX_LEN, "`"); break;
+        // case SDL_SCANCODE_PLUS:
+        //     snprintf(keyname, BUTTON_NAME_MAX_LEN, "+"); break;
+        case SDL_SCANCODE_EQUALS:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "="); break;
-        /* case SDLK_COMPOSE: */
+        /* case SDL_SCANCODE_COMPOSE: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "^"); break; */
-        case SDLK_SLASH:
+        case SDL_SCANCODE_SLASH:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "/"); break;
-        case SDLK_BACKSLASH:
+        case SDL_SCANCODE_BACKSLASH:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "\\"); break;
-        case SDLK_LESS:
-            snprintf(keyname, BUTTON_NAME_MAX_LEN, "<"); break;
-        case SDLK_LEFTBRACKET:
+        // case SDL_SCANCODE_LESS:
+        //     snprintf(keyname, BUTTON_NAME_MAX_LEN, "<"); break;
+        case SDL_SCANCODE_LEFTBRACKET:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "["); break;
-        case SDLK_RIGHTBRACKET:
+        case SDL_SCANCODE_RIGHTBRACKET:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "]"); break;
-        case SDLK_BACKSPACE:
+        case SDL_SCANCODE_BACKSPACE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "b-space"); break;
-        case SDLK_RETURN:
+        case SDL_SCANCODE_RETURN:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "enter"); break;
-        case SDLK_SPACE:
+        case SDL_SCANCODE_SPACE:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "space"); break;
         case SDL_BUTTON_LEFT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "l-mouse"); break;
@@ -355,11 +358,11 @@ char *buttonName(button b)
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "m-mouse"); break;
         case SDL_BUTTON_RIGHT:
             snprintf(keyname, BUTTON_NAME_MAX_LEN, "r-mouse"); break;
-        /* case SDLK_WORLD_70: */
+        /* case SDL_SCANCODE_WORLD_70: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "æ"); break; */
-        /* case SDLK_WORLD_88: */
+        /* case SDL_SCANCODE_WORLD_88: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "ø"); break; */
-        /* case SDLK_WORLD_69: */
+        /* case SDL_SCANCODE_WORLD_69: */
         /*     snprintf(keyname, BUTTON_NAME_MAX_LEN, "å"); break; */
         default:
             break;

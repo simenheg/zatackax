@@ -8,7 +8,7 @@
 #include "common.h"
 
 extern const int BUTTON_NAME_MAX_LEN;
-extern bool keyDown[322];
+extern bool keyDown[SDL_NUM_SCANCODES];
 extern bool joyButtonDown[MAX_PLAYERS][128];
 
 /*

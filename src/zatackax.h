@@ -155,7 +155,7 @@ int handleMenu(struct menu *m);
 void displayMenu(char *c[], struct menu *m, int ymod);
 
 /* GRAPHICS */
-void putPixel(int x, int y, SDL_Color c, unsigned char *target);
+void putPixel(int x, int y, SDL_Color c, SDL_Surface *target);
 void colorFill(SDL_Color c, SDL_Surface *sprite);
 void colorBalls(void);
 
