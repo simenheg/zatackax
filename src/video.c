@@ -40,6 +40,10 @@ bool screenFreeze = false;
  */
 int initScreen(void)
 {
+    if (renderer) {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+    }
     window = SDL_CreateWindow("Zatacka X",
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                               WINDOW_W, WINDOW_H,
@@ -54,6 +58,7 @@ int initScreen(void)
                                   0x0000ff00,
                                   0x000000ff,
                                   0xff000000);
+
     screen_t = SDL_CreateTexture(renderer,
                                  SDL_PIXELFORMAT_ARGB8888,
                                  SDL_TEXTUREACCESS_STREAMING,

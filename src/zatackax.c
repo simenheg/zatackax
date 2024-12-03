@@ -615,6 +615,8 @@ void addToHitMap(unsigned int x, unsigned int y, unsigned char player,
                                    player, killer);
                         SDL_UnlockSurface(gameScreen);
                         killPlayer(player, killer);
+                    } else {
+                        SDL_UnlockSurface(gameScreen);
                     }
                     if (olvl >= O_DEBUG)
                         fprintf(stderr, "Player %d crashed at: (%d, %d)\n",
