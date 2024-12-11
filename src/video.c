@@ -31,27 +31,56 @@ unsigned int WINDOW_W = DEFAULT_WINDOW_W;
 
 unsigned int WINDOW_H = DEFAULT_WINDOW_H;
 
+SDL_Rect gameScreenOnWindowRect = { 0 };
+
 bool screenFreeze = false;
 
 /**
- * Initialize the application window and main screen surfaces.
+ * Initialize the application window.
+ *
+ * @return 1 if the initialization was successful, 0 if not.
+ */
+int initWindow(void)
+{
+    if (renderer) {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        screen_t = NULL; /* Destroying the renderer will destroy the texture */
+    }
+    int width = WINDOW_W;
+    int height = WINDOW_H;
+    if (fullscreen) {
+        if (width * DEFAULT_WINDOW_H > height * DEFAULT_WINDOW_W) {
+            height = width * DEFAULT_WINDOW_H / DEFAULT_WINDOW_W;
+        } else {
+            width = height * DEFAULT_WINDOW_W / DEFAULT_WINDOW_H;
+        }
+    }
+    window = SDL_CreateWindow("Zatacka X",
+                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                              width, height,
+                              (fullscreen ?
+                               SDL_WINDOW_FULLSCREEN :
+                               SDL_WINDOW_RESIZABLE));
+
+    SDL_GetWindowSize(window, &width, &height);
+    gameScreenOnWindowRect.w = WINDOW_W;
+    gameScreenOnWindowRect.h = WINDOW_H;
+    gameScreenOnWindowRect.y = (height - WINDOW_H) / 2;
+    gameScreenOnWindowRect.x = (width - WINDOW_W) / 2;
+
+    renderer = SDL_CreateRenderer(window, -1, 0);
+
+    return window && renderer;
+}
+
+/**
+ * Initialize the main screen surfaces.
  *
  * @return 1 if the initialization was successful, 0 if not.
  */
 int initScreen(void)
 {
-    if (renderer) {
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-    }
-    window = SDL_CreateWindow("Zatacka X",
-                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              WINDOW_W, WINDOW_H,
-                              (fullscreen ?
-                               SDL_WINDOW_FULLSCREEN :
-                               SDL_WINDOW_RESIZABLE));
-    renderer = SDL_CreateRenderer(window, -1, 0);
-
     SDL_FreeSurface(screen);
     screen = SDL_CreateRGBSurface(0, WINDOW_W, WINDOW_H, 32,
                                   0x00ff0000,
@@ -59,6 +88,12 @@ int initScreen(void)
                                   0x000000ff,
                                   0xff000000);
 
+    gameScreenOnWindowRect.w = WINDOW_W;
+    gameScreenOnWindowRect.h = WINDOW_H;
+
+    if (screen_t) {
+        SDL_DestroyTexture(screen_t);
+    }
     screen_t = SDL_CreateTexture(renderer,
                                  SDL_PIXELFORMAT_ARGB8888,
                                  SDL_TEXTUREACCESS_STREAMING,
@@ -75,5 +110,5 @@ int initScreen(void)
 
     initParticleScreen(WINDOW_W, WINDOW_H);
 
-    return (screen == NULL || gameScreen == NULL) ? 0 : 1;
+    return screen && screen_t && gameScreen && particleScreen;
 }

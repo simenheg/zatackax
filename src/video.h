@@ -30,11 +30,14 @@ extern SDL_Surface *gameScreen;
 extern unsigned int WINDOW_W;
 extern unsigned int WINDOW_H;
 
+extern SDL_Rect gameScreenOnWindowRect;
+
 /*
  * True to temporarily freeze what's currently being displayed.
  */
 extern bool screenFreeze;
 
+int initWindow(void);
 int initScreen(void);
 
 #endif

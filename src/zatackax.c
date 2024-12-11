@@ -954,7 +954,7 @@ void displayGame(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -1011,7 +1011,7 @@ void displayGameStart(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -1315,7 +1315,7 @@ void displayMainMenu(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -1462,7 +1462,7 @@ void displayWepMenu(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -1478,6 +1478,7 @@ int logicSettingsMenu(void)
         case 0: /* Toggle fullscreen */
             playSound(SOUND_BEEP, sound);
             fullscreen ^= 1;
+            initWindow();
             initScreen();
             initHitMap(WINDOW_W, WINDOW_H);
             break;
@@ -1647,7 +1648,7 @@ void displaySettingsMenu(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -1694,7 +1695,7 @@ void displayPlayerMenu(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -1815,7 +1816,7 @@ void displayPConfMenu(void)
 
     SDL_UpdateTexture(screen_t, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screen_t, NULL, NULL);
+    SDL_RenderCopy(renderer, screen_t, NULL, &gameScreenOnWindowRect);
     SDL_RenderPresent(renderer);
 }
 
@@ -2093,6 +2094,9 @@ int main(void)
     initPlayers1();
     restoreSettings();
 
+    if (!initWindow())
+        return 1;
+
     if (!initScreen())
         return 1;
 
@@ -2218,7 +2222,7 @@ int main(void)
             else if (event.type == SDL_QUIT) {
                 exitGame(0);
             }
-            else if (event.type == SDL_WINDOWEVENT_RESIZED) {
+            else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
                 WINDOW_W = event.window.data1;
                 WINDOW_H = event.window.data2;
 
